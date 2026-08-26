@@ -4,7 +4,7 @@
         {
             "label": "Compilar Linceu Lighthouse (MinGW)",
             "type": "shell",
-            "command": "$env:QTDIR='C:\\Qt\\6.11.0\\mingw_64'; $env:Path='C:\\Qt\\6.11.0\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;' + $env:Path; cmake --preset qt6-mingw-debug; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; cmake --build --preset linceu-qt6-mingw-debug --parallel",
+            "command": "$env:QTDIR='C:\\Qt\\6.11.1\\mingw_64'; $env:Path='C:\\Qt\\6.11.1\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;' + $env:Path; cmake --preset qt6-mingw-release; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; cmake --build --preset linceu-qt6-mingw-release --parallel",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -19,7 +19,7 @@
         {
             "label": "Executar Linceu Lighthouse (MinGW)",
             "type": "shell",
-            "command": "$env:QTDIR='C:\\Qt\\6.11.0\\mingw_64'; $env:Path='C:\\Qt\\6.11.0\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;' + $env:Path; & 'D:\\MISCELANEAS\\VSCode\\LinceuLighthouse\\Linceu_Lighthouse_mingw\\Linceu_Lighthouse.exe'",
+            "command": "$env:QTDIR='C:\\Qt\\6.11.1\\mingw_64'; $env:Path='C:\\Qt\\6.11.1\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;' + $env:Path; & 'D:\\MISCELANEAS\\VSCode\\LinceuLighthouse\\Linceu_Lighthouse_mingw\\Linceu_Lighthouse.exe'",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -37,7 +37,7 @@
         {
             "label": "Compilar Linceu Lighthouse (MSVC)",
             "type": "shell",
-            "command": "$env:QTDIR='C:\\Qt\\6.11.0\\msvc2022_64'; $env:VSINSTALLDIR='C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\'; $env:VCINSTALLDIR='C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\'; $env:Path='C:\\Qt\\6.11.0\\msvc2022_64\\bin;' + $env:Path; cmake --preset qt6-msvc-release; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; cmake --build --preset linceu-qt6-msvc-release --parallel",
+            "command": "$ErrorActionPreference = 'Stop'; $env:QTDIR='C:\\Qt\\6.11.1\\msvc2022_64'; $env:QT_PLUGIN_PATH='C:\\Qt\\6.11.1\\msvc2022_64\\plugins'; $env:VSINSTALLDIR='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\'; $env:VCINSTALLDIR='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\'; $env:VCToolsInstallDir='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\'; $env:WindowsSdkDir='C:\\Program Files (x86)\\Windows Kits\\10\\'; $env:WindowsSDKVersion='10.0.28000.0\\'; $env:INCLUDE='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\include;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\ucrt;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\um;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\shared;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\winrt;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\cppwinrt;' + $env:INCLUDE; $env:LIB='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\lib\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.28000.0\\ucrt\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.28000.0\\um\\x64;' + $env:LIB; $env:LIBPATH='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\lib\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\UnionMetadata\\10.0.28000.0;C:\\Program Files (x86)\\Windows Kits\\10\\References\\10.0.28000.0;' + $env:LIBPATH; $env:Path='C:\\Qt\\Tools\\Ninja;C:\\Qt\\6.11.1\\msvc2022_64\\bin;C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.28000.0\\x64;' + $env:Path; cmake --preset qt6-msvc-release; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; cmake --build --preset linceu-qt6-msvc-release --parallel; exit $LASTEXITCODE",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -49,7 +49,7 @@
         {
             "label": "Executar Linceu Lighthouse (MSVC)",
             "type": "shell",
-            "command": "$env:QTDIR='C:\\Qt\\6.11.0\\msvc2022_64'; $env:Path='C:\\Qt\\6.11.0\\msvc2022_64\\bin;' + $env:Path; & 'D:\\MISCELANEAS\\VSCode\\LinceuLighthouse\\Linceu_Lighthouse_msvc\\Linceu_Lighthouse.exe'",
+            "command": "$env:QTDIR='C:\\Qt\\6.11.1\\msvc2022_64'; $env:Path='C:\\Qt\\6.11.1\\msvc2022_64\\bin;' + $env:Path; & 'D:\\MISCELANEAS\\VSCode\\LinceuLighthouse\\Linceu_Lighthouse_msvc\\Linceu_Lighthouse.exe'",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -67,7 +67,7 @@
         {
             "label": "Compilar Mock VersionEditor (MinGW)",
             "type": "shell",
-            "command": "$env:QTDIR='C:\\Qt\\6.11.0\\mingw_64'; $env:Path='C:\\Qt\\6.11.0\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;' + $env:Path; cmake --preset mock-qt6-mingw-debug; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; cmake --build --preset mock-qt6-mingw-debug --parallel",
+            "command": "$env:QTDIR='C:\\Qt\\6.11.1\\mingw_64'; $env:Path='C:\\Qt\\6.11.1\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;' + $env:Path; cmake --preset mock-qt6-mingw-debug; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; cmake --build --preset mock-qt6-mingw-debug --parallel",
             "options": {
                 "cwd": "${workspaceFolder}/mocks"
             },
@@ -78,7 +78,7 @@
         {
             "label": "Executar Mock VersionEditor (MinGW)",
             "type": "shell",
-            "command": "$env:QTDIR='C:\\Qt\\6.11.0\\mingw_64'; $env:Path='C:\\Qt\\6.11.0\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;' + $env:Path; & '${workspaceFolder}\\mocks\\output\\find_VersionEditor.exe'",
+            "command": "$env:QTDIR='C:\\Qt\\6.11.1\\mingw_64'; $env:Path='C:\\Qt\\6.11.1\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;' + $env:Path; & 'D:\\MISCELANEAS\\VSCode\\LinceuLighthouse\\mocks\\find_VersionEditor.exe'",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -94,9 +94,9 @@
             "problemMatcher": []
         },
         {
-            "label": "Compilar Compile Translations (MinGW)",
+            "label": "Compilar Mock Compile Translations (MinGW)",
             "type": "shell",
-            "command": "$env:QTDIR='C:\\Qt\\6.11.0\\mingw_64'; $env:Path='C:\\Qt\\6.11.0\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;' + $env:Path; cmake --preset mock-qt6-mingw-debug; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; cmake --build --preset mock-compile-translations-qt6-mingw-debug --parallel",
+            "command": "$env:QTDIR='C:\\Qt\\6.11.1\\mingw_64'; $env:Path='C:\\Qt\\6.11.1\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;' + $env:Path; cmake --preset mock-qt6-mingw-debug; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; cmake --build --preset mock-compile-translations-qt6-mingw-debug --parallel",
             "options": {
                 "cwd": "${workspaceFolder}/mocks"
             },
@@ -105,20 +105,31 @@
             ]
         },
         {
-            "label": "Executar Compile Translations (MinGW)",
+            "label": "Executar Mock Compile Translations (MinGW)",
             "type": "shell",
-            "command": "$env:QTDIR='C:\\Qt\\6.11.0\\mingw_64'; $env:Path='C:\\Qt\\6.11.0\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;' + $env:Path; & '${workspaceFolder}\\mocks\\output\\compile_translations.exe'",
+            "command": "$env:QTDIR='C:\\Qt\\6.11.1\\mingw_64'; $env:Path='C:\\Qt\\6.11.1\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;' + $env:Path; & 'D:\\MISCELANEAS\\VSCode\\LinceuLighthouse\\mocks\\compile_translations.exe'",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
             "problemMatcher": []
         },
         {
-            "label": "Compilar + Executar Compile Translations (MinGW)",
+            "label": "Compilar + Executar Mock Compile Translations (MinGW)",
             "dependsOrder": "sequence",
             "dependsOn": [
-                "Compilar Compile Translations (MinGW)",
-                "Executar Compile Translations (MinGW)"
+                "Compilar Mock Compile Translations (MinGW)",
+                "Executar Mock Compile Translations (MinGW)"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Compilar + Executar Mocks (MinGW)",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Compilar Mock VersionEditor (MinGW)",
+                "Executar Mock VersionEditor (MinGW)",
+                "Compilar Mock Compile Translations (MinGW)",
+                "Executar Mock Compile Translations (MinGW)"
             ],
             "problemMatcher": []
         }

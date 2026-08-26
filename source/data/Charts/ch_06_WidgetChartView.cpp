@@ -151,7 +151,9 @@ bool can_pan_zoom(const ChartKind kind) {
 WidgetChartView::WidgetChartView(QWidget* parent)
     : QOpenGLWidget(parent),
       m_fillVbo(QOpenGLBuffer::VertexBuffer),
-      m_lineVbo(QOpenGLBuffer::VertexBuffer) {
+      m_lineVbo(QOpenGLBuffer::VertexBuffer),
+      m_foregroundFillVbo(QOpenGLBuffer::VertexBuffer),
+      m_foregroundLineVbo(QOpenGLBuffer::VertexBuffer) {
     QSurfaceFormat format = QSurfaceFormat::defaultFormat();
     format.setRenderableType(QSurfaceFormat::OpenGL);
     format.setSamples(qMax(8, format.samples()));
@@ -184,6 +186,8 @@ WidgetChartView::~WidgetChartView() {
         makeCurrent();
         m_fillVbo.destroy();
         m_lineVbo.destroy();
+        m_foregroundFillVbo.destroy();
+        m_foregroundLineVbo.destroy();
         doneCurrent();
     }
 }
@@ -281,6 +285,8 @@ void WidgetChartView::initializeGL() {
 
     m_fillVbo.create();
     m_lineVbo.create();
+    m_foregroundFillVbo.create();
+    m_foregroundLineVbo.create();
 }
 
 void WidgetChartView::resizeGL(int, int) {
@@ -309,19 +315,21 @@ void WidgetChartView::uploadBuffersIfNeeded() {
         return;
     }
 
-    if (!m_fillVbo.isCreated() || !m_lineVbo.isCreated()) {
+    if (!m_fillVbo.isCreated() || !m_lineVbo.isCreated() || !m_foregroundFillVbo.isCreated() ||
+        !m_foregroundLineVbo.isCreated()) {
         return;
     }
 
-    m_fillVbo.bind();
-    m_fillVbo.allocate(m_scene.fillVertices.constData(),
-                       static_cast<int>(m_scene.fillVertices.size() * sizeof(ColoredVertex)));
-    m_fillVbo.release();
+    auto upload = [](QOpenGLBuffer& buffer, const QVector<ColoredVertex>& vertices) {
+        buffer.bind();
+        buffer.allocate(vertices.constData(), static_cast<int>(vertices.size() * sizeof(ColoredVertex)));
+        buffer.release();
+    };
 
-    m_lineVbo.bind();
-    m_lineVbo.allocate(m_scene.lineVertices.constData(),
-                       static_cast<int>(m_scene.lineVertices.size() * sizeof(ColoredVertex)));
-    m_lineVbo.release();
+    upload(m_fillVbo, m_scene.fillVertices);
+    upload(m_lineVbo, m_scene.lineVertices);
+    upload(m_foregroundFillVbo, m_scene.foregroundFillVertices);
+    upload(m_foregroundLineVbo, m_scene.foregroundLineVertices);
 
     m_buffersDirty = false;
 }
@@ -346,25 +354,23 @@ void WidgetChartView::paintGL() {
     const int positionLoc = m_program.attributeLocation("position");
     const int colorLoc = m_program.attributeLocation("color");
 
-    if (!m_scene.fillVertices.isEmpty()) {
-        m_fillVbo.bind();
+    auto drawVertices = [&](QOpenGLBuffer& buffer, const QVector<ColoredVertex>& vertices, GLenum mode) {
+        if (vertices.isEmpty()) {
+            return;
+        }
+        buffer.bind();
         m_program.enableAttributeArray(positionLoc);
         m_program.enableAttributeArray(colorLoc);
         m_program.setAttributeBuffer(positionLoc, GL_FLOAT, offsetof(ColoredVertex, x), 2, sizeof(ColoredVertex));
         m_program.setAttributeBuffer(colorLoc, GL_FLOAT, offsetof(ColoredVertex, r), 4, sizeof(ColoredVertex));
-        glDrawArrays(GL_TRIANGLES, 0, m_scene.fillVertices.size());
-        m_fillVbo.release();
-    }
+        glDrawArrays(mode, 0, static_cast<GLsizei>(vertices.size()));
+        buffer.release();
+    };
 
-    if (!m_scene.lineVertices.isEmpty()) {
-        m_lineVbo.bind();
-        m_program.enableAttributeArray(positionLoc);
-        m_program.enableAttributeArray(colorLoc);
-        m_program.setAttributeBuffer(positionLoc, GL_FLOAT, offsetof(ColoredVertex, x), 2, sizeof(ColoredVertex));
-        m_program.setAttributeBuffer(colorLoc, GL_FLOAT, offsetof(ColoredVertex, r), 4, sizeof(ColoredVertex));
-        glDrawArrays(GL_LINES, 0, m_scene.lineVertices.size());
-        m_lineVbo.release();
-    }
+    drawVertices(m_fillVbo, m_scene.fillVertices, GL_TRIANGLES);
+    drawVertices(m_lineVbo, m_scene.lineVertices, GL_LINES);
+    drawVertices(m_foregroundFillVbo, m_scene.foregroundFillVertices, GL_TRIANGLES);
+    drawVertices(m_foregroundLineVbo, m_scene.foregroundLineVertices, GL_LINES);
 
     m_program.disableAttributeArray(positionLoc);
     m_program.disableAttributeArray(colorLoc);

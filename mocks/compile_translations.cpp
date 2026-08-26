@@ -18,6 +18,7 @@
 #include <QDateTime>
 #include <QDesktopServices>
 #include <QDir>
+#include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QFontDatabase>
@@ -32,13 +33,19 @@
 #include <QProcess>
 #include <QProcessEnvironment>
 #include <QPushButton>
+#include <QStringList>
 #include <QTextCursor>
+#include <QTimer>
 #include <QUrl>
 #include <QVBoxLayout>
 
 #ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <direct.h>
 #include <process.h>
+#include <windows.h>
 #else
 #include <unistd.h>
 #endif
@@ -268,6 +275,14 @@ std::string resolve_locale_dir() {
         candidates.push_back(env_locale_dir);
     }
 
+#ifdef LINCEU_PROJECT_ROOT_PATH
+    const std::string configured_proj_root = std::string(LINCEU_PROJECT_ROOT_PATH);
+    if (!configured_proj_root.empty()) {
+        candidates.push_back(join_path(configured_proj_root, "source/locale"));
+        candidates.push_back(configured_proj_root);
+    }
+#endif
+
     const std::string current_dir = get_current_dir();
     if (!current_dir.empty()) {
         candidates.push_back(join_path(current_dir, "source/locale"));
@@ -277,12 +292,15 @@ std::string resolve_locale_dir() {
     const std::string compile_time_dir = dirname_path(std::string(__FILE__));
     if (!compile_time_dir.empty()) {
         candidates.push_back(compile_time_dir);
+        candidates.push_back(join_path(compile_time_dir, "source/locale"));
+        candidates.push_back(join_path(join_path(compile_time_dir, ".."), "source/locale"));
     }
 
     if (!g_executable_dir.empty()) {
         candidates.push_back(g_executable_dir);
         candidates.push_back(join_path(g_executable_dir, "source/locale"));
         candidates.push_back(join_path(join_path(g_executable_dir, ".."), "source/locale"));
+        candidates.push_back(join_path(join_path(join_path(g_executable_dir, ".."), ".."), "source/locale"));
         candidates.push_back(join_path(join_path(g_executable_dir, ".."), ".."));
     }
 
@@ -408,6 +426,27 @@ std::vector<std::string> lrelease_names() {
     names.push_back("lrelease-qt6");
     names.push_back("pyside6-lrelease");
     return names;
+#endif
+}
+
+std::string configured_qt_root_path() {
+#ifdef LINCEU_MOCK_QT_ROOT_PATH
+    return std::string(LINCEU_MOCK_QT_ROOT_PATH);
+#else
+    return std::string();
+#endif
+}
+
+std::string configured_qt_lrelease_path() {
+    const std::string root = configured_qt_root_path();
+    if (root.empty()) {
+        return std::string();
+    }
+
+#ifdef _WIN32
+    return join_path(join_path(root, "bin"), "lrelease.exe");
+#else
+    return join_path(join_path(root, "bin"), "lrelease");
 #endif
 }
 
@@ -648,6 +687,11 @@ std::string find_lrelease() {
     const std::string env_qt_lrelease = trim_copy(getenv_string("QT_LRELEASE"));
     if (!env_qt_lrelease.empty() && file_exists(env_qt_lrelease)) {
         return env_qt_lrelease;
+    }
+
+    const std::string configured_lrelease = configured_qt_lrelease_path();
+    if (!configured_lrelease.empty() && file_exists(configured_lrelease)) {
+        return configured_lrelease;
     }
 
     std::size_t i = 0U;
@@ -1082,7 +1126,112 @@ QString to_qstring(const std::string& value) {
     return QString::fromLocal8Bit(value.c_str());
 }
 
+std::string to_local_std_string(const QString& value) {
+    const QByteArray bytes = QFile::encodeName(value);
+    return std::string(bytes.constData());
+}
+
+QString configured_qt_root_path_qt() {
+#ifdef LINCEU_MOCK_QT_ROOT_PATH
+    return QDir::cleanPath(QString::fromLocal8Bit(LINCEU_MOCK_QT_ROOT_PATH));
+#else
+    return {};
+#endif
+}
+
+QString configured_qt_lrelease_path_qt() {
+    const QString root = configured_qt_root_path_qt();
+    if (root.isEmpty()) {
+        return {};
+    }
+
+#ifdef _WIN32
+    const QString candidate = QDir(root).filePath(QStringLiteral("bin/lrelease.exe"));
+#else
+    const QString candidate = QDir(root).filePath(QStringLiteral("bin/lrelease"));
+#endif
+    return QFileInfo::exists(candidate) ? QDir::cleanPath(candidate) : QString();
+}
+
+QStringList expected_ts_filenames_qt() {
+    return {
+        QStringLiteral("linceu_pt_BR.ts"),
+        QStringLiteral("linceu_it_IT.ts"),
+        QStringLiteral("linceu_fr_FR.ts"),
+        QStringLiteral("linceu_es_ES.ts"),
+        QStringLiteral("linceu_en_US.ts"),
+        QStringLiteral("linceu_de_DE.ts")
+    };
+}
+
+QStringList expected_ts_paths_qt(const QString& locale_dir) {
+    QStringList paths;
+    const QDir dir(locale_dir);
+    const QStringList names = expected_ts_filenames_qt();
+    for (const QString& name : names) {
+        paths << dir.filePath(name);
+    }
+    return paths;
+}
+
+QString qm_path_from_ts_qt(const QString& ts_file_path) {
+    const QFileInfo info(ts_file_path);
+    return QDir(info.absolutePath()).filePath(info.completeBaseName() + QStringLiteral(".qm"));
+}
+
+QString format_percent_qt(double value) {
+    return QString::number(value, 'f', 1);
+}
+
+QProcessEnvironment lrelease_process_environment(const QString& lrelease_path) {
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    const QFileInfo lrelease_info(lrelease_path);
+    const QString lrelease_dir = QDir::cleanPath(lrelease_info.absolutePath());
+    const QString qt_root = QDir(lrelease_dir).absoluteFilePath(QStringLiteral(".."));
+
+    env.remove(QStringLiteral("QT_PLUGIN_PATH"));
+    env.remove(QStringLiteral("QML2_IMPORT_PATH"));
+    env.insert(QStringLiteral("QTDIR"), QDir::cleanPath(qt_root));
+
+    QStringList path_entries;
+    path_entries << lrelease_dir;
+
+#ifdef _WIN32
+    path_entries << QStringLiteral("C:/Windows/System32")
+                 << QStringLiteral("C:/Windows")
+                 << QStringLiteral("C:/Windows/System32/Wbem");
+#endif
+
+    const QString original_path = env.value(QStringLiteral("PATH"));
+#ifdef _WIN32
+    const QChar separator = QLatin1Char(';');
+#else
+    const QChar separator = QLatin1Char(':');
+#endif
+    if (!original_path.isEmpty()) {
+        const QStringList original_entries = original_path.split(separator, Qt::SkipEmptyParts);
+        for (const QString& entry : original_entries) {
+            const QString clean_entry = QDir::cleanPath(entry);
+            if (!clean_entry.isEmpty() && !path_entries.contains(clean_entry, Qt::CaseInsensitive)) {
+                path_entries << clean_entry;
+            }
+        }
+    }
+    env.insert(QStringLiteral("PATH"), path_entries.join(separator));
+
+    return env;
+}
+
 QString project_root_dir() {
+#ifdef LINCEU_PROJECT_ROOT_PATH
+    const QString configured_root = QDir::cleanPath(QString::fromUtf8(LINCEU_PROJECT_ROOT_PATH));
+    const QString configured_locale = QDir(configured_root).filePath(QStringLiteral("source/locale/linceu_pt_BR.ts"));
+    const QString configured_cmake = QDir(configured_root).filePath(QStringLiteral("CMakeLists.txt"));
+    if (QFileInfo::exists(configured_locale) && QFileInfo::exists(configured_cmake)) {
+        return configured_root;
+    }
+#endif
+
     QDir dir(QCoreApplication::applicationDirPath());
 
     for (int depth = 0; depth < 8; ++depth) {
@@ -1108,6 +1257,7 @@ QString default_locale_dir() {
 QString find_window_icon_path() {
     const QString root = project_root_dir();
     const QStringList candidates = {
+        QDir(root).filePath(QStringLiteral("source/assets/images/icons/linceu_sem_fundo.ico")),
         QDir(root).filePath(QStringLiteral("source/assets/icones/linceu_sem_fundo.ico"))
     };
 
@@ -1121,6 +1271,10 @@ QString find_window_icon_path() {
 }
 
 QString find_default_lrelease_path() {
+    const QString configured = configured_qt_lrelease_path_qt();
+    if (!configured.isEmpty()) {
+        return configured;
+    }
     return to_qstring(source::locale::find_lrelease());
 }
 
@@ -1166,6 +1320,9 @@ public:
                 [this](int exit_code, QProcess::ExitStatus status) {
                     on_process_finished(exit_code, status);
                 });
+        connect(process_, &QProcess::errorOccurred, this, [this](QProcess::ProcessError error) {
+            on_process_error(error);
+        });
 
         auto* root_layout = new QVBoxLayout(this);
         root_layout->setContentsMargins(16, 16, 16, 16);
@@ -1400,7 +1557,7 @@ private:
     }
 
     void start_command(const QString& command, const QString& label) {
-        if (process_->state() != QProcess::NotRunning) {
+        if (process_->state() != QProcess::NotRunning || process_mode_ != ProcessMode::None) {
             return;
         }
 
@@ -1411,6 +1568,47 @@ private:
         }
 
         current_command_label_ = label;
+        current_locale_dir_ = locale_dir;
+        current_lrelease_path_ = lrelease_path;
+
+        append_command_header(label, locale_dir, lrelease_path);
+
+        if (command == QStringLiteral("compile")) {
+            begin_compile(false);
+        } else if (command == QStringLiteral("validate")) {
+            set_running_state(true);
+            const bool ok = run_validate_direct();
+            finish_direct_command(ok);
+        } else if (command == QStringLiteral("list")) {
+            set_running_state(true);
+            run_list_direct();
+            finish_direct_command(true);
+        } else if (command == QStringLiteral("stats")) {
+            set_running_state(true);
+            run_stats_direct();
+            finish_direct_command(true);
+        } else if (command == QStringLiteral("clean")) {
+            set_running_state(true);
+            run_clean_direct();
+            finish_direct_command(true);
+        } else if (command == QStringLiteral("install")) {
+            set_running_state(true);
+            run_install_direct();
+            finish_direct_command(true);
+        } else if (command == QStringLiteral("all")) {
+            set_running_state(true);
+            append_log(QStringLiteral("1. Validando arquivos..."));
+            if (run_validate_direct()) {
+                append_log(QStringLiteral("\n2. Compilando traducoes..."));
+                begin_compile(true);
+            } else {
+                append_log(QStringLiteral("\n[WARN] Alguns arquivos tem problemas. Corrija antes de compilar."));
+                finish_direct_command(false);
+            }
+        }
+    }
+
+    void append_command_header(const QString& label, const QString& locale_dir, const QString& lrelease_path) {
         append_log(QStringLiteral("\n=== %1 ===").arg(label));
         append_log(QStringLiteral("Horario: %1")
                        .arg(QDateTime::currentDateTime().toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"))));
@@ -1418,30 +1616,351 @@ private:
         if (!lrelease_path.isEmpty()) {
             append_log(QStringLiteral("LRELEASE: %1").arg(QDir::toNativeSeparators(lrelease_path)));
         }
+    }
 
-        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-        env.insert(QStringLiteral("LINCEU_LOCALE_DIR"), locale_dir);
-        if (!lrelease_path.isEmpty()) {
-            env.insert(QStringLiteral("LRELEASE"), lrelease_path);
-            env.insert(QStringLiteral("QT_LRELEASE"), lrelease_path);
+    QStringList existing_ts_paths() const {
+        QStringList files;
+        const QStringList expected = expected_ts_paths_qt(current_locale_dir_);
+        for (const QString& path : expected) {
+            if (QFileInfo::exists(path)) {
+                files << path;
+            }
+        }
+        return files;
+    }
+
+    bool has_full_translation_set_direct() {
+        const QStringList expected = expected_ts_paths_qt(current_locale_dir_);
+        bool complete = true;
+        for (const QString& path : expected) {
+            if (!QFileInfo::exists(path)) {
+                append_log(QStringLiteral("[WARN] Arquivo de traducao nao encontrado: %1")
+                               .arg(QDir::toNativeSeparators(path)));
+                complete = false;
+            }
+        }
+        return complete;
+    }
+
+    bool run_validate_direct() {
+        append_log(QStringLiteral("Validando arquivos de traducao..."));
+        const QStringList ts_files = existing_ts_paths();
+        if (ts_files.isEmpty()) {
+            append_log(QStringLiteral("Nenhum arquivo .ts encontrado!"));
+            return false;
         }
 
-        process_->setWorkingDirectory(project_root_dir());
-        process_->setProcessEnvironment(env);
-        process_->setProgram(QCoreApplication::applicationFilePath());
-        process_->setArguments(QStringList() << QStringLiteral("--cli") << command);
-        process_->start();
+        int valid_count = 0;
+        for (const QString& ts_path : ts_files) {
+            const std::pair<bool, std::string> result =
+                source::locale::validate_ts_file(to_local_std_string(ts_path));
+            append_log(QStringLiteral("%1 %2: %3")
+                           .arg(result.first ? QStringLiteral("[OK]") : QStringLiteral("[ERRO]"),
+                                QFileInfo(ts_path).fileName(),
+                                to_qstring(result.second)));
+            if (result.first) {
+                ++valid_count;
+            }
+        }
 
-        if (!process_->waitForStarted(3000)) {
-            append_log(QStringLiteral("[ERRO] Falha ao iniciar o processo interno."));
-            status_value_->setText(QStringLiteral("Falha ao iniciar"));
-            set_running_state(false);
+        append_log(QStringLiteral("\nResultado: %1/%2 arquivos validos").arg(valid_count).arg(ts_files.size()));
+        return valid_count == ts_files.size() && has_full_translation_set_direct();
+    }
+
+    void run_list_direct() {
+        append_log(QStringLiteral("Arquivos de traducao disponiveis:"));
+        const QStringList ts_files = existing_ts_paths();
+        if (ts_files.isEmpty()) {
+            append_log(QStringLiteral("Nenhum arquivo .ts encontrado!"));
+            return;
+        }
+
+        for (const QString& ts_path : ts_files) {
+            const QString qm_path = qm_path_from_ts_qt(ts_path);
+            const bool qm_exists = QFileInfo::exists(qm_path);
+            const std::pair<bool, std::string> validation =
+                source::locale::validate_ts_file(to_local_std_string(ts_path));
+            append_log(QStringLiteral("  %1 %2 - %3 %4")
+                           .arg(qm_exists ? QStringLiteral("[OK]") : QStringLiteral("[MISS]"),
+                                QFileInfo(ts_path).fileName(),
+                                validation.first ? QStringLiteral("[OK]") : QStringLiteral("[ERRO]"),
+                                to_qstring(validation.second)));
+
+            if (qm_exists) {
+                const QFileInfo ts_info(ts_path);
+                const QFileInfo qm_info(qm_path);
+                if (ts_info.lastModified() > qm_info.lastModified()) {
+                    append_log(QStringLiteral("    [WARN] Arquivo .ts mais recente que .qm"));
+                }
+            }
         }
     }
 
-    void on_process_started() {
+    void run_stats_direct() {
+        append_log(QStringLiteral("Estatisticas das traducoes:"));
+        const QStringList ts_files = existing_ts_paths();
+        if (ts_files.isEmpty()) {
+            append_log(QStringLiteral("Nenhum arquivo .ts encontrado!"));
+            return;
+        }
+
+        int valid_files = 0;
+        int total_messages = 0;
+        int total_translated = 0;
+
+        for (const QString& ts_path : ts_files) {
+            bool read_ok = false;
+            const std::string text = read_file_text_for_gui(ts_path, &read_ok);
+            if (!read_ok) {
+                append_log(QStringLiteral("  %1: Erro - nao foi possivel abrir arquivo")
+                               .arg(QFileInfo(ts_path).fileName()));
+                continue;
+            }
+
+            int file_messages = 0;
+            int file_translated = 0;
+            count_message_stats_for_gui(text, &file_messages, &file_translated);
+
+            total_messages += file_messages;
+            total_translated += file_translated;
+            ++valid_files;
+
+            const double completion = file_messages > 0
+                                          ? (static_cast<double>(file_translated) * 100.0 /
+                                             static_cast<double>(file_messages))
+                                          : 0.0;
+            append_log(QStringLiteral("  %1: %2/%3 (%4%)")
+                           .arg(language_code_from_ts_qt(ts_path))
+                           .arg(file_translated)
+                           .arg(file_messages)
+                           .arg(format_percent_qt(completion)));
+        }
+
+        const double overall_completion = total_messages > 0
+                                              ? (static_cast<double>(total_translated) * 100.0 /
+                                                 static_cast<double>(total_messages))
+                                              : 0.0;
+        append_log(QStringLiteral("\nTotal: %1/%2 (%3%)")
+                       .arg(total_translated)
+                       .arg(total_messages)
+                       .arg(format_percent_qt(overall_completion)));
+        append_log(QStringLiteral("Arquivos validos: %1/%2").arg(valid_files).arg(ts_files.size()));
+    }
+
+    void run_clean_direct() {
+        append_log(QStringLiteral("Removendo arquivos .qm..."));
+        int removed_count = 0;
+        int found_count = 0;
+        const QStringList expected = expected_ts_paths_qt(current_locale_dir_);
+        for (const QString& ts_path : expected) {
+            const QString qm_path = qm_path_from_ts_qt(ts_path);
+            if (!QFileInfo::exists(qm_path)) {
+                continue;
+            }
+
+            ++found_count;
+            if (QFile::remove(qm_path)) {
+                append_log(QStringLiteral("[OK] Removido: %1").arg(QFileInfo(qm_path).fileName()));
+                ++removed_count;
+            } else {
+                append_log(QStringLiteral("[ERRO] Falha ao remover %1").arg(QFileInfo(qm_path).fileName()));
+            }
+        }
+
+        if (found_count == 0) {
+            append_log(QStringLiteral("Nenhum arquivo .qm encontrado!"));
+            return;
+        }
+
+        append_log(QStringLiteral("\nResultado: %1 arquivos removidos").arg(removed_count));
+    }
+
+    void run_install_direct() {
+        append_log(QStringLiteral("[INFO] A GUI nao relanca mais o modo CLI interno."));
+        append_log(QStringLiteral("[INFO] Instale as ferramentas pelo instalador do Qt ou configure o caminho do lrelease manualmente."));
+    }
+
+    std::string read_file_text_for_gui(const QString& file_path, bool* ok) const {
+        return read_file_text_direct(file_path, ok);
+    }
+
+    std::string read_file_text_direct(const QString& file_path, bool* ok) const {
+        QFile file(file_path);
+        if (!file.open(QIODevice::ReadOnly)) {
+            if (ok != nullptr) {
+                *ok = false;
+            }
+            return {};
+        }
+
+        if (ok != nullptr) {
+            *ok = true;
+        }
+        const QByteArray bytes = file.readAll();
+        return std::string(bytes.constData(), static_cast<std::size_t>(bytes.size()));
+    }
+
+    void count_message_stats_for_gui(const std::string& text, int* total_messages, int* translated_messages) const {
+        int total = 0;
+        int translated = 0;
+        std::string::size_type search_from = 0U;
+        while (true) {
+            const std::string::size_type msg_start = text.find("<message", search_from);
+            if (msg_start == std::string::npos) {
+                break;
+            }
+
+            const std::string::size_type msg_end_tag = text.find("</message>", msg_start);
+            if (msg_end_tag == std::string::npos) {
+                break;
+            }
+
+            const std::string::size_type msg_end = msg_end_tag + std::string("</message>").size();
+            const std::string block = text.substr(msg_start, msg_end - msg_start);
+            ++total;
+
+            if (block.find("<translation") != std::string::npos &&
+                block.find("type=\"unfinished\"") == std::string::npos &&
+                block.find("type='unfinished'") == std::string::npos) {
+                const std::string::size_type open = block.find("<translation");
+                const std::string::size_type open_end = block.find('>', open);
+                const std::string::size_type close = block.find("</translation>", open_end);
+                if (open_end != std::string::npos && close != std::string::npos && close > open_end + 1U) {
+                    ++translated;
+                }
+            }
+
+            search_from = msg_end;
+        }
+
+        if (total_messages != nullptr) {
+            *total_messages = total;
+        }
+        if (translated_messages != nullptr) {
+            *translated_messages = translated;
+        }
+    }
+
+    QString language_code_from_ts_qt(const QString& ts_file_path) const {
+        const QString name = QFileInfo(ts_file_path).fileName();
+        const QString prefix = QStringLiteral("linceu_");
+        const QString suffix = QStringLiteral(".ts");
+        if (name.startsWith(prefix) && name.endsWith(suffix)) {
+            return name.mid(prefix.size(), name.size() - prefix.size() - suffix.size());
+        }
+        return name;
+    }
+
+    bool check_lrelease_available() {
+        if (current_lrelease_path_.isEmpty()) {
+            current_lrelease_path_ = find_default_lrelease_path();
+        }
+
+        if (current_lrelease_path_.isEmpty() || !QFileInfo::exists(current_lrelease_path_)) {
+            append_log(QStringLiteral("[ERRO] lrelease nao encontrado."));
+            append_log(QStringLiteral("       Configure o campo Executavel lrelease."));
+            return false;
+        }
+
+        QProcess check;
+        check.setProgram(current_lrelease_path_);
+        check.setArguments(QStringList() << QStringLiteral("-version"));
+        check.setWorkingDirectory(QFileInfo(current_lrelease_path_).absolutePath());
+        check.setProcessEnvironment(lrelease_process_environment(current_lrelease_path_));
+        check.setProcessChannelMode(QProcess::MergedChannels);
+        check.start();
+
+        if (!check.waitForStarted(5000)) {
+            append_log(QStringLiteral("[ERRO] Nao foi possivel iniciar lrelease: %1").arg(check.errorString()));
+            return false;
+        }
+
+        if (!check.waitForFinished(10000)) {
+            check.kill();
+            check.waitForFinished(3000);
+            append_log(QStringLiteral("[ERRO] Timeout ao validar lrelease."));
+            return false;
+        }
+
+        const QString output = QString::fromLocal8Bit(check.readAllStandardOutput()).trimmed();
+        if (!output.isEmpty()) {
+            append_log(QStringLiteral("[INFO] %1").arg(output));
+        }
+
+        if (check.exitStatus() != QProcess::NormalExit || check.exitCode() != 0) {
+            append_log(QStringLiteral("[ERRO] lrelease retornou codigo %1 durante validacao.")
+                           .arg(check.exitCode()));
+            return false;
+        }
+
+        return true;
+    }
+
+    void begin_compile(bool all_mode) {
+        all_mode_ = all_mode;
         set_running_state(true);
-        status_value_->setText(QStringLiteral("Executando: %1").arg(current_command_label_));
+        status_value_->setText(QStringLiteral("Preparando compilacao"));
+
+        if (!has_full_translation_set_direct()) {
+            finish_direct_command(false);
+            return;
+        }
+        if (!check_lrelease_available()) {
+            finish_direct_command(false);
+            return;
+        }
+
+        pending_ts_files_ = expected_ts_paths_qt(current_locale_dir_);
+        compile_total_count_ = pending_ts_files_.size();
+        compile_success_count_ = 0;
+        process_mode_ = ProcessMode::CompileTranslations;
+        append_log(QStringLiteral("[OK] Ferramenta encontrada: %1")
+                       .arg(QDir::toNativeSeparators(current_lrelease_path_)));
+        start_next_lrelease();
+    }
+
+    void start_next_lrelease() {
+        if (pending_ts_files_.isEmpty()) {
+            finish_compile_sequence();
+            return;
+        }
+
+        current_ts_file_ = pending_ts_files_.takeFirst();
+        current_qm_file_ = qm_path_from_ts_qt(current_ts_file_);
+        const QString ts_name = QFileInfo(current_ts_file_).fileName();
+
+        append_log(QStringLiteral("Compilando com %1: %2")
+                       .arg(QDir::toNativeSeparators(current_lrelease_path_), ts_name));
+        status_value_->setText(QStringLiteral("Compilando: %1").arg(ts_name));
+
+        process_->setProgram(current_lrelease_path_);
+        process_->setArguments(QStringList()
+                               << QStringLiteral("-silent")
+                               << current_ts_file_
+                               << QStringLiteral("-qm")
+                               << current_qm_file_);
+        process_->setWorkingDirectory(current_locale_dir_);
+        process_->setProcessEnvironment(lrelease_process_environment(current_lrelease_path_));
+        process_->start();
+
+        if (!process_->waitForStarted(3000)) {
+            append_log(QStringLiteral("  [ERRO] Falha ao iniciar lrelease: %1").arg(process_->errorString()));
+            process_mode_ = ProcessMode::None;
+            finish_direct_command(false);
+        }
+    }
+
+    void finish_compile_sequence() {
+        process_mode_ = ProcessMode::None;
+        append_log(QStringLiteral("\n=== Resultado ==="));
+        append_log(QStringLiteral("Sucessos: %1/%2").arg(compile_success_count_).arg(compile_total_count_));
+        finish_direct_command(compile_success_count_ == compile_total_count_);
+    }
+
+    void on_process_started() {
+        if (process_mode_ == ProcessMode::CompileTranslations) {
+            set_running_state(true);
+        }
     }
 
     void append_process_output() {
@@ -1453,24 +1972,79 @@ private:
 
     void on_process_finished(int exit_code, QProcess::ExitStatus exit_status) {
         append_process_output();
-        set_running_state(false);
 
-        const bool ok = (exit_status == QProcess::NormalExit && exit_code == 0);
-        const QString status_text = ok
-                                        ? QStringLiteral("Concluido com sucesso")
-                                        : QStringLiteral("Finalizado com erro (codigo %1)").arg(exit_code);
+        if (process_mode_ != ProcessMode::CompileTranslations) {
+            return;
+        }
+
+        bool ok = (exit_status == QProcess::NormalExit && exit_code == 0);
+        if (!ok) {
+            append_log(QStringLiteral("  [ERRO] Falha ao compilar. Codigo: %1").arg(exit_code));
+        } else if (!QFileInfo::exists(current_qm_file_)) {
+            append_log(QStringLiteral("  [ERRO] lrelease finalizou sem gerar o .qm: %1")
+                           .arg(QDir::toNativeSeparators(current_qm_file_)));
+            ok = false;
+        } else if (QFileInfo(current_qm_file_).size() <= 0) {
+            append_log(QStringLiteral("  [ERRO] Arquivo .qm gerado esta vazio: %1")
+                           .arg(QDir::toNativeSeparators(current_qm_file_)));
+            ok = false;
+        }
+
+        if (ok) {
+            append_log(QStringLiteral("  [OK] Compilado com sucesso"));
+            ++compile_success_count_;
+        }
+
+        QTimer::singleShot(0, this, [this]() { start_next_lrelease(); });
+    }
+
+    void on_process_error(QProcess::ProcessError error) {
+        if (process_mode_ != ProcessMode::CompileTranslations) {
+            return;
+        }
+
+        append_log(QStringLiteral("  [ERRO] Processo lrelease falhou (%1): %2")
+                       .arg(static_cast<int>(error))
+                       .arg(process_->errorString()));
+    }
+
+    void finish_direct_command(bool ok) {
+        set_running_state(false);
+        process_mode_ = ProcessMode::None;
+        const QString status_text = ok ? QStringLiteral("Concluido com sucesso")
+                                       : QStringLiteral("Finalizado com erro");
         append_log(QStringLiteral("=== %1 ===\n").arg(status_text));
         status_value_->setText(status_text);
     }
 
     void cancel_running_process() {
-        if (process_->state() == QProcess::NotRunning) {
+        if (process_->state() == QProcess::NotRunning && process_mode_ == ProcessMode::None) {
             return;
         }
 
         append_log(QStringLiteral("[INFO] Cancelando processo em execucao..."));
-        process_->kill();
+        pending_ts_files_.clear();
+        process_mode_ = ProcessMode::None;
+        if (process_->state() != QProcess::NotRunning) {
+            process_->kill();
+        }
+        finish_direct_command(false);
     }
+
+    enum class ProcessMode {
+        None,
+        CompileTranslations
+    };
+
+    ProcessMode process_mode_ = ProcessMode::None;
+    QString current_locale_dir_;
+    QString current_lrelease_path_;
+    QStringList pending_ts_files_;
+    QString current_ts_file_;
+    QString current_qm_file_;
+    int compile_success_count_ = 0;
+    int compile_total_count_ = 0;
+    bool all_mode_ = false;
 
     QLineEdit* locale_dir_edit_ = nullptr;
     QLineEdit* lrelease_edit_ = nullptr;
@@ -1492,6 +2066,10 @@ private:
 }  // namespace
 
 int main(int argc, char* argv[]) {
+#ifdef _WIN32
+    SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
+#endif
+
     std::vector<std::string> args;
     if (argc > 0) {
         args.reserve(static_cast<std::size_t>(argc));

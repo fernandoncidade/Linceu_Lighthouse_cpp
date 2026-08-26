@@ -40,6 +40,60 @@ std::vector<ManualSection> doc_pt_br() {
             }
         },
         {
+            QStringLiteral("abrir-arquivos-mime-datas-pastas"),
+            QStringLiteral("Abertura de arquivos, MIME e datas de pastas"),
+            {
+                QStringLiteral("A tabela agora ajuda a abrir os itens reportados mesmo quando eles não são arquivos de texto. Ao usar Abrir ou duplo clique em uma linha de arquivo, o aplicativo tenta usar o aplicativo padrão do Windows e pode oferecer outras opções compatíveis."),
+                QStringLiteral("A coluna MIME exibe o tipo real de conteúdo em linguagem legível no idioma atual, mantendo o identificador original entre parênteses para auditoria. As colunas Data de Criação, Data de Modificação e Data de Acesso também são preenchidas para pastas, subpastas e diretórios filhos durante a varredura."),
+            },
+            {
+                QStringLiteral("Use Abrir ou duplo clique para abrir documentos, imagens, vídeos, planilhas, executáveis, arquivos compactados e outros tipos reconhecidos pelo sistema."),
+                QStringLiteral("Quando o Windows informar mais de uma opção, escolha o aplicativo desejado na janela de seleção."),
+                QStringLiteral("Ative a coluna MIME para conferir a categoria e o subtipo de conteúdo detectado."),
+                QStringLiteral("Ative as três colunas de data para auditar quando pastas e arquivos foram criados, modificados ou acessados."),
+            },
+            {
+                {
+                    QStringLiteral("Como abrir qualquer tipo de arquivo"),
+                    {
+                        QStringLiteral("1) Selecione uma linha que represente um arquivo existente."),
+                        QStringLiteral("2) Dê duplo clique ou use a ação Abrir."),
+                        QStringLiteral("3) Se aparecer uma janela de escolha, selecione o aplicativo desejado e confirme."),
+                        QStringLiteral("4) Se o item for uma pasta, use a ação de abrir pasta para navegar até o local no Explorador de Arquivos."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Como interpretar a coluna MIME"),
+                    {
+                        QStringLiteral("A primeira parte mostra a família do conteúdo, como Texto, Imagem, Vídeo, Áudio ou Aplicativo."),
+                        QStringLiteral("A segunda parte mostra o subtipo em linguagem simples, como PDF, PNG, ZIP ou Texto simples."),
+                        QStringLiteral("O texto entre parênteses preserva o identificador original, por exemplo text/plain ou application/pdf."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Como conferir datas em pastas e subpastas"),
+                    {
+                        QStringLiteral("1) Abra o menu de colunas e habilite Data de Criação, Data de Modificação e Data de Acesso."),
+                        QStringLiteral("2) Execute uma nova varredura no diretório escolhido."),
+                        QStringLiteral("3) Ordene ou filtre a tabela para revisar pastas filhas e diretórios mais profundos."),
+                        QStringLiteral("4) Use essas datas para comparar alterações recentes com eventos registrados."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Se um arquivo não abrir"),
+                    {
+                        QStringLiteral("Confirme se o caminho ainda existe e se você possui permissão de leitura."),
+                        QStringLiteral("Verifique se há um aplicativo associado ao tipo de arquivo no Windows."),
+                        QStringLiteral("Quando necessário, escolha manualmente outro aplicativo compatível na janela de seleção."),
+                    },
+                    {}
+                },
+            }
+        },
+        {
             QStringLiteral("operacao-em-grandes-volumes"),
             QStringLiteral("Operação em grandes volumes"),
             {

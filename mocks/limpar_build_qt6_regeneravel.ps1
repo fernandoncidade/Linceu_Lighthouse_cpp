@@ -29,17 +29,19 @@ $scriptDir = if ($PSScriptRoot) {
 }
 
 $projectRoot = Normalize-Path (Split-Path -Parent $scriptDir)
+$buildRoot = Normalize-Path (Join-Path $projectRoot 'build')
 
 $allowedDirectories = @(
-    (Join-Path $projectRoot 'build_qt6_msvc'),
-    (Join-Path $projectRoot 'build_qt6_mingw'),
-    (Join-Path $projectRoot 'mocks\output')
+    $buildRoot,
+    (Join-Path $buildRoot 'build_mocks'),
+    (Join-Path $buildRoot 'build_qt6_mingw'),
+    (Join-Path $buildRoot 'build_qt6_msvc')
 ) | ForEach-Object {
     Normalize-Path $_
 }
 
 if (-not $TargetDir -or $TargetDir.Count -eq 0) {
-    $TargetDir = $allowedDirectories
+    $TargetDir = @($buildRoot)
 }
 
 foreach ($directory in $TargetDir) {
@@ -49,7 +51,8 @@ foreach ($directory in $TargetDir) {
 
     $resolvedDirectory = Normalize-Path $directory
 
-    if ($allowedDirectories -notcontains $resolvedDirectory) {
+    $isAllowed = ($allowedDirectories -contains $resolvedDirectory) -or ($resolvedDirectory.StartsWith($buildRoot + [System.IO.Path]::DirectorySeparatorChar))
+    if (-not $isAllowed) {
         throw "Por seguranca, o script so limpa estes diretorios: $($allowedDirectories -join ', '). Recebido: $resolvedDirectory"
     }
 

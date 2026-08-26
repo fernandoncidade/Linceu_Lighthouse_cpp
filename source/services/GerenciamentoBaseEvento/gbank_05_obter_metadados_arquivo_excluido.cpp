@@ -30,6 +30,7 @@ QString metadata_priority_sql() {
         "(CASE WHEN COALESCE(linhas,'') <> '' THEN 6 ELSE 0 END) + "
         "(CASE WHEN COALESCE(palavras,'') <> '' THEN 6 ELSE 0 END) + "
         "(CASE WHEN COALESCE(tipo,'') <> '' THEN 4 ELSE 0 END) + "
+        "(CASE WHEN COALESCE(mime,'') <> '' THEN 4 ELSE 0 END) + "
         "(CASE WHEN COALESCE(atributos,'') <> '' THEN 2 ELSE 0 END) + "
         "(CASE WHEN COALESCE(autor,'') <> '' THEN 2 ELSE 0 END)");
 }
@@ -57,7 +58,7 @@ QVariantMap obter_metadados_arquivo_excluido(source::services::BaseEvento* self,
                     QSqlQuery q_path(db);
                     q_path.prepare(QStringLiteral(
                                        "SELECT tipo_operacao,nome,dir_anterior,dir_atual,data_criacao,data_modificacao,data_acesso,"
-                                       "tipo,size_b,size_kb,size_mb,size_gb,size_tb,atributos,autor,dimensoes,duracao,"
+                                       "tipo,mime,size_b,size_kb,size_mb,size_gb,size_tb,atributos,autor,dimensoes,duracao,"
                                        "taxa_bits,protegido,paginas,linhas,palavras,paginas_estimadas,linhas_codigo,"
                                        "total_linhas,slides_estimados,arquivos,unzipped_b,unzipped_kb,unzipped_mb,"
                                        "unzipped_gb,unzipped_tb,slides,binary_file_b,binary_file_kb,binary_file_mb,"
@@ -77,7 +78,7 @@ QVariantMap obter_metadados_arquivo_excluido(source::services::BaseEvento* self,
                     QSqlQuery q(db);
                     q.prepare(QStringLiteral(
                                   "SELECT tipo_operacao,nome,dir_anterior,dir_atual,data_criacao,data_modificacao,data_acesso,"
-                                  "tipo,size_b,size_kb,size_mb,size_gb,size_tb,atributos,autor,dimensoes,duracao,"
+                                  "tipo,mime,size_b,size_kb,size_mb,size_gb,size_tb,atributos,autor,dimensoes,duracao,"
                                   "taxa_bits,protegido,paginas,linhas,palavras,paginas_estimadas,linhas_codigo,"
                                   "total_linhas,slides_estimados,arquivos,unzipped_b,unzipped_kb,unzipped_mb,"
                                   "unzipped_gb,unzipped_tb,slides,binary_file_b,binary_file_kb,binary_file_mb,"
@@ -97,7 +98,7 @@ QVariantMap obter_metadados_arquivo_excluido(source::services::BaseEvento* self,
                     QSqlQuery q2_path(db);
                     q2_path.prepare(QStringLiteral(
                                         "SELECT NULL as tipo_operacao,nome,diretorio as dir_anterior,diretorio as dir_atual,"
-                                        "data_criacao,data_modificacao,data_acesso,tipo,size_b,size_kb,size_mb,size_gb,"
+                                        "data_criacao,data_modificacao,data_acesso,tipo,mime,size_b,size_kb,size_mb,size_gb,"
                                         "size_tb,atributos,autor,dimensoes,duracao,taxa_bits,protegido,paginas,linhas,"
                                         "palavras,paginas_estimadas,linhas_codigo,total_linhas,slides_estimados,arquivos,"
                                         "unzipped_b,unzipped_kb,unzipped_mb,unzipped_gb,unzipped_tb,slides,binary_file_b,"
@@ -116,7 +117,7 @@ QVariantMap obter_metadados_arquivo_excluido(source::services::BaseEvento* self,
                     QSqlQuery q2(db);
                     q2.prepare(QStringLiteral(
                                   "SELECT NULL as tipo_operacao,nome,diretorio as dir_anterior,diretorio as dir_atual,"
-                                  "data_criacao,data_modificacao,data_acesso,tipo,size_b,size_kb,size_mb,size_gb,"
+                                  "data_criacao,data_modificacao,data_acesso,tipo,mime,size_b,size_kb,size_mb,size_gb,"
                                   "size_tb,atributos,autor,dimensoes,duracao,taxa_bits,protegido,paginas,linhas,"
                                   "palavras,paginas_estimadas,linhas_codigo,total_linhas,slides_estimados,arquivos,"
                                   "unzipped_b,unzipped_kb,unzipped_mb,unzipped_gb,unzipped_tb,slides,binary_file_b,"

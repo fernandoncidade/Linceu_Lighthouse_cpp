@@ -17,6 +17,22 @@ bool has_ext(const QString& nome_lower, const QSet<QString>& exts) {
 }
 }  // namespace
 
+QString extensao_tipo_preferencial(const QString& nome_arquivo) {
+    const QString nome_lower = QFileInfo(nome_arquivo).fileName().toLower();
+    static const QSet<QString> exts = {
+        QStringLiteral(".lnk"),
+        QStringLiteral(".db-shm"),
+        QStringLiteral(".db-wal")
+    };
+
+    for (const QString& ext : exts) {
+        if (nome_lower.endsWith(ext)) {
+            return ext.mid(1);
+        }
+    }
+    return {};
+}
+
 QString identificar_tipo_arquivo(const QString& caminho, source::ui::LocalizadorQt* loc, const QString& nome_arquivo) {
     try {
         const QString nome = nome_arquivo.isEmpty() ? QFileInfo(caminho).fileName() : nome_arquivo;
@@ -26,6 +42,8 @@ QString identificar_tipo_arquivo(const QString& caminho, source::ui::Localizador
 
         // Keep "tipo" consistent: .tmp/.TMP files should report their extension.
         if (ext == QStringLiteral("tmp")) return ext;
+        const QString ext_preferencial = extensao_tipo_preferencial(nome);
+        if (!ext_preferencial.isEmpty()) return ext_preferencial;
 
         const auto t = [&](const QString& key, const QString& fallback) { return loc ? loc->get_text(key) : fallback; };
 

@@ -1,29 +1,47 @@
-Begründung des Namens: Linceu Lighthouse
+Geschichte und Namensbegründung: Linceu Lighthouse
 
-Der Name Linceu Lighthouse (Leuchtturm des Lynkeus) wurde nicht zufällig gewählt. Er verkörpert die Verschmelzung zweier mächtiger Konzepte der Überwachung und Orientierung und spiegelt präzise das Wesen und die Funktionalität unserer Software zur Überwachung der Dateiintegrität wider.
+1. Die mythologische und konzeptionelle Fusion: Vision und Orientierung
 
-Die Vision des Lynkeus: Das Unwahrnehmbare sehen
+Der Name Linceu Lighthouse (Lynkeus-Leuchtturm) wurde nicht zufällig gewählt. Er synthetisiert die Vereinigung zweier fundamentaler Säulen digitaler Überwachung und Navigierbarkeit: die Wahrnehmung des Unscheinbaren und die Klarheit strategischer Orientierung.
 
-In der griechischen Mythologie war Lynkeus der Ausguck der Argonauten, ein Held, gesegnet mit übermenschlicher Sehkraft. Seine legendäre Fähigkeit beschränkte sich nicht darauf, große Entfernungen zu sehen; er konnte durch Barrieren wie Mauern, Bäume und sogar den Boden sehen. Nichts entging seinem Blick. Er war die erste Verteidigungslinie, die versteckte Gefahren und Bewegungen aufspürte, um die Sicherheit seiner Mannschaft zu gewährleisten.
+Die Vision von Lynkeus: Das Verborgene und Unscheinbare sehen
+In der griechischen Mythologie war Lynkeus der legendäre Ausguck des Schiffes der Argonauten, gesegnet mit übermenschlicher Sehkraft. Seine Sicht beschränkte sich nicht darauf, unendliche Weiten zu überblicken: Er besaß die einzigartige Gabe, durch feste Hindernisse, Mauern, dichte Wälder und sogar bis in das Innere der Erde zu blicken. Seinem aufmerksamen Blick entging nichts; er war der vorausschauende Schutz, der verborgene Bewegungen und drohende Gefahren erkannte, noch bevor ein anderes Mitglied der Mannschaft sie bemerken konnte.
 
-Wie der mythologische Held besitzt Linceu Lighthouse eine unvergleichliche digitale „Vision“. Es arbeitet im Herzen Ihres Systems und überwacht ein Verzeichnis und seine Unterverzeichnisse mit einer Schärfe, die jede noch so subtile Veränderung wahrnimmt. Vorgänge, die für einen normalen Benutzer unsichtbar oder flüchtig wären – Hinzufügungen, Löschungen, Umbenennungen, Änderungen und sogar der einfache Scanvorgang – werden sofort erkannt und aufgezeichnet. Unsere Software ist der Lynkeus Ihres Dateisystems: Sie sieht, was verborgen ist, und stellt sicher, dass keine Aktion unbemerkt bleibt.
+Linceu Lighthouse überträgt diese Schärfe auf das Dateisystem des Computers. Direkt im Herzen des Betriebssystems (Windows) agierend, überwacht es Verzeichnisse, Unterordner und Laufwerke mit mikroskopischer Präzision. Ereignisse, die sonst flüchtig, unscheinbar oder geräuschlos wären — schnelle Änderungen von Hintergrundprozessen, kaskadierende Umbenennungen, Verzeichnisverschiebungen, versehentliche Löschungen oder die Erstellung temporärer Dateien — werden augenblicklich erfasst. Unser System ist der Lynkeus Ihres Datenträgers: Es sieht das Verborgene und stellt sicher, dass keine Änderung unbemerkt bleibt.
 
-Das Licht des Leuchtturms (Lighthouse): Daten in Klarheit verwandeln
+Das Licht des Leuchtturms (Lighthouse): Datenchaos in handlungsorientierte Intelligenz verwandeln
+Das Ereignis lediglich zu sehen, reicht jedoch nicht aus; es ist zwingend erforderlich, den Kurs zu verstehen und sicher zu navigieren. Aus dieser Notwendigkeit entsteht das Konzept des „Leuchtturms“ (Lighthouse). Inmitten der Finsternis des Sturms und der Ungewissheit der Meere wirft der Leuchtturm einen kraftvollen und unverwechselbaren Lichtstrahl aus, der den Nebel durchbricht und Seefahrern als unerschütterlicher Kompass dient.
 
-Sehen allein genügt nicht; es ist notwendig, zu verstehen und sicher zu navigieren. Hier kommt der „Lighthouse“ (Leuchtturm) ins Spiel. Ein Leuchtturm sieht nicht nur die Dunkelheit; er projiziert einen starken Lichtstrahl mit einer einzigartigen Kennung und dient als zuverlässiger Führer für Seefahrer. Er verwandelt die Unsicherheit der Nacht in einen klaren Weg, warnt vor Gefahren und bestätigt die sichere Route zum Hafen.
+Linceu Lighthouse erfüllt genau diese Aufgabe angesichts der Flut von Dateisystemdaten:
+* Visuelle und semantische Signalisierung: Jede Operation erhält eine sofortige farbliche Kennzeichnung und präzise Kategorisierung, ähnlich der Lichtsignatur eines nautischen Leuchtturms.
+* Gezielte Fokussierung und Filterung: Fortschrittliche Filterwerkzeuge ermöglichen es, den Lichtstrahl exakt auf den gewünschten Zeitraum, die Dateiendung, den Prozess oder den Ordner zu richten und störendes Grundrauschen zu eliminieren.
+* Visuelle und statistische Intelligenz: Mit 17 nativen Diagrammtypen und einer tiefgehenden Analyse von über 30 Metadatenkategorien wandelt die Anwendung Rohdaten in visuelle und deterministische Intelligenz um.
+* Universalität und Zugänglichkeit: So wie das Licht eines Leuchtturms jedem Seemann den Weg weist, gewährleistet die native Unterstützung von 6 Sprachen eine unmittelbare weltweite Zugänglichkeit.
 
-Linceu Lighthouse macht genau das mit den gesammelten Daten. Es meldet nicht nur eine Lawine von Rohinformationen. Es beleuchtet sie:
 
-* Klare Signalisierung: Jeder Vorgangstyp wird mit unterschiedlichen Farben gekennzeichnet, die wie die Lichtkennung eines Leuchtturms wirken und eine sofortige Identifizierung des Geschehens ermöglichen.
+2. Ursprung und Motivation des Projekts
 
-* Fokus und Orientierung: Das fortschrittliche Filtersystem nach Ereignistyp, Datum oder Dateierweiterung ermöglicht es dem Benutzer, den „Lichtstrahl“ genau dorthin zu lenken, wo er benötigt wird, indem er Störgeräusche ignoriert und sich auf das Wesentliche konzentriert.
+Linceu Lighthouse entstand aus der Identifizierung einer kritischen Lücke im Desktop-Software-Ökosystem. Historisch gesehen sahen sich Anwender und Fachleute mit zwei unbefriedigenden Extremen konfrontiert:
 
-* Panoramablick und Analyse: Die Fähigkeit, statistische Grafiken und Diagramme zu erstellen und über dreißig Arten von Metadaten zu analysieren, verwandelt Rohdaten in handlungsrelevante Erkenntnisse und bietet einen klaren Blick auf das digitale „Gelände“.
+Auf der einen Seite stehen vereinfachte und kurzlebige Freeware-Tools, die vorübergehende Änderungen ohne persistente Historie, ohne Metadatenkontext, ohne Verknüpfung von Umbenennungen/Verschiebungen und mit veralteten Oberflächen darstellen.
+Auf der anderen Seite existieren gewaltige Enterprise-Lösungen (Server-FIM/SIEM) und Low-Level-Diagnosewerkzeuge (wie Process Monitor), die übermäßig komplex, teuer (Lizenzkosten von hunderten Dollar) sind oder die Übertragung von Daten an Cloud-Server erzwingen.
 
-* Universelle Zugänglichkeit: So wie das Licht eines Leuchtturms ein universeller Führer ist, stellt unser Übersetzungssystem in sechs Sprachen sicher, dass diese Klarheit und Sicherheit für Benutzer weltweit zugänglich sind.
+Es fehlte eine moderne, lokale, visuelle und zugängliche Desktop-Plattform, die darauf ausgerichtet ist, die elementarste und häufigste Frage jedes Computernutzers zu beantworten:
+„Was ist mit meinen Dateien geschehen?“
 
-Zusammenfassend:
 
-Linceu Lighthouse ist die perfekte Verschmelzung dieser beiden Konzepte. Es kombiniert die durchdringende Vision des Lynkeus, um jede Änderung in Ihren Dateien zu erkennen, mit dem führenden Licht eines Leuchtturms, um diese Informationen zu interpretieren, zu analysieren und darauf zu reagieren.
+3. Die technologische Evolution: Von der Idee zum nativen C++17/Qt6-Kern
 
-Es ist Ihr digitaler Wächter, der alles sieht und alles beleuchtet und kontinuierliche Überwachung, Datenintelligenz und die notwendige Klarheit bietet, um die Integrität und Sicherheit Ihrer digitalen Umgebung zu gewährleisten.
+Das Projekt begann seine konzeptionelle Reise als Prototyp mit Schwerpunkt auf Integritätsaudits. Die Anforderung, hunderttausende von Ereignissen in Echtzeit zu verarbeiten, ohne die grafische Benutzeroberfläche einzufrieren, und dabei eine sofortige und zuverlässige Speicherung zu garantieren, erforderte jedoch eine fundamentale Weiterentwicklung der Softwarearchitektur.
+
+Linceu Lighthouse wurde als native Desktop-Anwendung in C++17 mit Qt6 vollständig neu implementiert. Es integriert native asynchrone Windows-APIs (ReadDirectoryChangesW), Mutex-geschützte Warteschlangen und Puffer, parallele Verarbeitungs-Threads mit QtConcurrent, persistente lokale SQLite-Speicherung und ein eigenes, hardwarebeschleunigtes Grafik-Rendering-Subsystem (OpenGL / Qt Quick).
+
+
+4. Verpflichtung zu souveränem Datenschutz (Local-First)
+
+In einer Ära, die von Cloud-Abhängigkeiten, invasiver Telemetrie und dem unkontrollierten Senden von Daten an entfernte Server geprägt ist, vertritt Linceu Lighthouse eine kompromisslose ethische Haltung:
+* 100% Offline und Lokal: Sämtliche Datenbanken, Metadaten, Analysen und Nachweise verbleiben ausschließlich auf dem Computer des Nutzers (%LOCALAPPDATA%\LinceuLighthouse).
+* Keine Cloud, Keine Konten, Keine Telemetrie: Es gibt weder eine Erfassung analytischer Nutzungsdaten noch eine erzwungene Online-Authentifizierung.
+* Deterministische Intelligenz ohne KI: Sämtliche Klassifizierungen, Musteranalysen und Integritätsbewertungen basieren auf deterministischen mathematischen und statistischen Algorithmen — ohne Sprachmodelle (LLM) oder externe Inferenzen.
+
+Linceu Lighthouse ist die vollendete Verbindung aus dem scharfen Blick von Lynkeus und dem leitenden Licht des Leuchtturms — der souveräne digitale Wächter, der alles sieht, alles erhellt und die Integrität Ihrer Arbeitsumgebung schützt.

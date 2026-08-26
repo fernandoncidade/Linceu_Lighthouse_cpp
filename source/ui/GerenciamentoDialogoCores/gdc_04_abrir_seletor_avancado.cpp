@@ -85,7 +85,9 @@ void abrir_seletor_avancado(source::ui::DialogoPaletaCores* self) {
                 auto* novo_trans = new QTranslator(app);
                 bool carregado = false;
                 for (const auto& path : translations_paths) {
-                    if (QDir(path).exists() && novo_trans->load(QLocale(lc), "qtbase", "_", path)) {
+                    if (QDir(path).exists() &&
+                        (novo_trans->load(QLocale(lc), "qtbase", "_", path) ||
+                         novo_trans->load(QLocale(lc), "qt", "_", path))) {
                         carregado = true;
                         break;
                     }

@@ -1,29 +1,47 @@
-Giustificazione del Nome: Linceu Lighthouse
+Storia e Giustificazione del Nome: Linceu Lighthouse
 
-Il nome Linceu Lighthouse (Faro di Linceo) non è stato scelto a caso. Incapsula la fusione di due potenti concetti di sorveglianza e orientamento, riflettendo con precisione l'essenza e la funzionalità del nostro software di monitoraggio dell'integrità dei file.
+1. La Fusione Mitologica e Concettuale: Visione e Orientamento
 
-La Visione di Linceo: Vedere l'Impercettibile
+Il nome Linceu Lighthouse (Faro di Lynceus) non è stato scelto a caso. Sintetizza l'unione di due pilastri fondamentali della sorveglianza e della navigabilità digitale: la percezione dell'impercettibile e la chiarezza dell'orientamento strategico.
 
-Nella mitologia greca, Linceo era la vedetta degli Argonauti, un eroe dotato di una vista sovrumana. La sua leggendaria abilità non si limitava a vedere a grandi distanze; poteva vedere attraverso barriere come mura, alberi e persino il suolo. Nulla sfuggiva al suo sguardo. Era la prima linea di difesa, rilevando pericoli e movimenti nascosti per garantire la sicurezza del suo equipaggio.
+La Visione di Lynceus: Vedere l'Occulto e l'Impercettibile
+Nella mitologia greca, Lynceus era la leggendaria vedetta della nave degli Argonauti, dotato di un'acutezza visiva sovrumana. La sua vista non si limitava a scorgere distanze infinite: possedeva il dono singolare di penetrare attraverso ostacoli solidi, mura, fitti boschi e persino nel profondo della terra. Nulla sfuggiva al suo sguardo attento; era la sentinella pionieristica che identificava movimenti occulti e pericoli imminenti prima che qualsiasi altro membro dell'equipaggio potesse notarli.
 
-Come l'eroe mitologico, Linceu Lighthouse possiede una "visione" digitale senza pari. Opera nel cuore del tuo sistema, monitorando una directory e le sue sottodirectory con un'acutezza che percepisce ogni cambiamento, non importa quanto sottile. Le operazioni che per un utente comune sarebbero invisibili o fugaci — aggiunte, eliminazioni, rinomine, modifiche e persino il semplice atto di scansione — vengono istantaneamente rilevate e registrate. Il nostro software è il Linceo del tuo file system: vede ciò che è nascosto e assicura che nessuna azione passi inosservata.
+Linceu Lighthouse riproduce questa acutezza nel file system del computer. Agendo direttamente nel cuore del sistema operativo (Windows), monitora directory, sottocartelle e unità con precisione microscopica. Eventi che sarebbero effimeri, impercettibili o silenziosi — rapide modifiche di processi in background, ridenominazioni a cascata, spostamenti tra cartelle, cancellazioni involontarie o creazioni di file temporanei — vengono catturati istantaneamente. Il nostro motore è il Lynceus del vostro disco: vede ciò che è nascosto e garantisce che nessuna alterazione passi inosservata.
 
-La Luce del Faro (Lighthouse): Trasformare i Dati in Chiarezza
+La Luce del Faro (Lighthouse): Illuminare il Caos in Intelligenza Azionabile
+Tuttavia, limitarsi a vedere l'evento non basta; è imperativo comprendere la rotta e agire in sicurezza. È da questa necessità che nasce il concetto del "Faro" (Lighthouse). Nel buio della tempesta e nell'incertezza dei mari, il faro proietta un fascio di luce potente e inconfondibile, dissipando la nebbia e fungendo da bussola incrollabile per chi naviga.
 
-Vedere non è sufficiente; è necessario comprendere e navigare in sicurezza. È qui che entra in gioco il "Lighthouse" (Faro). Un faro non si limita a vedere l'oscurità; proietta un potente fascio di luce con una firma unica, fungendo da guida affidabile per i navigatori. Trasforma l'incertezza della notte in un percorso chiaro, avvisando dei pericoli e confermando la rotta sicura verso il porto.
+Linceu Lighthouse svolge esattamente questo ruolo davanti al turbine di dati del file system:
+* Segnalazione Visiva e Semantica: Ogni operazione riceve un'immediata distinzione cromatica e una categorizzazione precisa, agendo come la firma luminosa di un faro nautico.
+* Messa a Fuoco e Filtraggio Mirato: Strumenti avanzati di filtraggio consentono di dirigere il fascio di luce esattamente sull'intervallo di date, l'estensione, il processo o la cartella desiderata, eliminando il rumore operativo.
+* Intelligenza Visiva e Statistica: Con 17 tipi di visualizzazioni grafiche e un'analisi approfondita di oltre 30 categorie di metadati, l'applicazione trasforma i log grezzi in intelligenza visiva e deterministica.
+* Universalità e Accessibilità: Proprio come la luce di un faro guida qualsiasi marinaio, il supporto nativo in 6 lingue garantisce un'accessibilità globale immediata.
 
-Linceu Lighthouse fa esattamente questo con i dati che raccoglie. Non si limita a riportare una valanga di informazioni grezze. Le illumina:
 
-* Segnalazione Chiara: Ogni tipo di operazione è identificata con colori distinti, agendo come la firma luminosa di un faro, consentendo l'identificazione immediata di ciò che è accaduto.
+2. L'Origine e la Motivazione del Progetto
 
-* Messa a Fuoco e Orientamento: Il sistema di filtraggio avanzato per tipo di evento, data o estensione del file permette all'utente di focalizzare il "fascio di luce" esattamente dove necessario, ignorando il rumore e concentrandosi su ciò che è importante.
+Linceu Lighthouse è nato dall'individuazione di una lacuna critica nell'ecosistema del software desktop. Storicamente, utenti e professionisti si sono trovati di fronte a due estremi insoddisfacenti:
 
-* Visione Panoramica e Analisi: La capacità di generare grafici e diagrammi statistici e di analizzare oltre trenta tipi di metadati trasforma i dati grezzi in intelligenza utilizzabile, offrendo una visione chiara del "terreno" digitale.
+Da un lato, utility gratuite semplicistiche ed effimere che mostrano cambiamenti passeggeri senza persistenza storica, senza contesto di metadati, senza correlazione di ridenominazioni/spostamenti e con interfacce datate.
+Dall'altro lato, giganteschi software aziendali (FIM/SIEM per server) e strumenti di diagnostica a basso livello (come Process Monitor), eccessivamente complessi, costosi (licenze da centinaia di dollari) o che impongono l'invio di dati a server cloud.
 
-* Accessibilità Universale: Proprio come la luce di un faro è una guida universale, il nostro sistema di traduzione in sei lingue garantisce che questa chiarezza e sicurezza siano accessibili agli utenti di tutto il mondo.
+Mancava una piattaforma desktop locale, moderna, visiva e accessibile, dedicata a rispondere alla domanda più elementare e frequente di chiunque si trovi davanti a un computer:
+"Cosa è successo ai miei file?"
 
-In sintesi:
 
-Linceu Lighthouse è la fusione perfetta di questi due concetti. Combina la visione penetrante di Linceo per rilevare ogni cambiamento nei tuoi file con la luce guida di un Faro per interpretare, analizzare e agire sulla base di tali informazioni.
+3. L'Evoluzione Tecnologica: Dall'Idea al Motore Nativo C++17/Qt6
 
-È il tuo guardiano digitale, che vede tutto e illumina tutto, fornendo sorveglianza continua, intelligenza dei dati e la chiarezza necessaria per mantenere l'integrità e la sicurezza del tuo ambiente digitale.
+Il progetto ha iniziato il suo percorso concettuale come prototipo incentrato sull'audit dell'integrità. Tuttavia, la necessità di elaborare centinaia di migliaia di eventi in tempo reale, senza congelare l'interfaccia grafica e garantendo una registrazione istantanea e affidabile, ha richiesto un'evoluzione radicale nell'ingegneria del software.
+
+Linceu Lighthouse è stato interamente riscritto come applicazione desktop nativa in C++17 con Qt6, integrando le API native asincrone di Windows (ReadDirectoryChangesW), code e buffer protetti da mutex, thread di elaborazione parallela con QtConcurrent, archiviazione persistente in SQLite locale e un sottosistema proprietario di rendering grafico accelerato via hardware (OpenGL / Qt Quick).
+
+
+4. L'Impegno per la Privacy Sovrana (Local-First)
+
+In un'epoca dominata dalla dipendenza dal cloud, dalla telemetria invasiva e dall'invio indiscriminato di dati a server remoti, Linceu Lighthouse assume una posizione etica non negoziabile:
+* 100% Offline e Locale: Tutti i database, metadati, analisi e prove risiedono esclusivamente sul computer dell'utente (%LOCALAPPDATA%\LinceuLighthouse).
+* Nessun Cloud, Nessun Account, Nessuna Telemetria: Nessuna raccolta di dati analitici né autenticazione remota forzata.
+* Intelligenza Deterministica senza IA: Tutte le classificazioni, le analisi dei pattern e i punteggi di integrità derivano da algoritmi matematici e statistici deterministici, senza modelli di linguaggio (LLM) o inferenze esterne.
+
+Linceu Lighthouse è la fusione perfetta tra la vista penetrante di Lynceus e la luce guida del Faro — il guardiano digitale sovrano che vede tutto, illumina tutto e protegge l'integrità del vostro ambiente di lavoro.

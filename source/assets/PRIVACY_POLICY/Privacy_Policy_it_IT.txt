@@ -1,6 +1,6 @@
 Informativa sulla Privacy di Linceu Lighthouse
-Ultimo aggiornamento: 27 Aprile 2026
-Versione: 2026.4.27.0
+Ultimo aggiornamento: 25 agosto 2026
+Versione: 2026.8.25.0
 
 La tua privacy è fondamentale per noi. Questa Informativa sulla Privacy spiega quali informazioni utilizza Linceu Lighthouse ("Software") e, soprattutto, come queste rimangono sotto il tuo controllo.
 
@@ -46,11 +46,9 @@ Hai il controllo assoluto sui tuoi dati. In qualsiasi momento, puoi:
  - Cancellare l'intera cronologia di monitoraggio direttamente dall'interfaccia del Software.
  - Disinstallare il Software, che rimuoverà l'applicazione e i suoi componenti dal tuo sistema. I file del database e i log possono essere cancellati manualmente da te per garantire una rimozione completa.
 
-6. Dati dei Rapporti sugli Errori di Microsoft
+6. Zero Telemetria e Diagnostica Locale
 
-Per migliorare la stabilità e la qualità di Linceu Lighthouse, potremmo utilizzare il servizio di Segnalazione Errori di Microsoft. Se l'applicazione incontra un errore critico, informazioni diagnostiche anonime possono essere inviate a Microsoft e successivamente condivise con noi.
-
-Questa pratica è regolata dall'Accordo per Sviluppatori di App di Microsoft. I dati sugli errori che riceviamo sono utilizzati esclusivamente per correggere bug e migliorare il software. Questi rapporti non includono i tuoi file personali o alcuna informazione che ti identifichi direttamente.
+Linceu Lighthouse opera sul principio della Privacy Locale e Zero Telemetria dell'applicazione. Il Software non implementa meccanismi proprietari di telemetria, analisi remota, tracciamento dell'uso o invio automatizzato di segnalazioni di arresto anomalo su Internet. Eventuali registri di errori o diagnostica vengono generati e archiviati esclusivamente in file locali sul dispositivo dell'utente per la risoluzione dei problemi, senza alcuna trasmissione a server remoti.
 
 7. Privacy dei Minori
 

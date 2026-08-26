@@ -10,13 +10,15 @@
       "name": "mock-qt6-mingw-debug",
       "displayName": "Linceu Mocks Qt6 MinGW Debug",
       "generator": "MinGW Makefiles",
-      "binaryDir": "${sourceDir}/output",
+      "binaryDir": "${sourceDir}/../build/build_mocks",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_CXX_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/g++.exe",
         "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/mingw1310_64/bin/mingw32-make.exe",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "LINCEU_MOCK_QT_ROOT": "C:/Qt/6.11.0/mingw_64"
+        "LINCEU_MOCK_OUTPUT_DIR": "${sourceDir}/../build/build_mocks",
+        "LINCEU_MOCK_DISTRIBUTION_DIR": "D:/MISCELANEAS/VSCode/LinceuLighthouse/mocks",
+        "LINCEU_MOCK_QT_ROOT": "C:/Qt/6.11.1/mingw_64"
       }
     }
   ],

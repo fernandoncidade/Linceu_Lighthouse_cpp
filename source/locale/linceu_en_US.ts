@@ -288,6 +288,214 @@
         <translation>Type</translation>
     </message>
     <message>
+        <source>mime</source>
+        <translation>MIME</translation>
+    </message>
+    <message>
+        <source>mime_primary_application</source>
+        <translation>Application</translation>
+    </message>
+    <message>
+        <source>mime_primary_audio</source>
+        <translation>Audio</translation>
+    </message>
+    <message>
+        <source>mime_primary_font</source>
+        <translation>Font</translation>
+    </message>
+    <message>
+        <source>mime_primary_image</source>
+        <translation>Image</translation>
+    </message>
+    <message>
+        <source>mime_primary_inode</source>
+        <translation>File system</translation>
+    </message>
+    <message>
+        <source>mime_primary_message</source>
+        <translation>Message</translation>
+    </message>
+    <message>
+        <source>mime_primary_model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>mime_primary_multipart</source>
+        <translation>Multipart</translation>
+    </message>
+    <message>
+        <source>mime_primary_text</source>
+        <translation>Text</translation>
+    </message>
+    <message>
+        <source>mime_primary_video</source>
+        <translation>Video</translation>
+    </message>
+    <message>
+        <source>mime_primary_other</source>
+        <translation>Other</translation>
+    </message>
+    <message>
+        <source>mime_subtype_plain</source>
+        <translation>Plain text</translation>
+    </message>
+    <message>
+        <source>mime_subtype_directory</source>
+        <translation>Directory</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_directory</source>
+        <translation>Directory</translation>
+    </message>
+    <message>
+        <source>mime_subtype_pdf</source>
+        <translation>PDF</translation>
+    </message>
+    <message>
+        <source>mime_subtype_json</source>
+        <translation>JSON</translation>
+    </message>
+    <message>
+        <source>mime_subtype_xml</source>
+        <translation>XML</translation>
+    </message>
+    <message>
+        <source>mime_subtype_csv</source>
+        <translation>CSV</translation>
+    </message>
+    <message>
+        <source>mime_subtype_html</source>
+        <translation>HTML</translation>
+    </message>
+    <message>
+        <source>mime_subtype_xhtml_xml</source>
+        <translation>XHTML</translation>
+    </message>
+    <message>
+        <source>mime_subtype_octet_stream</source>
+        <translation>Binary stream</translation>
+    </message>
+    <message>
+        <source>mime_subtype_zip</source>
+        <translation>ZIP</translation>
+    </message>
+    <message>
+        <source>mime_subtype_gzip</source>
+        <translation>GZIP</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_7z_compressed</source>
+        <translation>7-Zip</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_rar_compressed</source>
+        <translation>RAR</translation>
+    </message>
+    <message>
+        <source>mime_subtype_msword</source>
+        <translation>Word document</translation>
+    </message>
+    <message>
+        <source>mime_subtype_vnd_openxmlformats_officedocument_wordprocessingml_document</source>
+        <translation>Word document</translation>
+    </message>
+    <message>
+        <source>mime_subtype_vnd_ms_excel</source>
+        <translation>Excel spreadsheet</translation>
+    </message>
+    <message>
+        <source>mime_subtype_vnd_openxmlformats_officedocument_spreadsheetml_sheet</source>
+        <translation>Excel spreadsheet</translation>
+    </message>
+    <message>
+        <source>mime_subtype_vnd_ms_powerpoint</source>
+        <translation>PowerPoint presentation</translation>
+    </message>
+    <message>
+        <source>mime_subtype_vnd_openxmlformats_officedocument_presentationml_presentation</source>
+        <translation>PowerPoint presentation</translation>
+    </message>
+    <message>
+        <source>mime_subtype_jpeg</source>
+        <translation>JPEG</translation>
+    </message>
+    <message>
+        <source>mime_subtype_png</source>
+        <translation>PNG</translation>
+    </message>
+    <message>
+        <source>mime_subtype_gif</source>
+        <translation>GIF</translation>
+    </message>
+    <message>
+        <source>mime_subtype_bmp</source>
+        <translation>BMP</translation>
+    </message>
+    <message>
+        <source>mime_subtype_svg_xml</source>
+        <translation>SVG</translation>
+    </message>
+    <message>
+        <source>mime_subtype_webp</source>
+        <translation>WebP</translation>
+    </message>
+    <message>
+        <source>mime_subtype_tiff</source>
+        <translation>TIFF</translation>
+    </message>
+    <message>
+        <source>mime_subtype_mpeg</source>
+        <translation>MPEG</translation>
+    </message>
+    <message>
+        <source>mime_subtype_mp4</source>
+        <translation>MP4</translation>
+    </message>
+    <message>
+        <source>mime_subtype_quicktime</source>
+        <translation>QuickTime</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_msvideo</source>
+        <translation>AVI</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_matroska</source>
+        <translation>Matroska</translation>
+    </message>
+    <message>
+        <source>mime_subtype_webm</source>
+        <translation>WebM</translation>
+    </message>
+    <message>
+        <source>mime_subtype_ogg</source>
+        <translation>Ogg</translation>
+    </message>
+    <message>
+        <source>mime_subtype_wav</source>
+        <translation>WAV</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_wav</source>
+        <translation>WAV</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_msdownload</source>
+        <translation>Windows executable</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_dosexec</source>
+        <translation>DOS/Windows executable</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_executable</source>
+        <translation>Executable</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_shellscript</source>
+        <translation>Shell script</translation>
+    </message>
+    <message>
         <source>op_moved</source>
         <translation>Moved</translation>
     </message>
@@ -785,7 +993,7 @@
     </message>
     <message>
         <source>description_text</source>
-        <translation>Linceu Lighthouse is a monitoring tool that applies the principles of File Integrity Monitoring (FIM) to provide a detailed and transparent log of all activities in your most important directories. Instead of interpreting the intent behind a change, its focus is to factually record every operation—creation, modification, deletion, and renaming—giving you total control and knowledge of what happens to your data. It is the ideal tool for anyone who needs a clear and auditable history of activities in project folders, servers, or personal files.</translation>
+        <translation>Linceu Lighthouse is a monitoring tool that applies the principles of File Integrity Monitoring (FIM) to provide a detailed and transparent log of all activities in your most important directories. Instead of interpreting the intent behind a change, its focus is to factually record every operation—creation, modification, deletion, and renaming — giving you total control and knowledge of what happens to your data. It is the ideal tool for anyone who needs a clear and auditable history of activities in project folders, servers, or personal files.</translation>
     </message>
     <message>
         <source>manual</source>
@@ -6503,6 +6711,115 @@ New events may be recorded again immediately if monitoring remains active.</tran
     <message>
         <source>security_popup_batch_count</source>
         <translation>Accumulated total: %1</translation>
+    </message>
+    <message>
+        <source>search_label</source>
+        <translation>Search:</translation>
+    </message>
+    <message>
+        <source>about_search_placeholder</source>
+        <translation>Search text in the About window...</translation>
+    </message>
+    <message>
+        <source>manual_search_placeholder</source>
+        <translation>Search text in the manual...</translation>
+    </message>
+    <message>
+        <source>unavailable_file</source>
+        <translation>Unavailable file</translation>
+    </message>
+    <message>
+        <source>selected_file_unavailable</source>
+        <translation>The selected file no longer exists at the listed path.</translation>
+    </message>
+    <message>
+        <source>open_failed</source>
+        <translation>Failed to open</translation>
+    </message>
+    <message>
+        <source>app_chooser_title</source>
+        <translation>Choose Application</translation>
+    </message>
+    <message>
+        <source>app_chooser_prompt</source>
+        <translation>Choose the application to open:
+%1</translation>
+    </message>
+    <message>
+        <source>app_chooser_column_app</source>
+        <translation>Application</translation>
+    </message>
+    <message>
+        <source>app_chooser_column_source</source>
+        <translation>Source</translation>
+    </message>
+    <message>
+        <source>app_chooser_column_executable</source>
+        <translation>Executable</translation>
+    </message>
+    <message>
+        <source>app_chooser_choose_other</source>
+        <translation>Choose another executable...</translation>
+    </message>
+    <message>
+        <source>app_chooser_choose_executable</source>
+        <translation>Choose application</translation>
+    </message>
+    <message>
+        <source>app_chooser_executable_filter</source>
+        <translation>Executables (*.exe);;All files (*)</translation>
+    </message>
+    <message>
+        <source>app_chooser_all_files_filter</source>
+        <translation>All files (*)</translation>
+    </message>
+    <message>
+        <source>app_chooser_manual_source</source>
+        <translation>Selected manually by the user</translation>
+    </message>
+    <message>
+        <source>app_chooser_no_app_title</source>
+        <translation>No application selected</translation>
+    </message>
+    <message>
+        <source>app_chooser_no_app_message</source>
+        <translation>Select an application to open the file.</translation>
+    </message>
+    <message>
+        <source>associated_app_system_default</source>
+        <translation>System default application</translation>
+    </message>
+    <message>
+        <source>associated_app_system_default_source</source>
+        <translation>Operating system default association</translation>
+    </message>
+    <message>
+        <source>associated_app_windows_default_source</source>
+        <translation>Default application registered in Windows</translation>
+    </message>
+    <message>
+        <source>associated_app_registered_progid_source</source>
+        <translation>Registered ProgID: %1</translation>
+    </message>
+    <message>
+        <source>associated_app_open_with_list_source</source>
+        <translation>Windows Open With list</translation>
+    </message>
+    <message>
+        <source>associated_app_error_system_default</source>
+        <translation>Could not open the file with the system default application.</translation>
+    </message>
+    <message>
+        <source>associated_app_error_no_executable</source>
+        <translation>No executable was defined to open the file.</translation>
+    </message>
+    <message>
+        <source>associated_app_error_windows_refused</source>
+        <translation>Windows refused to open the file with the selected executable.</translation>
+    </message>
+    <message>
+        <source>associated_app_error_start_failed</source>
+        <translation>Could not start the selected application.</translation>
     </message>
 </context>
 </TS>

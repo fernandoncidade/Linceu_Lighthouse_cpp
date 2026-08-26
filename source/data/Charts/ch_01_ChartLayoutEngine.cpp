@@ -123,6 +123,19 @@ void append_circle(QVector<ColoredVertex>& fills, QVector<ColoredVertex>& lines,
     append_polygon_outline(lines, polygon, stroke);
 }
 
+void append_circle_direct(QVector<ColoredVertex>& fills, QVector<ColoredVertex>& lines, const QPointF& center,
+                          double radius, const QColor& fill, const QColor& stroke, int segments = 12) {
+    segments = qMax(6, segments);
+    QPointF previous(center.x() + radius, center.y());
+    for (int i = 1; i <= segments; ++i) {
+        const double angle = (static_cast<double>(i) / static_cast<double>(segments)) * (kPi * 2.0);
+        const QPointF current(center.x() + (std::cos(angle) * radius), center.y() + (std::sin(angle) * radius));
+        append_triangle(fills, center, previous, current, fill);
+        append_line(lines, previous, current, stroke);
+        previous = current;
+    }
+}
+
 void append_circle_outline(QVector<ColoredVertex>& lines, const QPointF& center, double radius, const QColor& stroke,
                            int segments = 72) {
     QVector<QPointF> polygon;
@@ -1004,6 +1017,28 @@ void add_plot_background(ChartScene& scene, const ChartDataSet& dataSet) {
     append_rect_outline(scene.lineVertices, scene.plotRect, QColor(QStringLiteral("#d1d5db")));
 }
 
+bool grid_overlay_enabled(const ChartDataSet& dataSet) {
+    return dataSet.meta.value(QStringLiteral("gridOverlay")).toBool();
+}
+
+void append_grid_vertical(ChartScene& scene, const ChartDataSet& dataSet, double x, const QColor& color,
+                          double thickness = 1.0) {
+    if (grid_overlay_enabled(dataSet)) {
+        append_line(scene.lineVertices, QPointF(x, scene.plotRect.top()), QPointF(x, scene.plotRect.bottom()), color);
+        return;
+    }
+    append_vertical_strip(scene.fillVertices, scene.plotRect, x, color, thickness);
+}
+
+void append_grid_horizontal(ChartScene& scene, const ChartDataSet& dataSet, double y, const QColor& color,
+                            double thickness = 1.0) {
+    if (grid_overlay_enabled(dataSet)) {
+        append_line(scene.lineVertices, QPointF(scene.plotRect.left(), y), QPointF(scene.plotRect.right(), y), color);
+        return;
+    }
+    append_horizontal_strip(scene.fillVertices, scene.plotRect, y, color, thickness);
+}
+
 struct AxisWindow {
     double xMin = 0.0;
     double xMax = 1.0;
@@ -1199,7 +1234,9 @@ void add_pick(ChartScene& scene, PickRole role, int seriesIndex, int elementInde
 
 void build_numeric_axes(ChartScene& scene, const ChartDataSet& dataSet, const AxisWindow& primary,
                         const AxisWindow* secondary = nullptr) {
-    const QColor gridColor(QStringLiteral("#eef1f5"));
+    const QColor gridColor = grid_overlay_enabled(dataSet)
+                                 ? alpha_color(QColor(QStringLiteral("#d1d9e6")), 180)
+                                 : QColor(QStringLiteral("#eef1f5"));
     const bool categoricalX = (dataSet.kind == ChartKind::Bars || dataSet.kind == ChartKind::Histogram ||
                                dataSet.kind == ChartKind::Pareto || dataSet.kind == ChartKind::ComboBarsLine ||
                                dataSet.kind == ChartKind::DotPlot || dataSet.kind == ChartKind::BoxPlot);
@@ -1232,7 +1269,7 @@ void build_numeric_axes(ChartScene& scene, const ChartDataSet& dataSet, const Ax
         for (int i = 0; i < totalCategories; i += labelStep) {
             const double x = map_linear(static_cast<double>(i), primary.xMin, primary.xMax, scene.plotRect.left(),
                                         scene.plotRect.right());
-            append_vertical_strip(scene.fillVertices, scene.plotRect, x, gridColor, 1.0);
+            append_grid_vertical(scene, dataSet, x, gridColor, 1.0);
             if (dataSet.kind != ChartKind::BoxPlot) {
                 const QString label = dataSet.categories.value(i);
                 if (forceAllBarLabels) {
@@ -1318,7 +1355,7 @@ void build_numeric_axes(ChartScene& scene, const ChartDataSet& dataSet, const Ax
             const double ratio = (xTicks == 1) ? 0.0 : static_cast<double>(i) / static_cast<double>(xTicks - 1);
             const double xValue = primary.xMin + ((primary.xMax - primary.xMin) * ratio);
             const double x = map_linear(xValue, primary.xMin, primary.xMax, scene.plotRect.left(), scene.plotRect.right());
-            append_vertical_strip(scene.fillVertices, scene.plotRect, x, gridColor, 1.0);
+            append_grid_vertical(scene, dataSet, x, gridColor, 1.0);
 
             QString label;
             if (primary.xIsDateTime) {
@@ -1351,7 +1388,7 @@ void build_numeric_axes(ChartScene& scene, const ChartDataSet& dataSet, const Ax
         for (int i = 0; i < count; ++i) {
             const double yValue = static_cast<double>(i + 1);
             const double y = map_linear(yValue, primary.yMin, primary.yMax, scene.plotRect.bottom(), scene.plotRect.top());
-            append_horizontal_strip(scene.fillVertices, scene.plotRect, y, gridColor, 1.0);
+            append_grid_horizontal(scene, dataSet, y, gridColor, 1.0);
             scene.labels.append(OverlayLabel{
                 QRectF(categoryLeft, y - 12.0, categoryWidth, 24.0),
                 primary.yCategories.at(i),
@@ -1374,7 +1411,7 @@ void build_numeric_axes(ChartScene& scene, const ChartDataSet& dataSet, const Ax
                 value = primary.yMin + ((primary.yMax - primary.yMin) * ratio);
             }
             const double y = map_y_value(value, primary, scene.plotRect);
-            append_horizontal_strip(scene.fillVertices, scene.plotRect, y, gridColor, 1.0);
+            append_grid_horizontal(scene, dataSet, y, gridColor, 1.0);
             scene.labels.append(OverlayLabel{
                 QRectF(10.0, y - 10.0, qMax(56.0, scene.plotRect.left() - 20.0), 20.0),
                 primary.yLog ? QString::number(value, 'e', 1) : QString::number(value, 'f', value >= 10.0 ? 0 : 2),
@@ -1763,6 +1800,24 @@ void build_scatter(ChartScene& scene, const ChartDataSet& dataSet, const QSizeF&
     const AxisWindow axis = cartesian_window(dataSet, state, false);
     build_numeric_axes(scene, dataSet, axis, nullptr);
 
+    int totalPointCount = 0;
+    for (const ChartSeries& series : dataSet.series) {
+        if (series.role != QStringLiteral("mean")) {
+            totalPointCount += series.points.size();
+        }
+    }
+    const bool fastPointCloud = dataSet.meta.value(QStringLiteral("fastPointCloud")).toBool() || totalPointCount > 6000;
+    const int pointSegments = fastPointCloud ? 10 : 16;
+    const auto point_center = [&](const ChartPoint& point) {
+        return QPointF(map_linear(point.x, axis.xMin, axis.xMax, scene.plotRect.left(), scene.plotRect.right()),
+                       map_y_value(point.y * state.animationT, axis, scene.plotRect));
+    };
+    if (totalPointCount > 0) {
+        scene.fillVertices.reserve(scene.fillVertices.size() + (totalPointCount * pointSegments * 3));
+        scene.lineVertices.reserve(scene.lineVertices.size() + (totalPointCount * pointSegments * 2));
+        scene.picks.reserve(scene.picks.size() + totalPointCount);
+    }
+
     for (int seriesIndex = 0; seriesIndex < dataSet.series.size(); ++seriesIndex) {
         const ChartSeries& series = dataSet.series.at(seriesIndex);
         if (series.role == QStringLiteral("mean")) {
@@ -1778,20 +1833,34 @@ void build_scatter(ChartScene& scene, const ChartDataSet& dataSet, const QSizeF&
 
         for (int pointIndex = 0; pointIndex < series.points.size(); ++pointIndex) {
             const ChartPoint& point = series.points.at(pointIndex);
-            const QPointF center(
-                map_linear(point.x, axis.xMin, axis.xMax, scene.plotRect.left(), scene.plotRect.right()),
-                map_y_value(point.y * state.animationT, axis, scene.plotRect));
+            const QPointF center = point_center(point);
             const bool highlight = active_element(state, seriesIndex, pointIndex);
-            const QColor fill = series_color(series.color.isValid() ? series.color : QColor(QStringLiteral("#0057ff")),
-                                             state, seriesIndex, pointIndex);
+            QColor fill = series_color(series.color.isValid() ? series.color : QColor(QStringLiteral("#0057ff")),
+                                       state, seriesIndex, highlight ? pointIndex : -1);
             const bool dimmedByOtherSeries = (active_series(state) >= 0 && active_series(state) != seriesIndex);
-            const double radius = highlight ? 7.4 : 5.0;
-            append_circle(scene.fillVertices, scene.lineVertices, center, radius,
-                          alpha_color(fill, dimmedByOtherSeries ? inactive_point_alpha(fill) : 190),
-                          fill.darker(highlight ? 150 : 130), 16);
-            QPainterPath path;
-            path.addEllipse(center, radius + 2.5, radius + 2.5);
-            add_pick(scene, PickRole::Data, seriesIndex, pointIndex, path, path.boundingRect(), point.tooltip);
+            const double radius = highlight ? 8.2 : 5.0;
+            const QColor pointFill = alpha_color(fill, dimmedByOtherSeries ? inactive_point_alpha(fill) : 190);
+            const QColor stroke = fill.darker(highlight ? 150 : 130);
+            if (highlight) {
+                append_circle_direct(scene.fillVertices, scene.lineVertices, center, radius + 3.4,
+                                     alpha_color(fill, 54), alpha_color(fill, 105), 14);
+            }
+            if (fastPointCloud) {
+                append_circle_direct(scene.fillVertices, scene.lineVertices, center, radius, pointFill, stroke,
+                                     pointSegments);
+            } else {
+                append_circle(scene.fillVertices, scene.lineVertices, center, radius, pointFill, stroke,
+                              pointSegments);
+            }
+            if (fastPointCloud) {
+                const QRectF bounds(center.x() - radius - 3.0, center.y() - radius - 3.0,
+                                    (radius + 3.0) * 2.0, (radius + 3.0) * 2.0);
+                add_pick(scene, PickRole::Data, seriesIndex, pointIndex, QPainterPath(), bounds, point.tooltip);
+            } else {
+                QPainterPath path;
+                path.addEllipse(center, radius + 2.5, radius + 2.5);
+                add_pick(scene, PickRole::Data, seriesIndex, pointIndex, path, path.boundingRect(), point.tooltip);
+            }
         }
     }
 
@@ -1809,6 +1878,9 @@ void build_radar(ChartScene& scene, const ChartDataSet& dataSet, const QSizeF& s
     const int curveSubdivisions = 12;
     const bool useSmoothCurve = dataSet.meta.value(QStringLiteral("smoothCurve"), true).toBool();
     const bool maskGridUnderSeries = dataSet.meta.value(QStringLiteral("maskGridUnderSeries"), false).toBool();
+    const bool radarPointsForeground = dataSet.meta.value(QStringLiteral("radarPointsForeground"), false).toBool();
+    const int surfaceAlpha =
+        qBound(0, dataSet.meta.value(QStringLiteral("radarSurfaceAlpha"), 90).toInt(), 255);
     int maxValue = 1;
     for (const ChartSeries& series : dataSet.series) {
         for (const ChartPoint& point : series.points) {
@@ -1821,10 +1893,15 @@ void build_radar(ChartScene& scene, const ChartDataSet& dataSet, const QSizeF& s
     const double angleStep = (kPi * 2.0) / static_cast<double>(spokeCount);
     const QColor ringColor = QColor(QStringLiteral("#e5e7eb"));
     const QColor spokeColor = QColor(QStringLiteral("#d1d5db"));
+    const bool radarGridOverlay = dataSet.meta.value(QStringLiteral("radarGridOverlay")).toBool();
 
     for (int ring = 1; ring <= 5; ++ring) {
         const double ringRadius = radius * (static_cast<double>(ring) / 5.0);
-        append_circle_band(scene.fillVertices, center, ringRadius, 1.4, ringColor, 96);
+        if (radarGridOverlay) {
+            append_circle_outline(scene.lineVertices, center, ringRadius, alpha_color(ringColor, 185), 96);
+        } else {
+            append_circle_band(scene.fillVertices, center, ringRadius, 1.4, ringColor, 96);
+        }
         scene.labels.append(OverlayLabel{
             QRectF(center.x() + 8.0, center.y() - ringRadius - 10.0, 38.0, 18.0),
             QString::number((radialMax / 5.0) * ring, 'f', ((radialMax / 5.0) * ring) >= 10.0 ? 0 : 1),
@@ -1838,7 +1915,11 @@ void build_radar(ChartScene& scene, const ChartDataSet& dataSet, const QSizeF& s
     for (int i = 0; i < spokeCount; ++i) {
         const double angle = startAngle + ((kPi * 2.0) * static_cast<double>(i) / static_cast<double>(spokeCount));
         const QPointF outer = center + QPointF(std::cos(angle) * radius, std::sin(angle) * radius);
-        append_line_band(scene.fillVertices, center, outer, 1.3, spokeColor);
+        if (radarGridOverlay) {
+            append_line(scene.lineVertices, center, outer, alpha_color(spokeColor, 190));
+        } else {
+            append_line_band(scene.fillVertices, center, outer, 1.3, spokeColor);
+        }
 
         const QPointF labelPoint = center + QPointF(std::cos(angle) * (radius + 24.0), std::sin(angle) * (radius + 24.0));
         scene.labels.append(OverlayLabel{
@@ -1857,7 +1938,7 @@ void build_radar(ChartScene& scene, const ChartDataSet& dataSet, const QSizeF& s
         QVector<double> radialValues;
         polygon.reserve(spokeCount);
         radialValues.reserve(spokeCount);
-        const QColor fill = alpha_color(series_color(series.color, state, seriesIndex), 90);
+        const QColor fill = alpha_color(series_color(series.color, state, seriesIndex), surfaceAlpha);
         const QColor stroke = line_color(series.color, state, seriesIndex);
 
         for (int i = 0; i < qMin(spokeCount, series.points.size()); ++i) {
@@ -1908,10 +1989,24 @@ void build_radar(ChartScene& scene, const ChartDataSet& dataSet, const QSizeF& s
         append_polygon_fan_from_center(scene.fillVertices, center, smoothCurve, fill);
         append_polygon_outline(scene.lineVertices, smoothCurve, stroke);
 
+        QVector<ColoredVertex>& pointFillVertices =
+            radarPointsForeground ? scene.foregroundFillVertices : scene.fillVertices;
+        QVector<ColoredVertex>& pointLineVertices =
+            radarPointsForeground ? scene.foregroundLineVertices : scene.lineVertices;
         for (int pointIndex = 0; pointIndex < polygon.size(); ++pointIndex) {
             const bool highlight = active_element(state, seriesIndex, pointIndex);
-            append_circle(scene.fillVertices, scene.lineVertices, polygon.at(pointIndex),
-                          highlight ? 5.6 : 4.0, stroke, stroke.darker(140), 14);
+            QColor pointFill = stroke;
+            QColor pointStroke = stroke.darker(140);
+            if (radarPointsForeground) {
+                pointFill.setAlpha(255);
+                pointStroke.setAlpha(255);
+                if (highlight) {
+                    append_circle(pointFillVertices, pointLineVertices, polygon.at(pointIndex), 8.0,
+                                  alpha_color(stroke, 54), alpha_color(stroke, 105), 18);
+                }
+            }
+            append_circle(pointFillVertices, pointLineVertices, polygon.at(pointIndex),
+                          highlight ? 5.6 : 4.0, pointFill, pointStroke, 14);
             QPainterPath path;
             path.addEllipse(polygon.at(pointIndex), 7.0, 7.0);
             add_pick(scene, PickRole::Data, seriesIndex, pointIndex, path, path.boundingRect(),

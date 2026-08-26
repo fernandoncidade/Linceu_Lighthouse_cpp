@@ -13,6 +13,7 @@ QList<QPair<QString, QString>> criar_definicoes_colunas() {
         {"data_modificacao", "TEXT"},
         {"data_acesso", "TEXT"},
         {"tipo", "TEXT"},
+        {"mime", "TEXT"},
         {"size_b", "REAL"},
         {"size_kb", "REAL"},
         {"size_mb", "REAL"},

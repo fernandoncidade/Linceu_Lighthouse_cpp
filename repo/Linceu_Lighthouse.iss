@@ -1,5 +1,5 @@
 #define MyAppName "Linceu Lighthouse"
-#define MyAppVersion "2026.4.27.0"
+#define MyAppVersion "2026.8.25.0"
 #define MyAppPublisher "Fernando Nillsson Cidade"
 #define MyAppURL "https://github.com/fernandoncidade"
 #define MyAppExeName "Linceu_Lighthouse.exe"
@@ -45,11 +45,11 @@ OutputManifestFile=
 #if BuildVariantNormalized == "mingw"
 #define BuildVariantName "mingw"
 #define DeploySourceDir DeployRootDir + "\Linceu_Lighthouse_mingw"
-#define InstallerOutputDir DeployRootDir + "\InnoSetupOutput_mingw"
+#define InstallerOutputDir DeployRootDir + "\InnoSetupOutput"
 #elif BuildVariantNormalized == "msvc"
 #define BuildVariantName "msvc"
 #define DeploySourceDir DeployRootDir + "\Linceu_Lighthouse_msvc"
-#define InstallerOutputDir DeployRootDir + "\InnoSetupOutput_msvc"
+#define InstallerOutputDir DeployRootDir + "\InnoSetupOutput"
 #else
 #pragma error "BuildVariant invalida: " + BuildVariant + ". Use mingw ou msvc."
 #endif

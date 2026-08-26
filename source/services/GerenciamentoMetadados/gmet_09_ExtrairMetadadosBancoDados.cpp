@@ -6,6 +6,8 @@
 #include <QSqlQuery>
 #include <QFileInfo>
 #include <QSet>
+#include <QUuid>
+#include <QUrl>
 
 #include "source/utils/LogManager.h"
 
@@ -58,6 +60,11 @@ bool possui_header_sqlite(const QString& caminho) {
     const QByteArray head = f.read(16);
     return head.startsWith("SQLite format 3");
 }
+
+QString sqlite_uri_somente_leitura(const QString& caminho) {
+    const QString uri = QUrl::fromLocalFile(caminho).toString(QUrl::FullyEncoded);
+    return uri + QStringLiteral("?mode=ro&immutable=1");
+}
 }  // namespace
 
 QVariantMap extrair_metadados_banco_dados(const QString& caminho, source::ui::LocalizadorQt* loc) {
@@ -77,13 +84,15 @@ QVariantMap extrair_metadados_banco_dados(const QString& caminho, source::ui::Lo
 
         const bool sqlite_like = is_database && (has_ext(nome_lower, kSqliteLikeExts) || possui_header_sqlite(caminho));
         if (sqlite_like) {
-            const QString conn = QStringLiteral("gmet_db_%1").arg(reinterpret_cast<quintptr>(caminho.constData()));
+            const QString conn = QStringLiteral("gmet_db_ro_%1").arg(QUuid::createUuid().toString(QUuid::WithoutBraces));
             {
                 auto db = QSqlDatabase::addDatabase("QSQLITE", conn);
-                db.setDatabaseName(caminho);
+                db.setConnectOptions(QStringLiteral("QSQLITE_OPEN_READONLY;QSQLITE_OPEN_URI;QSQLITE_BUSY_TIMEOUT=1000"));
+                db.setDatabaseName(sqlite_uri_somente_leitura(caminho));
                 if (db.open()) {
                     QSqlQuery q(db);
-                    q.exec("SELECT name FROM sqlite_master WHERE type='table'");
+                    q.setForwardOnly(true);
+                    q.exec(QStringLiteral("SELECT name FROM sqlite_master WHERE type='table'"));
                     QStringList tabelas;
                     while (q.next()) tabelas << q.value(0).toString();
                     m.insert("tabelas", tabelas.size());

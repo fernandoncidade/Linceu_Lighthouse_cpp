@@ -5,13 +5,13 @@
 #include <QSet>
 #include <QSqlDatabase>
 #include <QSqlQuery>
-#include <QThread>
 #include <QUuid>
 
 #include "source/security/secore_02_SecurityManager.h"
 #include "source/security/secui_00_helpers.h"
 #include "source/security/secore_03_evento_campos.h"
 #include "source/services/GerenciamentoBaseEvento/gbank_00_operacoes.h"
+#include "source/services/GerenciamentoMetadados/gmet_19_GetTipoArquivo.h"
 #include "source/services/ob_01_Observador.h"
 #include "source/services/ob_02_BaseEvento.h"
 #include "source/ui/ui_12_LocalizadorQt.h"
@@ -52,6 +52,7 @@ bool has_meaningful_moved_metadata(const QVariantMap& evento) {
         QStringLiteral("size_mb"),
         QStringLiteral("size_gb"),
         QStringLiteral("size_tb"),
+        QStringLiteral("mime"),
         QStringLiteral("dimensoes"),
         QStringLiteral("duracao"),
         QStringLiteral("taxa_bits"),
@@ -86,7 +87,7 @@ void fill_missing_moved_metadata(QVariantMap& destino, const QVariantMap& origem
     };
     static const QSet<QString> kTextKeys = {
         QStringLiteral("data_criacao"), QStringLiteral("data_modificacao"), QStringLiteral("data_acesso"),
-        QStringLiteral("tipo"), QStringLiteral("atributos"), QStringLiteral("autor"),
+        QStringLiteral("tipo"), QStringLiteral("mime"), QStringLiteral("atributos"), QStringLiteral("autor"),
         QStringLiteral("dimensoes"), QStringLiteral("duracao"), QStringLiteral("taxa_bits"),
         QStringLiteral("protegido")
     };
@@ -134,6 +135,8 @@ QVariantMap preparar_evento_movido(source::services::BaseEvento* self, const QVa
 
     QVariantMap preparado = evento;
     const QString nomeBase = QFileInfo(evento.value(QStringLiteral("nome")).toString().trimmed()).fileName().trimmed();
+    const QString tipoPreferencial =
+        source::services::GerenciamentoMetadados::extensao_tipo_preferencial(nomeBase);
     const QString dirAnterior = evento.value(QStringLiteral("dir_anterior")).toString().trimmed();
     const QString dirAtual = evento.value(QStringLiteral("dir_atual")).toString().trimmed();
     const QString timestampEvento =
@@ -147,31 +150,30 @@ QVariantMap preparar_evento_movido(source::services::BaseEvento* self, const QVa
     preparado.insert(QStringLiteral("dir_atual"), dirAtual);
     preparado.insert(QStringLiteral("timestamp"), timestampEvento);
 
+    const QVariantMap reconstruido =
+        self->_criar_evento_padrao(QStringLiteral("op_moved"), nomeBase, dirAnterior, dirAtual);
+    fill_missing_moved_metadata(preparado, reconstruido);
+
     if (!has_meaningful_moved_metadata(preparado)) {
-        for (int attempt = 0; attempt < 3; ++attempt) {
-            const QVariantMap reconstruido =
-                self->_criar_evento_padrao(QStringLiteral("op_moved"), nomeBase, dirAnterior, dirAtual);
-            fill_missing_moved_metadata(preparado, reconstruido);
-            if (has_meaningful_moved_metadata(preparado) || attempt == 2) {
-                break;
-            }
-            QThread::msleep(75);
+        if (!dirAtual.isEmpty()) {
+            fill_missing_moved_metadata(preparado, self->obter_metadados_arquivo_excluido(nomeBase, dirAtual));
+        }
+        if (!has_meaningful_moved_metadata(preparado) && !dirAnterior.isEmpty()) {
+            fill_missing_moved_metadata(preparado, self->obter_metadados_arquivo_excluido(nomeBase, dirAnterior));
+        }
+        if (!has_meaningful_moved_metadata(preparado)) {
+            fill_missing_moved_metadata(preparado, self->obter_metadados_arquivo_excluido(nomeBase, QString()));
         }
     }
-
-    if (!dirAtual.isEmpty()) {
-        fill_missing_moved_metadata(preparado, self->obter_metadados_arquivo_excluido(nomeBase, dirAtual));
-    }
-    if (!dirAnterior.isEmpty()) {
-        fill_missing_moved_metadata(preparado, self->obter_metadados_arquivo_excluido(nomeBase, dirAnterior));
-    }
-    fill_missing_moved_metadata(preparado, self->obter_metadados_arquivo_excluido(nomeBase, QString()));
 
     preparado.insert(QStringLiteral("tipo_operacao"), QStringLiteral("op_moved"));
     preparado.insert(QStringLiteral("nome"), nomeBase);
     preparado.insert(QStringLiteral("dir_anterior"), dirAnterior);
     preparado.insert(QStringLiteral("dir_atual"), dirAtual);
     preparado.insert(QStringLiteral("timestamp"), timestampEvento);
+    if (!tipoPreferencial.isEmpty()) {
+        preparado.insert(QStringLiteral("tipo"), tipoPreferencial);
+    }
     return preparado;
 }
 

@@ -135,6 +135,8 @@ struct ChartScene {
     QRectF plotRect;
     QVector<ColoredVertex> fillVertices;
     QVector<ColoredVertex> lineVertices;
+    QVector<ColoredVertex> foregroundFillVertices;
+    QVector<ColoredVertex> foregroundLineVertices;
     QVector<OverlayLabel> labels;
     QVector<LegendEntry> legends;
     QVector<PickItem> picks;

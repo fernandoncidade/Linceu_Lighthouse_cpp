@@ -1,9 +1,14 @@
 #include "gmet_38_GetMetadados.h"
 
+#include <QDateTime>
+#include <QDir>
 #include <QDirIterator>
 #include <QFileInfo>
+#include <QMimeDatabase>
+#include <QMimeType>
 #include <QMutexLocker>
 #include <QSet>
+#include <QStringList>
 
 #include "gmet_02_ExtrairMetadadosCodigoFonte.h"
 #include "gmet_03_ExtrairMetadadosImagem.h"
@@ -158,6 +163,84 @@ bool has_ext(const QString& nome_arquivo_lower, const QSet<QString>& exts) {
     return false;
 }
 
+QString normalizar_chave_cache(const QString& caminho) {
+    if (caminho.trimmed().isEmpty()) {
+        return {};
+    }
+
+    QString normalizado = QDir::toNativeSeparators(QDir::cleanPath(caminho));
+#ifdef Q_OS_WIN
+    normalizado = normalizado.toLower();
+#endif
+    return normalizado;
+}
+
+QStringList chaves_cache_metadados(const QVariantMap& item, const QString& caminho_preferencial) {
+    QStringList chaves;
+    const auto adicionar = [&chaves](const QString& valor) {
+        const QString trimmed = valor.trimmed();
+        if (trimmed.isEmpty()) {
+            return;
+        }
+
+        const QString normalizada = normalizar_chave_cache(trimmed);
+        for (const QString& chave : {trimmed, normalizada}) {
+            if (!chave.isEmpty() && !chaves.contains(chave, Qt::CaseInsensitive)) {
+                chaves.append(chave);
+            }
+        }
+    };
+
+    adicionar(caminho_preferencial);
+    adicionar(item.value(QStringLiteral("dir_atual")).toString());
+    adicionar(item.value(QStringLiteral("dir_anterior")).toString());
+    return chaves;
+}
+
+bool buscar_cache_metadados(source::services::GerenciadorColunas* gc,
+                            const QStringList& chaves,
+                            QVariantMap* metadados,
+                            QString* chave_encontrada = nullptr) {
+    if (gc == nullptr || metadados == nullptr || chaves.isEmpty()) {
+        return false;
+    }
+
+    QMutexLocker locker(&gc->lock_cache);
+    for (const QString& chave : chaves) {
+        const auto it = gc->cache_metadados.constFind(chave);
+        if (it == gc->cache_metadados.constEnd()) {
+            continue;
+        }
+
+        const QVariantMap valor = it.value().toMap();
+        if (valor.isEmpty()) {
+            continue;
+        }
+
+        *metadados = valor;
+        if (chave_encontrada != nullptr) {
+            *chave_encontrada = chave;
+        }
+        return true;
+    }
+    return false;
+}
+
+void armazenar_cache_metadados(source::services::GerenciadorColunas* gc,
+                               const QString& caminho,
+                               const QVariantMap& metadados) {
+    if (gc == nullptr || caminho.trimmed().isEmpty() || metadados.isEmpty()) {
+        return;
+    }
+
+    QMutexLocker locker(&gc->lock_cache);
+    gc->cache_metadados[caminho] = metadados;
+    const QString normalizado = normalizar_chave_cache(caminho);
+    if (!normalizado.isEmpty()) {
+        gc->cache_metadados[normalizado] = metadados;
+    }
+}
+
 void merge_map(QVariantMap& destino, const QVariantMap& origem) {
     destino.insert(origem);
 }
@@ -171,6 +254,48 @@ void preencher_unidades_tamanho(QVariantMap& metadados, qint64 bytes,
     metadados.insert(prefixo + QStringLiteral("_tb"),
                      QString::number(bytes / (1024.0 * 1024.0 * 1024.0 * 1024.0), 'f', 2));
 }
+
+QString detectar_mime(const QFileInfo& info, const QString& nome_fallback = QString()) {
+    QMimeDatabase mime_db;
+    QMimeType mime;
+
+    if (info.exists()) {
+        mime = mime_db.mimeTypeForFile(info);
+    } else {
+        QString nome = nome_fallback.trimmed();
+        if (nome.isEmpty()) {
+            nome = info.fileName();
+        }
+        if (!nome.isEmpty()) {
+            mime = mime_db.mimeTypeForFile(nome, QMimeDatabase::MatchExtension);
+        }
+    }
+
+    return mime.isValid() ? mime.name() : QString();
+}
+
+bool valor_metadado_preenchido(const QVariantMap& metadados, const QString& chave) {
+    return !metadados.value(chave).toString().trimmed().isEmpty();
+}
+
+bool cache_tem_datas_base(const QVariantMap& metadados) {
+    return valor_metadado_preenchido(metadados, QStringLiteral("data_criacao")) &&
+           valor_metadado_preenchido(metadados, QStringLiteral("data_modificacao")) &&
+           valor_metadado_preenchido(metadados, QStringLiteral("data_acesso"));
+}
+
+QDateTime primeira_data_valida(const QDateTime& principal,
+                               const QDateTime& fallback_1 = QDateTime(),
+                               const QDateTime& fallback_2 = QDateTime()) {
+    if (principal.isValid()) return principal;
+    if (fallback_1.isValid()) return fallback_1;
+    if (fallback_2.isValid()) return fallback_2;
+    return {};
+}
+
+QString formatar_data_metadado(const QDateTime& data) {
+    return data.isValid() ? data.toString(QStringLiteral("yyyy-MM-dd HH:mm:ss")) : QString();
+}
 }
 
 QVariantMap get_metadados_gc(source::services::GerenciadorColunas* gc, const QVariantMap& item) {
@@ -179,8 +304,25 @@ QVariantMap get_metadados_gc(source::services::GerenciadorColunas* gc, const QVa
         auto* loc = qobject_cast<source::ui::LocalizadorQt*>(gc->loc);
 
         const QString caminho = item.value("dir_atual").toString().isEmpty() ? item.value("dir_anterior").toString() : item.value("dir_atual").toString();
-        if (caminho.isEmpty() || !QFileInfo::exists(caminho)) {
+        const bool caminho_existe = !caminho.isEmpty() && QFileInfo::exists(caminho);
+        const QStringList chaves_cache = chaves_cache_metadados(item, caminho);
+        QVariantMap cache_previo;
+        QString chave_cache_encontrada;
+        if (buscar_cache_metadados(gc, chaves_cache, &cache_previo, &chave_cache_encontrada)) {
+            const QString chave_preferencial = normalizar_chave_cache(caminho);
+            if (!chave_preferencial.isEmpty() &&
+                chave_cache_encontrada.compare(chave_preferencial, Qt::CaseInsensitive) != 0) {
+                armazenar_cache_metadados(gc, caminho, cache_previo);
+            }
+
+            if (!caminho_existe || cache_tem_datas_base(cache_previo)) {
+                return cache_previo;
+            }
+        }
+
+        if (caminho.isEmpty() || !caminho_existe) {
             const QString tipo = identificar_tipo_arquivo(caminho, loc, item.value("nome").toString());
+            const QString mime = detectar_mime(QFileInfo(caminho), item.value("nome").toString());
             const QString autor = !item.value("autor").toString().trimmed().isEmpty()
                                       ? item.value("autor").toString()
                                       : (!qEnvironmentVariable("USERNAME").trimmed().isEmpty()
@@ -189,6 +331,7 @@ QVariantMap get_metadados_gc(source::services::GerenciadorColunas* gc, const QVa
 
             return {
                 {"tipo", tipo},
+                {"mime", mime},
                 {"atributos", item.value("atributos", loc ? loc->get_text("file") : QStringLiteral("file"))},
                 {"autor", autor},
                 {"protegido", item.value("protegido", loc ? loc->get_text("no") : QStringLiteral("no"))},
@@ -196,13 +339,6 @@ QVariantMap get_metadados_gc(source::services::GerenciadorColunas* gc, const QVa
                 {"duracao", item.value("duracao", QString())},
                 {"taxa_bits", item.value("taxa_bits", QString())}
             };
-        }
-
-        {
-            QMutexLocker locker(&gc->lock_cache);
-            if (gc->cache_metadados.contains(caminho)) {
-                return gc->cache_metadados.value(caminho).toMap();
-            }
         }
 
         QFileInfo fi(caminho);
@@ -214,6 +350,7 @@ QVariantMap get_metadados_gc(source::services::GerenciadorColunas* gc, const QVa
 
         // Para arquivo, prioriza extensão na coluna "tipo"; para pasta, mantém descrição traduzida.
         metadados.insert("tipo", fi.isDir() ? tipo_categoria : (extensao.isEmpty() ? tipo_categoria : extensao));
+        metadados.insert("mime", detectar_mime(fi, item.value("nome").toString()));
 
         const qint64 tamanho_bytes = fi.isDir() ? get_tamanho_bytes(gc, item) : fi.size();
         metadados.insert("tamanho", get_formata_tamanho(static_cast<double>(tamanho_bytes)));
@@ -239,9 +376,12 @@ QVariantMap get_metadados_gc(source::services::GerenciadorColunas* gc, const QVa
             metadados.insert("arquivos", arquivos);
         }
 
-        metadados.insert("data_acesso", fi.lastRead().toString("yyyy-MM-dd HH:mm:ss"));
-        metadados.insert("data_modificacao", fi.lastModified().toString("yyyy-MM-dd HH:mm:ss"));
-        metadados.insert("data_criacao", fi.birthTime().toString("yyyy-MM-dd HH:mm:ss"));
+        const QDateTime data_modificacao = primeira_data_valida(fi.lastModified(), fi.metadataChangeTime());
+        const QDateTime data_criacao = primeira_data_valida(fi.birthTime(), fi.metadataChangeTime(), data_modificacao);
+        const QDateTime data_acesso = primeira_data_valida(fi.lastRead(), data_modificacao, data_criacao);
+        metadados.insert("data_acesso", formatar_data_metadado(data_acesso));
+        metadados.insert("data_modificacao", formatar_data_metadado(data_modificacao));
+        metadados.insert("data_criacao", formatar_data_metadado(data_criacao));
         metadados.insert("atributos", get_atributos_arquivo(item, loc));
         metadados.insert("autor", get_autor_arquivo(item, loc));
         metadados.insert("protegido", get_protecao_arquivo(gc, item, loc));
@@ -308,10 +448,7 @@ QVariantMap get_metadados_gc(source::services::GerenciadorColunas* gc, const QVa
             preencher_unidades_tamanho(metadados, fi.size(), QStringLiteral("binary_file"));
         }
 
-        {
-            QMutexLocker locker(&gc->lock_cache);
-            gc->cache_metadados[caminho] = metadados;
-        }
+        armazenar_cache_metadados(gc, caminho, metadados);
         return metadados;
     } catch (...) {
         source::utils::LogManager::get_logger().error("Erro ao obter metadados", true);

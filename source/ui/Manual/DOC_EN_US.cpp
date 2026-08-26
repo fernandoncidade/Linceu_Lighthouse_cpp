@@ -40,6 +40,60 @@ std::vector<ManualSection> doc_en_us() {
             }
         },
         {
+            QStringLiteral("open-files-mime-folder-dates"),
+            QStringLiteral("Opening files, MIME, and folder dates"),
+            {
+                QStringLiteral("The table can now help open reported items even when they are not text files. When you use Open or double-click a file row, the application tries the Windows default app and may offer other compatible choices."),
+                QStringLiteral("The MIME column shows the real content type in readable language for the current interface language, while keeping the original identifier in parentheses for audits. Creation Date, Modification Date, and Access Date are also filled for folders, subfolders, and child directories during scans."),
+            },
+            {
+                QStringLiteral("Use Open or double-click to open documents, images, videos, spreadsheets, executables, archives, and other system-recognized file types."),
+                QStringLiteral("When Windows reports more than one option, choose the desired application in the selection window."),
+                QStringLiteral("Enable the MIME column to review the detected content family and subtype."),
+                QStringLiteral("Enable the three date columns to audit when folders and files were created, modified, or accessed."),
+            },
+            {
+                {
+                    QStringLiteral("Open any file type"),
+                    {
+                        QStringLiteral("1) Select a row that represents an existing file."),
+                        QStringLiteral("2) Double-click it or use the Open action."),
+                        QStringLiteral("3) If an application chooser appears, select the desired application and confirm."),
+                        QStringLiteral("4) If the item is a folder, use the open-folder action to navigate to it in File Explorer."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Read the MIME column"),
+                    {
+                        QStringLiteral("The first part shows the content family, such as Text, Image, Video, Audio, or Application."),
+                        QStringLiteral("The second part shows the subtype in simple language, such as PDF, PNG, ZIP, or Plain text."),
+                        QStringLiteral("The text in parentheses keeps the original identifier, for example text/plain or application/pdf."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Check dates for folders and subfolders"),
+                    {
+                        QStringLiteral("1) Open the column menu and enable Creation Date, Modification Date, and Access Date."),
+                        QStringLiteral("2) Run a new scan on the selected directory."),
+                        QStringLiteral("3) Sort or filter the table to review child folders and deeper directories."),
+                        QStringLiteral("4) Use these dates to compare recent changes with recorded events."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("If a file does not open"),
+                    {
+                        QStringLiteral("Confirm that the path still exists and that you have read permission."),
+                        QStringLiteral("Check whether Windows has an application associated with that file type."),
+                        QStringLiteral("When needed, manually choose another compatible application in the selection window."),
+                    },
+                    {}
+                },
+            }
+        },
+        {
             QStringLiteral("high-volume-operation"),
             QStringLiteral("High-volume operation"),
             {

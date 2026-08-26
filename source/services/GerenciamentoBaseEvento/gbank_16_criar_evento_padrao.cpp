@@ -29,6 +29,19 @@ qint64 directory_size_and_count(const QString& dirPath, qint64& filesCount) {
     }
     return total;
 }
+
+QDateTime primeira_data_valida(const QDateTime& principal,
+                               const QDateTime& fallback_1 = QDateTime(),
+                               const QDateTime& fallback_2 = QDateTime()) {
+    if (principal.isValid()) return principal;
+    if (fallback_1.isValid()) return fallback_1;
+    if (fallback_2.isValid()) return fallback_2;
+    return {};
+}
+
+QString formatar_data_metadado(const QDateTime& data) {
+    return data.isValid() ? data.toString(QStringLiteral("yyyy-MM-dd HH:mm:ss")) : QString();
+}
 }
 
 namespace source::services::GerenciamentoBaseEvento {
@@ -42,16 +55,31 @@ QVariantMap _criar_evento_padrao(source::services::BaseEvento* self, const QStri
         QString tipo_arquivo;
         qint64 size_b = 0;
         qint64 arquivos = 0;
+        const QString tipo_preferencial =
+            source::services::GerenciamentoMetadados::extensao_tipo_preferencial(nome_base);
 
         QDateTime dc = QDateTime::currentDateTime();
         QDateTime dm = dc;
         QDateTime da = dc;
 
+        QVariantMap item_data{{"nome", nome_base}, {"dir_atual", dir_atual}, {"dir_anterior", dir_anterior}};
+        if (self->observador->gerenciador_colunas) {
+            metadados = self->observador->gerenciador_colunas->get_metadados(item_data);
+        }
+        if (!tipo_preferencial.isEmpty()) {
+            metadados["tipo"] = tipo_preferencial;
+        }
+
         if (QFileInfo::exists(caminho)) {
             const bool e_pasta = self->is_directory(caminho);
             if (e_pasta) {
                 tipo_arquivo = self->observador->loc ? self->observador->loc->get_text("folder") : QStringLiteral("folder");
-                size_b = directory_size_and_count(caminho, arquivos);
+                if (metadados.contains(QStringLiteral("size_b"))) {
+                    size_b = metadados.value(QStringLiteral("size_b")).toLongLong();
+                    arquivos = metadados.value(QStringLiteral("arquivos")).toLongLong();
+                } else {
+                    size_b = directory_size_and_count(caminho, arquivos);
+                }
             } else {
                 const QString ext = QFileInfo(nome_base).suffix().toLower();
                 tipo_arquivo = ext.isEmpty() ? (self->observador->loc ? self->observador->loc->get_text("unknown") : QStringLiteral("unknown")) : ext;
@@ -59,9 +87,10 @@ QVariantMap _criar_evento_padrao(source::services::BaseEvento* self, const QStri
             }
 
             QFileInfo st(caminho);
-            dc = st.birthTime().isValid() ? st.birthTime() : QDateTime::currentDateTime();
-            dm = st.lastModified();
-            da = st.lastRead();
+            const QDateTime agora = QDateTime::currentDateTime();
+            dm = primeira_data_valida(st.lastModified(), st.metadataChangeTime(), agora);
+            dc = primeira_data_valida(st.birthTime(), st.metadataChangeTime(), dm);
+            da = primeira_data_valida(st.lastRead(), dm, dc);
         } else {
             tipo_arquivo = source::services::GerenciamentoMetadados::identificar_tipo_arquivo(
                 nome_base, self->observador->loc, nome_base);
@@ -80,15 +109,16 @@ QVariantMap _criar_evento_padrao(source::services::BaseEvento* self, const QStri
                 size_b = directory_size_and_count(dir_anterior, arquivos);
             }
         }
+        if (!tipo_preferencial.isEmpty()) {
+            tipo_arquivo = tipo_preferencial;
+        }
 
         const QString extDot = QStringLiteral(".") + QFileInfo(nome_base).suffix().toLower();
         const QSet<QString> tipos_temporarios = {".tmp", ".temp", ".~", ".swp", ".swo", ".$$", ".old", ".part", ".cache", ".crdownload", ".download", ".partial", ".lock", ".thumb", ".TMP", ".TEMP"};
         const QString lower = nome_base.toLower();
         const bool eh_temporario = tipos_temporarios.contains(extDot) || lower.startsWith("~") || lower.startsWith("._") || lower.startsWith(".#") || lower.startsWith("~$") || lower.endsWith("~") || lower.endsWith(".lock") || lower.contains("temp-index") || lower.contains("~index") || lower.contains("thumb");
-
-        QVariantMap item_data{{"nome", nome_base}, {"dir_atual", dir_atual}, {"dir_anterior", dir_anterior}, {"tipo", tipo_arquivo}};
-        if (self->observador->gerenciador_colunas) {
-            metadados = self->observador->gerenciador_colunas->get_metadados(item_data);
+        if (!tipo_preferencial.isEmpty()) {
+            metadados["tipo"] = tipo_preferencial;
         }
 
         if (self->observador->loc && tipo_arquivo == self->observador->loc->get_text("folder")) {
@@ -107,8 +137,9 @@ QVariantMap _criar_evento_padrao(source::services::BaseEvento* self, const QStri
 
         return {
             {"tipo_operacao", tipo_operacao}, {"nome", nome_base}, {"dir_anterior", dir_anterior}, {"dir_atual", dir_atual},
-            {"data_criacao", dc.toString("yyyy-MM-dd HH:mm:ss")}, {"data_modificacao", dm.toString("yyyy-MM-dd HH:mm:ss")}, {"data_acesso", da.toString("yyyy-MM-dd HH:mm:ss")},
+            {"data_criacao", formatar_data_metadado(dc)}, {"data_modificacao", formatar_data_metadado(dm)}, {"data_acesso", formatar_data_metadado(da)},
             {"tipo", tipo_arquivo},
+            {"mime", metadados.value("mime")},
             {"size_b", metadados.value("size_b", size_b)}, {"size_kb", metadados.value("size_kb", QString::number(size_b / 1024.0, 'f', 2))},
             {"size_mb", metadados.value("size_mb", QString::number(size_b / (1024.0 * 1024.0), 'f', 2))}, {"size_gb", metadados.value("size_gb", QString::number(size_b / (1024.0 * 1024.0 * 1024.0), 'f', 2))},
             {"size_tb", metadados.value("size_tb", QString::number(size_b / (1024.0 * 1024.0 * 1024.0 * 1024.0), 'f', 2))},

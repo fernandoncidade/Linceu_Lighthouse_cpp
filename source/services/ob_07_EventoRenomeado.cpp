@@ -105,9 +105,26 @@ bool EventoRenomeado::processar(const QString& nome_arquivo, const QString& cami
         if (!nome_antigo.isEmpty() && !dir_anterior.isEmpty()) {
             observador->registros_anteriores.remove(dir_anterior);
             observador->registros_anteriores.remove(nome_antigo);
-            observador->arquivos_recem_renomeados[nome_arquivo] = tempo_atual;
-            observador->arquivos_recem_adicionados[nome_arquivo] = tempo_atual;
-            observador->ultima_modificacao[nome_arquivo] = tempo_atual;
+            const auto marcar_recente = [this, tempo_atual](const QString& chave) {
+                const QString normalizada = chave.trimmed();
+                if (normalizada.isEmpty()) return;
+                observador->arquivos_recem_renomeados[normalizada] = tempo_atual;
+                observador->ultima_modificacao[normalizada] = tempo_atual;
+            };
+            const auto marcar_adicionado = [this, tempo_atual](const QString& chave) {
+                const QString normalizada = chave.trimmed();
+                if (normalizada.isEmpty()) return;
+                observador->arquivos_recem_adicionados[normalizada] = tempo_atual;
+            };
+
+            marcar_recente(nome_arquivo);
+            marcar_recente(QFileInfo(nome_arquivo).fileName());
+            marcar_recente(caminho_completo);
+            marcar_recente(dir_anterior);
+            marcar_recente(QFileInfo(dir_anterior).fileName());
+            marcar_adicionado(nome_arquivo);
+            marcar_adicionado(QFileInfo(nome_arquivo).fileName());
+            marcar_adicionado(caminho_completo);
 
             const QString operacao = mudou_de_diretorio(dir_anterior, caminho_completo)
                                          ? QStringLiteral("op_moved")

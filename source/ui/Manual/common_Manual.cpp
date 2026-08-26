@@ -4,7 +4,9 @@
 
 #include "source/utils/CaminhoPersistenteUtils.h"
 
-namespace source::ui::manual {
+namespace source {
+namespace ui {
+namespace manual {
 
 namespace {
 
@@ -178,7 +180,7 @@ std::vector<ShortcutEntry> shortcut_entries(const QString& lang) {
 }
 
 std::vector<QString> shortcut_lines(const QString& lang) {
-    const auto entries = shortcut_entries(lang);
+    const auto entries = source::ui::manual::shortcut_entries(lang);
     std::vector<QString> lines;
     lines.reserve(entries.size());
 
@@ -189,4 +191,6 @@ std::vector<QString> shortcut_lines(const QString& lang) {
     return lines;
 }
 
-} // namespace source::ui::manual
+} // namespace manual
+} // namespace ui
+} // namespace source

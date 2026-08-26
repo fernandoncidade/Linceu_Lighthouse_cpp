@@ -29,6 +29,7 @@ QVariantMap build_evento_scan(source::services::DiretorioScanner* self, const QS
         {"nome", nome}, {"dir_anterior", ""}, {"dir_atual", caminho},
         {"data_criacao", m.value("data_criacao", "")}, {"data_modificacao", m.value("data_modificacao", "")}, {"data_acesso", m.value("data_acesso", "")},
         {"tipo", tipo},
+        {"mime", m.value("mime", "")},
         {"size_b", m.value("size_b", "")}, {"size_kb", m.value("size_kb", "")}, {"size_mb", m.value("size_mb", "")}, {"size_gb", m.value("size_gb", "")}, {"size_tb", m.value("size_tb", "")},
         {"atributos", m.value("atributos", "")}, {"autor", m.value("autor", "")}, {"dimensoes", m.value("dimensoes", "")}, {"duracao", m.value("duracao", "")},
         {"taxa_bits", m.value("taxa_bits", "")}, {"protegido", m.value("protegido", "")},

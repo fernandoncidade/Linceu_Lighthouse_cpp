@@ -40,6 +40,60 @@ std::vector<ManualSection> doc_de_de() {
             }
         },
         {
+            QStringLiteral("dateien-oeffnen-mime-ordnerdaten"),
+            QStringLiteral("Dateien öffnen, MIME und Ordnerdaten"),
+            {
+                QStringLiteral("Die Tabelle hilft nun dabei, gemeldete Elemente auch dann zu öffnen, wenn es keine Textdateien sind. Bei Öffnen oder Doppelklick auf eine Dateizeile versucht die Anwendung, die Windows-Standard-App zu verwenden, und kann weitere kompatible Optionen anbieten."),
+                QStringLiteral("Die MIME-Spalte zeigt den tatsächlichen Inhaltstyp in lesbarer Form in der aktuellen Sprache und behält die ursprüngliche Kennung in Klammern für Audits bei. Erstellungsdatum, Änderungsdatum und Zugriffsdatum werden während des Scans auch für Ordner, Unterordner und untergeordnete Verzeichnisse gefüllt."),
+            },
+            {
+                QStringLiteral("Nutzen Sie Öffnen oder Doppelklick für Dokumente, Bilder, Videos, Tabellen, ausführbare Dateien, Archive und andere vom System erkannte Dateitypen."),
+                QStringLiteral("Wenn Windows mehrere Optionen meldet, wählen Sie die gewünschte Anwendung im Auswahlfenster."),
+                QStringLiteral("Aktivieren Sie die MIME-Spalte, um erkannte Inhaltsfamilie und Untertyp zu prüfen."),
+                QStringLiteral("Aktivieren Sie die drei Datumsspalten, um zu prüfen, wann Ordner und Dateien erstellt, geändert oder aufgerufen wurden."),
+            },
+            {
+                {
+                    QStringLiteral("Beliebige Dateitypen öffnen"),
+                    {
+                        QStringLiteral("1) Wählen Sie eine Zeile, die eine vorhandene Datei darstellt."),
+                        QStringLiteral("2) Doppelklicken Sie darauf oder verwenden Sie die Aktion Öffnen."),
+                        QStringLiteral("3) Wenn ein Auswahlfenster erscheint, wählen Sie die gewünschte Anwendung und bestätigen Sie."),
+                        QStringLiteral("4) Wenn das Element ein Ordner ist, nutzen Sie die Ordner-öffnen-Aktion, um ihn im Datei-Explorer anzuzeigen."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("MIME-Spalte verstehen"),
+                    {
+                        QStringLiteral("Der erste Teil zeigt die Inhaltsfamilie, etwa Text, Bild, Video, Audio oder Anwendung."),
+                        QStringLiteral("Der zweite Teil zeigt den Untertyp in einfacher Sprache, etwa PDF, PNG, ZIP oder Einfacher Text."),
+                        QStringLiteral("Der Text in Klammern behält die ursprüngliche Kennung bei, zum Beispiel text/plain oder application/pdf."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Daten von Ordnern und Unterordnern prüfen"),
+                    {
+                        QStringLiteral("1) Öffnen Sie das Spaltenmenü und aktivieren Sie Erstellungsdatum, Änderungsdatum und Zugriffsdatum."),
+                        QStringLiteral("2) Führen Sie einen neuen Scan für das gewählte Verzeichnis aus."),
+                        QStringLiteral("3) Sortieren oder filtern Sie die Tabelle, um untergeordnete Ordner und tiefere Verzeichnisse zu prüfen."),
+                        QStringLiteral("4) Nutzen Sie diese Daten, um aktuelle Änderungen mit aufgezeichneten Ereignissen zu vergleichen."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Wenn eine Datei nicht geöffnet wird"),
+                    {
+                        QStringLiteral("Prüfen Sie, ob der Pfad noch existiert und ob Sie Leserechte besitzen."),
+                        QStringLiteral("Prüfen Sie, ob Windows eine Anwendung mit diesem Dateityp verknüpft hat."),
+                        QStringLiteral("Wählen Sie bei Bedarf manuell eine andere kompatible Anwendung im Auswahlfenster."),
+                    },
+                    {}
+                },
+            }
+        },
+        {
             QStringLiteral("betrieb-bei-hoher-last"),
             QStringLiteral("Betrieb bei hoher Last"),
             {

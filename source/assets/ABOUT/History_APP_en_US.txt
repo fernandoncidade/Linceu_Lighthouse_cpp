@@ -1,29 +1,47 @@
-Justification of the Name: Linceu Lighthouse
+History and Justification of the Name: Linceu Lighthouse
 
-The name Linceu Lighthouse was not chosen by chance. It encapsulates the fusion of two powerful concepts of surveillance and guidance, accurately reflecting the essence and functionality of our file integrity monitoring software.
+1. The Mythological and Conceptual Fusion: Vision and Guidance
 
-The Vision of Lynceus: Seeing the Imperceptible
+The name Linceu Lighthouse was not chosen by chance. It synthesizes the union of two fundamental pillars of digital surveillance and navigability: the perception of the imperceptible and the clarity of strategic guidance.
 
-In Greek mythology, Lynceus was the lookout for the Argonauts, a hero blessed with superhuman vision. His legendary ability was not limited to seeing great distances; he could see through barriers like walls, trees, and even the ground. Nothing escaped his gaze. He was the first line of defense, detecting hidden dangers and movements to ensure his crew's safety.
+The Vision of Lynceus: Seeing the Hidden and Imperceptible
+In Greek mythology, Lynceus was the legendary lookout of the ship of the Argonauts, blessed with superhuman visual acuity. His vision was not restricted to seeing across infinite distances: he possessed the singular gift of gazing through solid obstacles, walls, dense forests, and even deep into the earth. Nothing escaped his attentive gaze; he was the pioneering safeguard who identified hidden movements and imminent perils before any other member of the crew could notice them.
 
-Like the mythological hero, Linceu Lighthouse possesses an unparalleled digital "vision." It operates at the heart of your system, monitoring a directory and its subdirectories with an acuity that perceives every change, no matter how subtle. Operations that would be invisible or fleeting to an ordinary user—additions, deletions, renames, modifications, and even the simple act of scanning—are instantly detected and recorded. Our software is the Lynceus of your file system: it sees what is hidden and ensures that no action goes unnoticed.
+Linceu Lighthouse reproduces this acuity in the computer's file system. Operating directly at the heart of the operating system (Windows), it monitors directories, subfolders, and drives with microscopic precision. Events that would otherwise be fleeting, imperceptible, or silent—rapid background process modifications, cascading renames, directory moves, accidental deletions, or temporary file creations—are captured instantaneously. Our engine is the Lynceus of your disk: it sees what is hidden and ensures that no change goes unnoticed.
 
-The Light of the Lighthouse: Transforming Data into Clarity
+The Light of the Lighthouse: Illuminating Chaos into Actionable Intelligence
+However, merely seeing the event is not enough; it is imperative to understand the route and act with safety. From this necessity arises the concept of the "Lighthouse." Amidst storm darkness and ocean uncertainty, the lighthouse projects a powerful and unmistakable beam of light, dispersing the fog and serving as an unwavering compass for those who navigate.
 
-Seeing is not enough; it is necessary to understand and navigate safely. This is where the "Lighthouse" comes in. A lighthouse does not just see the darkness; it projects a powerful beam of light with a unique signature, serving as a reliable guide for navigators. It transforms the uncertainty of the night into a clear path, warning of dangers and confirming the safe route to port.
+Linceu Lighthouse performs this exact role amidst the whirlwind of file system data:
+* Visual and Semantic Signaling: Each operation receives immediate chromatic distinction and accurate categorization, acting like the unique light signature of a nautical lighthouse.
+* Focus and Targeted Filtering: Advanced filtering tools allow directing the light beam precisely onto the desired date range, extension, process, or folder, eliminating operational noise.
+* Visual and Statistical Intelligence: Featuring 17 types of chart visualizations and in-depth analysis of over 30 categories of metadata, the application transforms raw logs into visual and deterministic intelligence.
+* Universality and Accessibility: Just as a lighthouse's light guides any sailor, native support for 6 languages ensures immediate global accessibility.
 
-Linceu Lighthouse does exactly that with the data it collects. It doesn't just report an avalanche of raw information. It illuminates it:
 
-* Clear Signaling: Each type of operation is identified with distinct colors, acting like a lighthouse's light signature, allowing for immediate identification of what has happened.
+2. The Origin and Motivation of the Project
 
-* Focus and Guidance: The advanced filtering system by event type, date, or file extension allows the user to focus the "beam of light" exactly where needed, ignoring the noise and concentrating on what is important.
+Linceu Lighthouse was born from identifying a critical void in the desktop software ecosystem. Historically, users and professionals faced two unsatisfactory extremes:
 
-* Panoramic View and Analysis: The ability to generate statistical graphs and diagrams and analyze over thirty types of metadata transforms raw data into actionable intelligence, offering a clear view of the digital "terrain."
+On one side, simplistic and ephemeral free utilities that display fleeting changes without historical persistence, without metadata context, without move/rename correlation, and with dated interfaces.
+On the other side, massive enterprise software (server FIM/SIEM) and low-level diagnostic tools (such as Process Monitor) that are excessively complex, expensive (hundreds of dollars in licenses), or mandate sending data to cloud servers.
 
-* Universal Accessibility: Just as a lighthouse's light is a universal guide, our translation system in six languages ensures that this clarity and security are accessible to users worldwide.
+There was a profound lack of a modern, local, visual, and accessible desktop platform dedicated to answering the single most elementary and frequent question of anyone in front of a computer:
+"What happened to my files?"
 
-In summary:
 
-Linceu Lighthouse is the perfect fusion of these two concepts. It combines the penetrating vision of Lynceus to detect every change in your files with the guiding light of a Lighthouse to interpret, analyze, and act on that information.
+3. Technological Evolution: From Concept to Native C++17/Qt6 Engine
 
-It is your digital guardian, which sees all and illuminates all, providing continuous surveillance, data intelligence, and the clarity needed to maintain the integrity and security of your digital environment.
+The project began its conceptual journey as a prototype focused on integrity auditing. However, the need to process hundreds of thousands of events in real time, without freezing the graphical user interface and while ensuring instantaneous and reliable recording, demanded a radical evolution in software engineering.
+
+Linceu Lighthouse was completely rewritten as a native desktop application in C++17 with Qt6, integrating native asynchronous Windows APIs (ReadDirectoryChangesW), mutex-protected queues and buffers, parallel processing threads with QtConcurrent, persistent local SQLite storage, and a dedicated hardware-accelerated charting subsystem (OpenGL / Qt Quick).
+
+
+4. Commitment to Sovereign Privacy (Local-First)
+
+In an era dominated by cloud dependency, invasive telemetry, and indiscriminate data transmission to remote servers, Linceu Lighthouse upholds an uncompromising ethical stance:
+* 100% Offline and Local: All databases, metadata, analytics, and evidence reside exclusively on the user's computer (%LOCALAPPDATA%\LinceuLighthouse).
+* No Cloud, No Accounts, No Telemetry: There is no collection of analytical data, nor forced remote authentication.
+* Deterministic Intelligence without AI: All classification, pattern analysis, and integrity scoring derive from deterministic mathematical and statistical algorithms, free from language models (LLM) or external inferences.
+
+Linceu Lighthouse is the perfect fusion between the penetrating vision of Lynceus and the guiding light of the Lighthouse — the sovereign digital guardian that sees all, illuminates all, and protects the integrity of your workspace.

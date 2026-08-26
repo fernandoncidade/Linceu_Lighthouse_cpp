@@ -64,10 +64,11 @@ void inicializar_sistema_evento(QObject* interfaceMonitor) {
         auto* exclusaoTimer = qobject_cast<QTimer*>(interfaceMonitor->property("exclusao_timer").value<QObject*>());
         if (!exclusaoTimer) {
             exclusaoTimer = new QTimer(interfaceMonitor);
+            exclusaoTimer->setTimerType(Qt::PreciseTimer);
             QObject::connect(exclusaoTimer, &QTimer::timeout, interfaceMonitor, [interfaceMonitor]() {
                 processar_exclusoes_pendentes(interfaceMonitor);
             });
-            exclusaoTimer->start(1000);
+            exclusaoTimer->start(100);
             interfaceMonitor->setProperty("exclusao_timer", QVariant::fromValue(static_cast<QObject*>(exclusaoTimer)));
         }
     } catch (...) {

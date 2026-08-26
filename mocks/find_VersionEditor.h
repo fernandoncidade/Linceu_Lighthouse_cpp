@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QHash>
 #include <QString>
 #include <QWidget>
 
@@ -7,6 +8,7 @@ QT_BEGIN_NAMESPACE
 class QComboBox;
 class QLineEdit;
 class QSpinBox;
+class QTabWidget;
 class QTextEdit;
 QT_END_NAMESPACE
 
@@ -20,7 +22,9 @@ private:
     QString selected_base_dir_;
 
     QLineEdit* folder_path_;
-    QTextEdit* status_;
+    QTabWidget* tab_widget_;
+    QTextEdit* general_status_;
+    QHash<QString, QTextEdit*> group_status_map_;
 
     QLineEdit* pt_version_;
     QSpinBox* pt_day_;
@@ -55,6 +59,9 @@ private:
     void on_select_folder();
     void on_check();
     void on_save();
+    void on_sync_pt_version();
+    void on_set_today_all();
+    void load_versions_and_dates_from_files();
 };
 
 }  // namespace mocks

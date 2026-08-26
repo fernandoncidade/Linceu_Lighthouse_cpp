@@ -1,29 +1,47 @@
-Justificativa do Nome: Linceu Lighthouse
+História e Justificativa do Nome: Linceu Lighthouse
 
-O nome Linceu Lighthouse (Farol de Linceu) não foi escolhido ao acaso. Ele encapsula a fusão de dois conceitos poderosos de vigilância e orientação, refletindo com precisão a essência e a funcionalidade do nosso software de monitoramento de integridade de arquivos.
+1. A Fusão Mitológica e Conceitual: Visão e Orientação
 
-A Visão de Linceu: Ver o Imperceptível
+O nome Linceu Lighthouse (Farol de Linceu) não foi escolhido por acaso. Ele sintetiza a união de dois pilares fundamentais da vigilância e da navegabilidade digital: a percepção do imperceptível e a clareza da orientação estratégica.
 
-Na mitologia grega, Linceu era o vigia dos Argonautas, um herói abençoado com uma visão sobre-humana. Sua capacidade lendária não se limitava a enxergar a grandes distâncias; ele podia ver através de barreiras como muralhas, árvores e até mesmo o solo. Nada escapava ao seu olhar. Ele era a primeira linha de defesa, detectando perigos e movimentos ocultos para garantir a segurança de sua tripulação.
+A Visão de Linceu: Ver o Oculto e o Imperceptível
+Na mitologia grega, Linceu foi o vigia lendário da nau dos Argonautas, agraciado com uma acuidade visual sobre-humana. Sua visão não se restringia a enxergar a distâncias infinitas: ele possuía o dom singular de perscrutar através de obstáculos sólidos, muros, florestas densas e até o interior da terra. Nada escapava ao seu olhar atencioso; ele era a salvaguarda pioneira que identificava movimentos ocultos e perigos iminentes antes que qualquer outro membro da tripulação pudesse notá-los.
 
-Assim como o herói mitológico, o Linceu Lighthouse possui uma "visão" digital incomparável. Ele opera no coração do seu sistema, monitorando um diretório e seus subdiretórios com uma acuidade que percebe cada alteração, não importa quão sutil. As operações que para um usuário comum seriam invisíveis ou passageiras — adições, exclusões, renomeações, modificações e até mesmo o simples ato de escaneamento — são instantaneamente detectadas e registradas. Nosso software é o Linceu do seu sistema de arquivos: ele vê o que está oculto e garante que nenhuma ação passe despercebida.
+O Linceu Lighthouse reproduz essa acuidade no sistema de arquivos do computador. Atuando diretamente no coração do sistema operacional (Windows), ele monitora diretórios, subpastas e unidades com precisão microscópica. Eventos que seriam efêmeros, imperceptíveis ou silenciosos — modificações rápidas de processos em background, renomeações em cascata, movimentações entre diretórios, exclusões involuntárias ou criações de arquivos temporários — são capturados instantaneamente. Nosso motor é o Linceu do seu disco: ele enxerga o que está oculto e garante que nenhuma alteração passe despercebida.
 
-A Luz do Farol (Lighthouse): Transformando Dados em Clareza
+A Luz do Farol (Lighthouse): Iluminando o Caos em Inteligência Acionável
+No entanto, apenas enxergar o evento não basta; é imperativo compreender a rota e agir com segurança. É dessa necessidade que nasce o conceito do "Farol" (Lighthouse). Em meio à escuridão da tempestade e à incerteza dos mares, o farol projeta um feixe de luz potente e inconfundível, dissipando a névoa e servindo como bússola inabalável para quem navega.
 
-Ver não é o suficiente; é preciso compreender e navegar com segurança. É aqui que entra o "Lighthouse" (Farol). Um farol não apenas vê a escuridão; ele projeta um feixe de luz potente e com uma assinatura única, servindo como um guia confiável para os navegantes. Ele transforma a incerteza da noite em um caminho claro, alertando sobre perigos e confirmando a rota segura para o porto.
+O Linceu Lighthouse executa exatamente esse papel diante do turbilhão de dados do sistema de arquivos:
+* Sinalização Visual e Semântica: Cada operação recebe distinção cromática imediata e categorização precisa, agindo como a assinatura de luz de um farol náutico.
+* Foco e Filtragem Direcionada: Ferramentas avançadas de filtragem permitem direcionar o feixe de luz exatamente sobre o intervalo de datas, a extensão, o processo ou a pasta desejada, eliminando o ruído operacional.
+* Inteligência Visual e Estatística: Com 17 tipos de visualizações gráficas e análise aprofundada de mais de 30 categorias de metadados, o aplicativo transforma registros brutos em inteligência visual e determinística.
+* Universalidade e Acessibilidade: Como a luz de um farol que guia qualquer marinheiro, o suporte nativo a 6 idiomas assegura acessibilidade global instantânea.
 
-O Linceu Lighthouse faz exatamente isso com os dados que coleta. Ele não apenas reporta uma avalanche de informações brutas. Ele as ilumina:
 
-* Sinalização Clara: Cada tipo de operação é identificado com cores distintas, agindo como a assinatura de luz de um farol, permitindo a identificação imediata do que aconteceu.
+2. A Origem e a Motivação do Projeto
 
-* Foco e Orientação: O sistema de filtragem avançado por tipo de evento, data ou extensão de arquivo permite que o usuário foque o "feixe de luz" exatamente onde precisa, ignorando o ruído e concentrando-se no que é importante.
+O Linceu Lighthouse nasceu da identificação de uma lacuna crítica no ecossistema de software para desktop. Historicamente, os usuários e profissionais deparavam-se com dois extremos insatisfatórios:
 
-* Visão Panorâmica e Análise: A capacidade de gerar gráficos e diagramas estatísticos e analisar mais de trinta tipos de metadados transforma dados brutos em inteligência acionável, oferecendo uma visão clara do "terreno" digital.
+De um lado, utilitários gratuitos simplistas e efêmeros que exibem alterações passageiras sem persistência histórica, sem contexto de metadados, sem correlação de renomeações/movimentações e com interfaces datadas.
+Do outro lado, gigantescos softwares corporativos (FIM/SIEM de servidores) e ferramentas de diagnóstico de baixo nível (como o Process Monitor), que são excessivamente complexos, caros (licenças de centenas de dólares) ou exigem envio de dados para servidores na nuvem.
 
-* Acessibilidade Universal: Assim como a luz de um farol é um guia universal, nosso sistema de tradução em seis idiomas garante que essa clareza e segurança sejam acessíveis a usuários em todo o mundo.
+Faltava uma plataforma desktop local, moderna, visual e acessível, dedicada a responder à pergunta mais elementar e frequente de qualquer pessoa diante do computador:
+"O que aconteceu com os meus arquivos?"
 
-Em síntese:
 
-Linceu Lighthouse é a fusão perfeita desses dois conceitos. Ele combina a visão penetrante de Linceu para detectar cada alteração em seus arquivos com a luz orientadora de um Farol para interpretar, analisar e agir com base nessa informação.
+3. A Evolução Tecnológica: Da Ideia ao Motor Nativo C++17/Qt6
 
-É o seu guardião digital, que vê tudo e ilumina tudo, proporcionando vigilância contínua, inteligência de dados e a clareza necessária para manter a integridade e a segurança do seu ambiente digital.
+O projeto iniciou sua trajetória conceitual como um protótipo focado em auditoria de integridade. Contudo, a necessidade de processar centenas de milhares de eventos em tempo real, sem congelar a interface gráfica e garantindo gravação instantânea e confiável, demandou uma evolução radical na engenharia do software.
+
+O Linceu Lighthouse foi totalmente reescrito como uma aplicação desktop nativa em C++17 com Qt6, integrando APIs nativas assíncronas do Windows (ReadDirectoryChangesW), filas e buffers com proteção por mutex, threads de processamento paralelo com QtConcurrent, armazenamento persistente em SQLite local e um subsistema próprio de renderização gráfica acelerada por hardware (OpenGL / Qt Quick).
+
+
+4. O Compromisso com a Privacidade Soberana (Local-First)
+
+Em uma era dominada pela dependência de nuvem, telemetria invasiva e envio indiscriminado de dados para servidores remotos, o Linceu Lighthouse assume um posicionamento ético inegociável:
+* 100% Offline e Local: Todos os bancos de dados, metadados, análises e evidências residem exclusivamente no computador do usuário (%LOCALAPPDATA%\LinceuLighthouse).
+* Sem Nuvem, Sem Contas, Sem Telemetria: Não há coleta de dados analíticos, nem autenticação remota forçada.
+* Inteligência Determinística sem IA: Toda a classificação, análise de padrões e score de integridade decorrem de algoritmos matemáticos e estatísticos determinísticos, sem modelos de linguagem (LLM) ou inferências externas.
+
+O Linceu Lighthouse é a fusão perfeita entre a visão penetrante de Linceu e a luz orientadora do Farol — o guardião digital soberano que vê tudo, ilumina tudo e protege a integridade do seu ambiente de trabalho.

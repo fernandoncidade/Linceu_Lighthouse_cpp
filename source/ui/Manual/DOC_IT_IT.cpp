@@ -40,6 +40,60 @@ std::vector<ManualSection> doc_it_it() {
             }
         },
         {
+            QStringLiteral("aprire-file-mime-date-cartelle"),
+            QStringLiteral("Apertura file, MIME e date delle cartelle"),
+            {
+                QStringLiteral("La tabella ora aiuta ad aprire gli elementi segnalati anche quando non sono file di testo. Con Apri o doppio clic su una riga di file, l'applicazione prova a usare l'app predefinita di Windows e può proporre altre opzioni compatibili."),
+                QStringLiteral("La colonna MIME mostra il tipo reale di contenuto in forma leggibile nella lingua corrente, mantenendo l'identificatore originale tra parentesi per la verifica. Le colonne Data di creazione, Data di modifica e Data di accesso vengono compilate anche per cartelle, sottocartelle e directory figlie durante la scansione."),
+            },
+            {
+                QStringLiteral("Usa Apri o doppio clic per aprire documenti, immagini, video, fogli di calcolo, eseguibili, archivi compressi e altri tipi riconosciuti dal sistema."),
+                QStringLiteral("Quando Windows indica più opzioni, scegli l'applicazione desiderata nella finestra di selezione."),
+                QStringLiteral("Attiva la colonna MIME per controllare famiglia e sottotipo del contenuto rilevato."),
+                QStringLiteral("Attiva le tre colonne data per verificare quando cartelle e file sono stati creati, modificati o consultati."),
+            },
+            {
+                {
+                    QStringLiteral("Aprire qualsiasi tipo di file"),
+                    {
+                        QStringLiteral("1) Seleziona una riga che rappresenta un file esistente."),
+                        QStringLiteral("2) Fai doppio clic oppure usa l'azione Apri."),
+                        QStringLiteral("3) Se appare una finestra di scelta, seleziona l'applicazione desiderata e conferma."),
+                        QStringLiteral("4) Se l'elemento è una cartella, usa l'azione di apertura cartella per raggiungerla in Esplora file."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Interpretare la colonna MIME"),
+                    {
+                        QStringLiteral("La prima parte mostra la famiglia del contenuto, come Testo, Immagine, Video, Audio o Applicazione."),
+                        QStringLiteral("La seconda parte mostra il sottotipo in linguaggio semplice, come PDF, PNG, ZIP o Testo normale."),
+                        QStringLiteral("Il testo tra parentesi conserva l'identificatore originale, per esempio text/plain o application/pdf."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Controllare le date di cartelle e sottocartelle"),
+                    {
+                        QStringLiteral("1) Apri il menu delle colonne e abilita Data di creazione, Data di modifica e Data di accesso."),
+                        QStringLiteral("2) Esegui una nuova scansione sulla directory scelta."),
+                        QStringLiteral("3) Ordina o filtra la tabella per rivedere cartelle figlie e directory più profonde."),
+                        QStringLiteral("4) Usa queste date per confrontare modifiche recenti ed eventi registrati."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Se un file non si apre"),
+                    {
+                        QStringLiteral("Verifica che il percorso esista ancora e che tu disponga del permesso di lettura."),
+                        QStringLiteral("Controlla che in Windows esista un'applicazione associata a quel tipo di file."),
+                        QStringLiteral("Quando serve, scegli manualmente un'altra applicazione compatibile nella finestra di selezione."),
+                    },
+                    {}
+                },
+            }
+        },
+        {
             QStringLiteral("operazione-alto-volume"),
             QStringLiteral("Operatività ad alto volume"),
             {

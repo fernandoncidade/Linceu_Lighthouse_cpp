@@ -77,6 +77,8 @@ private:
     QOpenGLShaderProgram m_program;
     QOpenGLBuffer m_fillVbo;
     QOpenGLBuffer m_lineVbo;
+    QOpenGLBuffer m_foregroundFillVbo;
+    QOpenGLBuffer m_foregroundLineVbo;
 };
 
 }  // namespace source::charts_lgpl

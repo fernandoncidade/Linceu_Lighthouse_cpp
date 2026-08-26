@@ -5,11 +5,14 @@
 #include <QVector>
 
 class QLabel;
+class QEvent;
+class QLineEdit;
 class QPushButton;
 class QResizeEvent;
 class QShowEvent;
 class QTabWidget;
 class QTextBrowser;
+class QToolButton;
 class QUrl;
 
 namespace source::ui::GerenciamentoMenusUI {
@@ -49,6 +52,7 @@ public slots:
     void on_idioma_alterado(const QString& novo_idioma = QString());
 
 protected:
+    bool eventFilter(QObject* watched, QEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void showEvent(QShowEvent* event) override;
 
@@ -64,9 +68,18 @@ private:
     int calculate_fixed_label_height(int available_width) const;
     void refresh_fixed_label_geometry();
     void update_tab_labels(int current_index);
+    void update_search_texts();
+    void apply_about_search();
+    void navigate_about_search(int step);
+    void update_about_search_buttons();
+    void reset_about_search_position();
 
 private:
     QLabel* fixed_label_;
+    QLabel* search_label_;
+    QLineEdit* search_edit_;
+    QToolButton* search_previous_button_;
+    QToolButton* search_next_button_;
     QTabWidget* tabs_;
     QPushButton* ok_button_;
     QTextBrowser* history_browser_;
@@ -81,6 +94,8 @@ private:
     QHash<QString, QString> license_document_titles_;
     QHash<QString, QString> license_document_contents_;
     QVector<QPair<QString, QString>> tab_labels_;
+    QTextBrowser* search_current_browser_;
+    int search_current_start_;
     QObject* parent_ref_;
     QObject* loc_;
 };

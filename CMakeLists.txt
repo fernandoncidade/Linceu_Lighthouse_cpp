@@ -98,6 +98,158 @@ endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets Sql Xml Concurrent OpenGL OpenGLWidgets Quick Qml)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Sql Xml Concurrent OpenGL OpenGLWidgets Quick Qml)
 
+set(LINCEU_WINDEPLOYQT_RUNTIME_ARGS)
+set(LINCEU_MSVC_RUNTIME_DLLS)
+set(LINCEU_QT_RUNTIME_TRANSLATION_FILES)
+set(LINCEU_REQUIRED_MSVC_RUNTIME_DLL_NAMES
+        msvcp140.dll
+        msvcp140_1.dll
+        msvcp140_2.dll
+        vcruntime140.dll
+        vcruntime140_1.dll)
+set(LINCEU_UNUSED_MSVC_RUNTIME_DLL_NAMES
+        concrt140.dll
+        msvcp140_atomic_wait.dll
+        msvcp140_codecvt_ids.dll
+        vccorlib140.dll
+        vcruntime140_threads.dll)
+
+if(WIN32)
+        list(APPEND LINCEU_WINDEPLOYQT_RUNTIME_ARGS --no-translations)
+endif()
+
+if(MSVC)
+        list(APPEND LINCEU_WINDEPLOYQT_RUNTIME_ARGS --no-compiler-runtime)
+
+        set(LINCEU_MSVC_REDIST_ROOTS)
+        if(DEFINED ENV{VCToolsRedistDir})
+                file(TO_CMAKE_PATH "$ENV{VCToolsRedistDir}" LINCEU_VCTOOLS_REDIST_DIR)
+                list(APPEND LINCEU_MSVC_REDIST_ROOTS "${LINCEU_VCTOOLS_REDIST_DIR}")
+        endif()
+        if(DEFINED ENV{VCINSTALLDIR})
+                file(TO_CMAKE_PATH "$ENV{VCINSTALLDIR}/Redist/MSVC" LINCEU_VCINSTALL_REDIST_DIR)
+                list(APPEND LINCEU_MSVC_REDIST_ROOTS "${LINCEU_VCINSTALL_REDIST_DIR}")
+        endif()
+        list(APPEND LINCEU_MSVC_REDIST_ROOTS
+                "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/VC/Redist/MSVC")
+        list(REMOVE_DUPLICATES LINCEU_MSVC_REDIST_ROOTS)
+
+        foreach(LINCEU_MSVC_REDIST_ROOT IN LISTS LINCEU_MSVC_REDIST_ROOTS)
+                if(NOT EXISTS "${LINCEU_MSVC_REDIST_ROOT}")
+                        continue()
+                endif()
+
+                file(GLOB LINCEU_MSVC_REDIST_DLLS CONFIGURE_DEPENDS
+                        "${LINCEU_MSVC_REDIST_ROOT}/x64/Microsoft.VC*.CRT/*.dll"
+                        "${LINCEU_MSVC_REDIST_ROOT}/*/x64/Microsoft.VC*.CRT/*.dll")
+                list(APPEND LINCEU_MSVC_RUNTIME_DLLS ${LINCEU_MSVC_REDIST_DLLS})
+        endforeach()
+
+        list(REMOVE_DUPLICATES LINCEU_MSVC_RUNTIME_DLLS)
+        list(SORT LINCEU_MSVC_RUNTIME_DLLS)
+
+        set(LINCEU_FILTERED_MSVC_RUNTIME_DLLS)
+        foreach(LINCEU_MSVC_RUNTIME_DLL IN LISTS LINCEU_MSVC_RUNTIME_DLLS)
+                get_filename_component(LINCEU_MSVC_RUNTIME_DLL_NAME
+                        "${LINCEU_MSVC_RUNTIME_DLL}" NAME)
+                string(TOLOWER "${LINCEU_MSVC_RUNTIME_DLL_NAME}" LINCEU_MSVC_RUNTIME_DLL_NAME_LOWER)
+                if(LINCEU_MSVC_RUNTIME_DLL_NAME_LOWER IN_LIST LINCEU_REQUIRED_MSVC_RUNTIME_DLL_NAMES)
+                        list(APPEND LINCEU_FILTERED_MSVC_RUNTIME_DLLS "${LINCEU_MSVC_RUNTIME_DLL}")
+                endif()
+        endforeach()
+        set(LINCEU_MSVC_RUNTIME_DLLS ${LINCEU_FILTERED_MSVC_RUNTIME_DLLS})
+
+        if(LINCEU_MSVC_RUNTIME_DLLS)
+                message(STATUS "Required MSVC runtime DLLs will be deployed next to Linceu_Lighthouse.exe")
+        else()
+                message(WARNING "MSVC runtime DLLs were not found; target machines may need Microsoft Visual C++ Redistributable installed.")
+        endif()
+endif()
+
+set(LINCEU_COPY_MSVC_RUNTIME_TO_TARGET_COMMANDS)
+set(LINCEU_COPY_MSVC_RUNTIME_TO_DEPLOY_COMMANDS)
+set(LINCEU_REMOVE_UNUSED_MSVC_RUNTIME_FROM_TARGET_COMMANDS)
+set(LINCEU_REMOVE_UNUSED_MSVC_RUNTIME_FROM_DEPLOY_COMMANDS)
+if(MSVC)
+        foreach(LINCEU_UNUSED_MSVC_RUNTIME_DLL IN LISTS LINCEU_UNUSED_MSVC_RUNTIME_DLL_NAMES)
+                list(APPEND LINCEU_REMOVE_UNUSED_MSVC_RUNTIME_FROM_TARGET_COMMANDS
+                        COMMAND "${CMAKE_COMMAND}" -E rm -f
+                                "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>/${LINCEU_UNUSED_MSVC_RUNTIME_DLL}")
+                list(APPEND LINCEU_REMOVE_UNUSED_MSVC_RUNTIME_FROM_DEPLOY_COMMANDS
+                        COMMAND "${CMAKE_COMMAND}" -E rm -f
+                                "${LINCEU_DEPLOY_DIR}/${LINCEU_UNUSED_MSVC_RUNTIME_DLL}")
+        endforeach()
+endif()
+
+if(MSVC AND LINCEU_MSVC_RUNTIME_DLLS)
+        list(APPEND LINCEU_COPY_MSVC_RUNTIME_TO_TARGET_COMMANDS
+                COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                        ${LINCEU_MSVC_RUNTIME_DLLS}
+                        "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>")
+        list(APPEND LINCEU_COPY_MSVC_RUNTIME_TO_DEPLOY_COMMANDS
+                COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                        ${LINCEU_MSVC_RUNTIME_DLLS}
+                        "${LINCEU_DEPLOY_DIR}")
+endif()
+
+if(WIN32)
+        set(LINCEU_QT_TRANSLATIONS_DIR "")
+        if(LINCEU_SELECTED_QT_CMAKE_DIR)
+                get_filename_component(LINCEU_QT_INSTALL_ROOT "${LINCEU_SELECTED_QT_CMAKE_DIR}/../.." ABSOLUTE)
+                set(LINCEU_QT_TRANSLATIONS_DIR "${LINCEU_QT_INSTALL_ROOT}/translations")
+        elseif(DEFINED Qt${QT_VERSION_MAJOR}_DIR)
+                get_filename_component(LINCEU_QT_INSTALL_ROOT "${Qt${QT_VERSION_MAJOR}_DIR}/../../.." ABSOLUTE)
+                set(LINCEU_QT_TRANSLATIONS_DIR "${LINCEU_QT_INSTALL_ROOT}/translations")
+        endif()
+
+        foreach(LINCEU_QT_TRANSLATION_LANG IN ITEMS de en es fr it pt_BR)
+                set(LINCEU_QT_TRANSLATION_FILE
+                        "${LINCEU_QT_TRANSLATIONS_DIR}/qt_${LINCEU_QT_TRANSLATION_LANG}.qm")
+                if(EXISTS "${LINCEU_QT_TRANSLATION_FILE}")
+                        list(APPEND LINCEU_QT_RUNTIME_TRANSLATION_FILES "${LINCEU_QT_TRANSLATION_FILE}")
+                endif()
+        endforeach()
+
+        if(LINCEU_QT_RUNTIME_TRANSLATION_FILES)
+                message(STATUS "Qt runtime translations will be limited to: de, en, es, fr, it, pt_BR")
+        else()
+                message(WARNING "Supported Qt runtime translation files were not found in ${LINCEU_QT_TRANSLATIONS_DIR}.")
+        endif()
+endif()
+
+set(LINCEU_PREPARE_QT_TRANSLATIONS_TO_TARGET_COMMANDS)
+set(LINCEU_PREPARE_QT_TRANSLATIONS_TO_DEPLOY_COMMANDS)
+if(WIN32)
+        list(APPEND LINCEU_PREPARE_QT_TRANSLATIONS_TO_TARGET_COMMANDS
+                COMMAND "${CMAKE_COMMAND}" -E rm -rf
+                        "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>/locale/qt"
+                COMMAND "${CMAKE_COMMAND}" -E make_directory
+                        "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>/locale/qt")
+        list(APPEND LINCEU_PREPARE_QT_TRANSLATIONS_TO_DEPLOY_COMMANDS
+                COMMAND "${CMAKE_COMMAND}" -E rm -rf
+                        "${LINCEU_DEPLOY_DIR}/locale/qt"
+                COMMAND "${CMAKE_COMMAND}" -E make_directory
+                        "${LINCEU_DEPLOY_DIR}/locale/qt")
+
+        if(LINCEU_QT_RUNTIME_TRANSLATION_FILES)
+                list(APPEND LINCEU_PREPARE_QT_TRANSLATIONS_TO_TARGET_COMMANDS
+                        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                                ${LINCEU_QT_RUNTIME_TRANSLATION_FILES}
+                                "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>/locale/qt")
+                list(APPEND LINCEU_PREPARE_QT_TRANSLATIONS_TO_DEPLOY_COMMANDS
+                        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                                ${LINCEU_QT_RUNTIME_TRANSLATION_FILES}
+                                "${LINCEU_DEPLOY_DIR}/locale/qt")
+        endif()
+
+        list(APPEND LINCEU_PREPARE_QT_TRANSLATIONS_TO_TARGET_COMMANDS
+                COMMAND "${CMAKE_COMMAND}" -E rm -rf
+                        "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>/translations")
+        list(APPEND LINCEU_PREPARE_QT_TRANSLATIONS_TO_DEPLOY_COMMANDS
+                COMMAND "${CMAKE_COMMAND}" -E rm -rf
+                        "${LINCEU_DEPLOY_DIR}/translations")
+endif()
+
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(source)
 include_directories(source/data/Charts)
@@ -907,6 +1059,8 @@ add_executable(Linceu_Lighthouse_cpp ${LINCEU_APP_KIND}
         source/ui/Manual/DOC_IT_IT.h
         source/ui/Manual/DOC_PT_BR.cpp
         source/ui/Manual/DOC_PT_BR.h
+        source/ui/AppChooserDialog.cpp
+        source/ui/AppChooserDialog.h
         source/ui/ui_01_GerenciadorBotoes.cpp
         source/ui/ui_01_GerenciadorBotoes.h
         source/ui/ui_02_GerenciadorBotoesUI.cpp
@@ -939,6 +1093,8 @@ add_executable(Linceu_Lighthouse_cpp ${LINCEU_APP_KIND}
         source/ui/ui_15_Manual.h
         source/utils/ApplicationPathUtils.cpp
         source/utils/ApplicationPathUtils.h
+        source/utils/AssociatedApps.cpp
+        source/utils/AssociatedApps.h
         source/utils/CaminhoPersistenteUtils.cpp
         source/utils/CaminhoPersistenteUtils.h
         source/utils/IconUtils.cpp
@@ -966,8 +1122,26 @@ target_link_libraries(Linceu_Lighthouse_cpp PRIVATE
         Qt${QT_VERSION_MAJOR}::Quick
         Qt${QT_VERSION_MAJOR}::Qml)
 
+if(WIN32)
+        target_link_libraries(Linceu_Lighthouse_cpp PRIVATE Shlwapi Shell32)
+endif()
+
 set_target_properties(Linceu_Lighthouse_cpp PROPERTIES
         OUTPUT_NAME "${LINCEU_OUTPUT_NAME}")
+
+add_custom_command(TARGET Linceu_Lighthouse_cpp POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E copy_directory
+                "${CMAKE_SOURCE_DIR}/source/assets"
+                "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>/assets"
+        COMMAND "${CMAKE_COMMAND}" -E make_directory
+                "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>/locale"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                ${LINCEU_APP_TRANSLATION_FILES}
+                "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>/locale"
+        ${LINCEU_PREPARE_QT_TRANSLATIONS_TO_TARGET_COMMANDS}
+        COMMENT "Copying Linceu runtime assets and translations next to $<TARGET_FILE_NAME:Linceu_Lighthouse_cpp>"
+        COMMAND_EXPAND_LISTS
+        VERBATIM)
 
 if(MSVC)
     target_compile_options(Linceu_Lighthouse_cpp PRIVATE
@@ -985,6 +1159,38 @@ if(MSVC)
     
     set_property(TARGET Linceu_Lighthouse_cpp PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
     set_property(TARGET Linceu_Lighthouse_cpp PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELWITHDEBINFO TRUE)
+
+    add_custom_command(TARGET Linceu_Lighthouse_cpp POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E rm -f
+                "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>/vc_redist.x64.exe"
+        ${LINCEU_REMOVE_UNUSED_MSVC_RUNTIME_FROM_TARGET_COMMANDS}
+        ${LINCEU_COPY_MSVC_RUNTIME_TO_TARGET_COMMANDS}
+        COMMENT "Preparing MSVC runtime next to $<TARGET_FILE_NAME:Linceu_Lighthouse_cpp>"
+        COMMAND_EXPAND_LISTS
+        VERBATIM)
+endif()
+
+if(MINGW)
+    target_compile_options(Linceu_Lighthouse_cpp PRIVATE
+        $<$<CONFIG:Release>:-O3>
+        $<$<CONFIG:Release>:-ffunction-sections>
+        $<$<CONFIG:Release>:-fdata-sections>
+        $<$<CONFIG:MinSizeRel>:-Os>
+        $<$<CONFIG:MinSizeRel>:-ffunction-sections>
+        $<$<CONFIG:MinSizeRel>:-fdata-sections>)
+
+    target_link_options(Linceu_Lighthouse_cpp PRIVATE
+        $<$<CONFIG:Release>:-Wl,--gc-sections>
+        $<$<CONFIG:Release>:-Wl,--strip-all>
+        $<$<CONFIG:MinSizeRel>:-Wl,--gc-sections>
+        $<$<CONFIG:MinSizeRel>:-Wl,--strip-all>)
+
+    if(CMAKE_STRIP AND (CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel"))
+        add_custom_command(TARGET Linceu_Lighthouse_cpp POST_BUILD
+                COMMAND "${CMAKE_STRIP}" --strip-unneeded "$<TARGET_FILE:Linceu_Lighthouse_cpp>"
+                COMMENT "Stripping MinGW executable symbols from $<TARGET_FILE_NAME:Linceu_Lighthouse_cpp>"
+                VERBATIM)
+    endif()
 endif()
 
 if (WIN32)
@@ -998,7 +1204,7 @@ if (WIN32)
         endif()
 
         if (LINCEU_WINDEPLOYQT_COMMAND)
-                add_custom_command(TARGET Linceu_Lighthouse_cpp POST_BUILD
+                add_custom_target(Linceu_Lighthouse_deploy
                         COMMAND "${CMAKE_COMMAND}" -E rm -f
                                 "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>/Linceu_Lighthouse_cpp.exe"
                         COMMAND "${CMAKE_COMMAND}" -E rm -f
@@ -1008,11 +1214,30 @@ if (WIN32)
                                 "$<TARGET_FILE:Linceu_Lighthouse_cpp>"
                                 "${LINCEU_DEPLOY_DIR}/$<TARGET_FILE_NAME:Linceu_Lighthouse_cpp>"
                         COMMAND "${LINCEU_WINDEPLOYQT_COMMAND}"
+                                ${LINCEU_WINDEPLOYQT_RUNTIME_ARGS}
                                 --dir "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>"
                                 "$<TARGET_FILE:Linceu_Lighthouse_cpp>"
+                        COMMAND "${CMAKE_COMMAND}" -E rm -f
+                                "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>/vc_redist.x64.exe"
+                        ${LINCEU_REMOVE_UNUSED_MSVC_RUNTIME_FROM_TARGET_COMMANDS}
+                        ${LINCEU_COPY_MSVC_RUNTIME_TO_TARGET_COMMANDS}
+                        COMMAND "${CMAKE_COMMAND}" -E copy_directory
+                                "${CMAKE_SOURCE_DIR}/source/assets"
+                                "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>/assets"
+                        COMMAND "${CMAKE_COMMAND}" -E make_directory
+                                "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>/locale"
+                        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                                ${LINCEU_APP_TRANSLATION_FILES}
+                                "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>/locale"
+                        ${LINCEU_PREPARE_QT_TRANSLATIONS_TO_TARGET_COMMANDS}
                         COMMAND "${LINCEU_WINDEPLOYQT_COMMAND}"
+                                ${LINCEU_WINDEPLOYQT_RUNTIME_ARGS}
                                 --dir "${LINCEU_DEPLOY_DIR}"
                                 "${LINCEU_DEPLOY_DIR}/$<TARGET_FILE_NAME:Linceu_Lighthouse_cpp>"
+                        COMMAND "${CMAKE_COMMAND}" -E rm -f
+                                "${LINCEU_DEPLOY_DIR}/vc_redist.x64.exe"
+                        ${LINCEU_REMOVE_UNUSED_MSVC_RUNTIME_FROM_DEPLOY_COMMANDS}
+                        ${LINCEU_COPY_MSVC_RUNTIME_TO_DEPLOY_COMMANDS}
                         COMMAND "${CMAKE_COMMAND}" -E copy_directory
                                 "${CMAKE_SOURCE_DIR}/source/assets"
                                 "${LINCEU_DEPLOY_DIR}/assets"
@@ -1020,14 +1245,11 @@ if (WIN32)
                         COMMAND "${CMAKE_COMMAND}" -E copy_if_different
                                 ${LINCEU_APP_TRANSLATION_FILES}
                                 "${LINCEU_DEPLOY_DIR}/locale"
-                        COMMAND "${CMAKE_COMMAND}" -E remove_directory "${LINCEU_DEPLOY_DIR}/locale/qt"
-                        COMMAND "${CMAKE_COMMAND}" -E make_directory "${LINCEU_DEPLOY_DIR}/locale/qt"
-                        COMMAND "${CMAKE_COMMAND}" -E copy_directory
-                                "${LINCEU_DEPLOY_DIR}/translations"
-                                "${LINCEU_DEPLOY_DIR}/locale/qt"
+                        ${LINCEU_PREPARE_QT_TRANSLATIONS_TO_DEPLOY_COMMANDS}
                         COMMENT "Deploying Qt runtime dependencies and packaging runnable copy for ${LINCEU_OUTPUT_NAME}"
                         COMMAND_EXPAND_LISTS
                         VERBATIM)
+                add_dependencies(Linceu_Lighthouse_deploy Linceu_Lighthouse_cpp)
         else()
                 message(WARNING "Qt windeployqt target not available; Qt runtime dependencies will not be copied automatically.")
         endif()

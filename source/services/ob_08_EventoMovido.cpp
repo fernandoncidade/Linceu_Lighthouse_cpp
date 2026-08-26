@@ -14,6 +14,7 @@
 #include "GerenciamentoEventoMovido/gevmov_07_processar_exclusoes_pendentes.h"
 #include "GerenciamentoEventoMovido/gevmov_08_adicionar_item_tabela.h"
 #include "GerenciamentoEventoMovido/gevmov_09_adicionar_evento.h"
+#include "GerenciamentoEventoMovido/gevmov_10_PendenciasMovimentacao.h"
 #include "source/services/GerenciamentoBaseEvento/gbank_00_operacoes.h"
 #include "source/tools/fil_01_Filtros.h"
 #include "source/ui/ui_12_LocalizadorQt.h"
@@ -317,7 +318,7 @@ void parar_sistema_evento(QObject* self, int timeout_ms) {
         }
 
         self->setProperty("_aceitar_eventos_monitoramento", false);
-        self->setProperty("excluidos_recentemente", QVariantMap());
+        GerenciamentoEventoMovido::limpar_pendencias_movimentacao(self);
 
         if (auto* refresh_timer = qobject_cast<QTimer*>(self->property("refresh_timer").value<QObject*>());
             refresh_timer != nullptr) {

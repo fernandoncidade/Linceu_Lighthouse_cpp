@@ -8,6 +8,7 @@
 
 #include "source/security/secore_02_SecurityManager.h"
 #include "source/security/secui_00_helpers.h"
+#include "source/services/GerenciamentoEventoMovido/gevmov_10_PendenciasMovimentacao.h"
 #include "source/services/ob_09_GerenciadorColunas.h"
 #include "source/services/GerenciamentoTabela/gtab_47_EventTableModel.h"
 #include "source/tools/fil_01_Filtros.h"
@@ -96,12 +97,7 @@ void GerenciadorMonitoramento::reiniciar_sistema_monitoramento() {
             safe_disconnect_all(exclusao_timer, "Erro ao desconectar exclusao_timer");
         }
 
-        if (interface_->property("excluidos_recentemente").isValid()) {
-            interface_->setProperty("excluidos_recentemente", QVariantMap());
-        } else {
-            QObject* excluidos_obj = interface_->property("excluidos_recentemente_obj").value<QObject*>();
-            safe_invoke_noargs(excluidos_obj, "clear", "Erro ao limpar excluídos recentemente");
-        }
+        source::services::GerenciamentoEventoMovido::limpar_pendencias_movimentacao(interface_);
 
         auto* processador_evento = interface_->property("processador_evento").value<QObject*>();
         if (processador_evento != nullptr) {

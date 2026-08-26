@@ -1,10 +1,17 @@
 #include "gmui_03_SobreDialog.h"
 
 #include <algorithm>
+#include <QColor>
 #include <QDesktopServices>
+#include <QEvent>
+#include <QFontMetrics>
+#include <QGridLayout>
 #include <QHBoxLayout>
+#include <QKeyEvent>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMetaObject>
+#include <QPalette>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QRegularExpression>
@@ -14,7 +21,9 @@
 #include <QTabWidget>
 #include <QTextBrowser>
 #include <QTextDocument>
+#include <QTextEdit>
 #include <QTimer>
+#include <QToolButton>
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QtMath>
@@ -26,8 +35,11 @@ namespace {
 QString get_text(QObject* loc, const QString& key, const QString& fallback = QString()) {
     QString text = fallback;
     if (loc != nullptr) {
-        if (!QMetaObject::invokeMethod(loc, "get_text", Q_RETURN_ARG(QString, text), Q_ARG(QString, key)) &&
-            !fallback.isEmpty()) {
+        QString translated;
+        if (QMetaObject::invokeMethod(loc, "get_text", Q_RETURN_ARG(QString, translated), Q_ARG(QString, key)) &&
+            !translated.isEmpty() && translated != key) {
+            text = translated;
+        } else if (!fallback.isEmpty()) {
             text = fallback;
         }
     }
@@ -137,6 +149,129 @@ QString montar_html_licencas(const QString& licencas,
     texto_html += QStringLiteral("</ul></body></html>");
     return texto_html;
 }
+
+QString build_about_header_html(QObject* loc) {
+    return QStringLiteral(
+               "<div style=\"margin:0; padding:0;\">"
+               "<span style=\"font-size:13pt; font-weight:600;\">LINCEU LIGHTHOUSE</span><br><br>"
+               "<b>%1:</b> 2026.8.25.0<br>"
+               "<b>%2:</b> Fernando Nillsson Cidade<br>"
+               "<b>%3:</b> %4"
+               "</div>")
+        .arg(get_text(loc, "version", "Version").toHtmlEscaped(),
+             get_text(loc, "authors", "Authors").toHtmlEscaped(),
+             get_text(loc, "description", "Description").toHtmlEscaped(),
+             get_text(loc, "description_text", "Application information").toHtmlEscaped());
+}
+
+struct AboutSearchMatch {
+    QTextBrowser* browser = nullptr;
+    int start = -1;
+    int length = 0;
+};
+
+QVector<AboutSearchMatch> browser_search_matches(QTextBrowser* browser, const QString& query) {
+    QVector<AboutSearchMatch> matches;
+    if (browser == nullptr || browser->document() == nullptr || query.trimmed().isEmpty()) {
+        return matches;
+    }
+
+    QTextCursor cursor(browser->document());
+    while (true) {
+        cursor = browser->document()->find(query.trimmed(), cursor);
+        if (cursor.isNull()) {
+            break;
+        }
+        matches.append({browser, cursor.selectionStart(), cursor.selectionEnd() - cursor.selectionStart()});
+    }
+    return matches;
+}
+
+QVector<AboutSearchMatch> collect_about_search_matches(QWidget* root, const QString& query, bool visible_only) {
+    QVector<AboutSearchMatch> matches;
+    if (root == nullptr || query.trimmed().isEmpty()) {
+        return matches;
+    }
+
+    auto append_browser = [&](QTextBrowser* browser) {
+        if (browser == nullptr || (visible_only && !browser->isVisibleTo(root))) {
+            return;
+        }
+        matches += browser_search_matches(browser, query);
+    };
+
+    append_browser(qobject_cast<QTextBrowser*>(root));
+    for (QTextBrowser* browser : root->findChildren<QTextBrowser*>()) {
+        append_browser(browser);
+    }
+
+    return matches;
+}
+
+void apply_about_search_highlights(QWidget* root,
+                                   const QString& query,
+                                   QTextBrowser* current_browser,
+                                   int current_start) {
+    if (root == nullptr) {
+        return;
+    }
+
+    const QString trimmed = query.trimmed();
+    const QColor highlight = root->palette().color(QPalette::Highlight);
+    const QColor highlighted_text = root->palette().color(QPalette::HighlightedText);
+
+    auto apply_browser = [&](QTextBrowser* browser) {
+        if (browser == nullptr) {
+            return;
+        }
+
+        QList<QTextEdit::ExtraSelection> selections;
+        const QVector<AboutSearchMatch> matches = browser_search_matches(browser, trimmed);
+        for (const AboutSearchMatch& match : matches) {
+            QTextCursor cursor(browser->document());
+            cursor.setPosition(match.start);
+            cursor.setPosition(match.start + match.length, QTextCursor::KeepAnchor);
+
+            QColor background = highlight;
+            background.setAlpha(browser == current_browser && match.start == current_start ? 190 : 95);
+
+            QTextEdit::ExtraSelection selection;
+            selection.cursor = cursor;
+            selection.format.setBackground(background);
+            if (browser == current_browser && match.start == current_start) {
+                selection.format.setForeground(highlighted_text);
+            }
+            selections.append(selection);
+        }
+        browser->setExtraSelections(selections);
+    };
+
+    apply_browser(qobject_cast<QTextBrowser*>(root));
+    for (QTextBrowser* browser : root->findChildren<QTextBrowser*>()) {
+        apply_browser(browser);
+    }
+}
+
+int find_about_search_match_index(const QVector<AboutSearchMatch>& matches, QTextBrowser* browser, int start) {
+    for (int index = 0; index < matches.size(); ++index) {
+        if (matches.at(index).browser == browser && matches.at(index).start == start) {
+            return index;
+        }
+    }
+    return -1;
+}
+
+void scroll_about_search_match_to_view(const AboutSearchMatch& match) {
+    if (match.browser == nullptr || match.browser->document() == nullptr) {
+        return;
+    }
+
+    QTextCursor cursor(match.browser->document());
+    cursor.setPosition(match.start);
+    cursor.setPosition(match.start + match.length, QTextCursor::KeepAnchor);
+    match.browser->setTextCursor(cursor);
+    match.browser->ensureCursorVisible();
+}
 }  // namespace
 
 namespace source::ui::GerenciamentoMenusUI {
@@ -169,6 +304,10 @@ SobreDialog::SobreDialog(QWidget* parent,
                          const QString& hide_release_notes_text)
     : QDialog(parent),
       fixed_label_(nullptr),
+      search_label_(nullptr),
+      search_edit_(nullptr),
+      search_previous_button_(nullptr),
+      search_next_button_(nullptr),
       tabs_(nullptr),
       ok_button_(nullptr),
       history_browser_(nullptr),
@@ -178,6 +317,8 @@ SobreDialog::SobreDialog(QWidget* parent,
       privacidade_browser_(nullptr),
       release_notes_browser_(nullptr),
       info_not_available_text_(info_not_available_text),
+      search_current_browser_(nullptr),
+      search_current_start_(-1),
       parent_ref_(interface_ref != nullptr ? interface_ref : parent),
       loc_(parent_ref_ != nullptr ? parent_ref_->property("loc").value<QObject*>() : nullptr) {
     try {
@@ -192,21 +333,56 @@ SobreDialog::SobreDialog(QWidget* parent,
                                   source::ui::OpcoesSobre::GNU_LGPL_V3_LICENSE_TEXT);
 
         auto* layout = new QVBoxLayout(this);
+        layout->setSpacing(6);
+        const int search_top_margin = std::max(0, fontMetrics().lineSpacing() - layout->spacing());
 
         auto* header_widget = new QWidget(this);
         auto* header_layout = new QVBoxLayout(header_widget);
         header_layout->setContentsMargins(0, 0, 0, 0);
-        header_layout->setSpacing(5);
+        header_layout->setSpacing(0);
 
         fixed_label_ = new QLabel(texto_fixo, this);
         fixed_label_->setTextFormat(Qt::RichText);
         fixed_label_->setWordWrap(true);
         fixed_label_->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+        fixed_label_->setContentsMargins(0, 0, 0, 0);
+        fixed_label_->setIndent(0);
+        fixed_label_->setMargin(0);
         fixed_label_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         header_layout->addWidget(fixed_label_);
 
         header_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         layout->addWidget(header_widget);
+
+        auto* search_layout = new QGridLayout();
+        search_layout->setContentsMargins(0, search_top_margin, 0, 6);
+        search_layout->setHorizontalSpacing(8);
+        search_layout->setColumnStretch(0, 0);
+        search_layout->setColumnStretch(1, 1);
+
+        search_label_ = new QLabel(this);
+        search_label_->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+        search_edit_ = new QLineEdit(this);
+        search_edit_->setClearButtonEnabled(true);
+        search_edit_->installEventFilter(this);
+        search_previous_button_ = new QToolButton(this);
+        search_next_button_ = new QToolButton(this);
+        search_previous_button_->setArrowType(Qt::LeftArrow);
+        search_next_button_->setArrowType(Qt::RightArrow);
+        search_previous_button_->setAutoRaise(true);
+        search_next_button_->setAutoRaise(true);
+        search_previous_button_->setEnabled(false);
+        search_next_button_->setEnabled(false);
+
+        auto* search_controls = new QHBoxLayout();
+        search_controls->setContentsMargins(0, 0, 0, 0);
+        search_controls->setSpacing(4);
+        search_controls->addWidget(search_edit_, 1);
+        search_controls->addWidget(search_previous_button_);
+        search_controls->addWidget(search_next_button_);
+        search_layout->addWidget(search_label_, 0, 0);
+        search_layout->addLayout(search_controls, 0, 1);
+        layout->addLayout(search_layout);
 
         tabs_ = new QTabWidget(this);
         tabs_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -262,6 +438,8 @@ SobreDialog::SobreDialog(QWidget* parent,
         auto* button_layout = new QHBoxLayout();
         ok_button_ = new QPushButton(ok_text, this);
         ok_button_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+        ok_button_->setAutoDefault(false);
+        ok_button_->setDefault(false);
         QObject::connect(ok_button_, &QPushButton::clicked, this, &QDialog::accept);
         button_layout->addStretch(1);
         button_layout->addWidget(ok_button_);
@@ -270,6 +448,26 @@ SobreDialog::SobreDialog(QWidget* parent,
         setMinimumSize(400, 200);
 
         QObject::connect(tabs_, &QTabWidget::currentChanged, this, &SobreDialog::update_tab_labels);
+        QObject::connect(tabs_, &QTabWidget::currentChanged, this, [this](int) {
+            reset_about_search_position();
+            apply_about_search();
+            update_about_search_buttons();
+        });
+        QObject::connect(search_edit_, &QLineEdit::textChanged, this, [this]() {
+            reset_about_search_position();
+            apply_about_search();
+            update_about_search_buttons();
+        });
+        QObject::connect(search_edit_, &QLineEdit::returnPressed, this, [this]() {
+            navigate_about_search(1);
+        });
+        QObject::connect(search_previous_button_, &QToolButton::clicked, this, [this]() {
+            navigate_about_search(-1);
+        });
+        QObject::connect(search_next_button_, &QToolButton::clicked, this, [this]() {
+            navigate_about_search(1);
+        });
+        update_search_texts();
         update_tab_labels(tabs_->currentIndex());
 
         if (loc_ != nullptr) {
@@ -386,6 +584,7 @@ int SobreDialog::calculate_fixed_label_height(int available_width) const {
 
     QTextDocument document;
     document.setDefaultFont(fixed_label_->font());
+    document.setDocumentMargin(0);
     document.setHtml(fixed_label_->text());
     document.setTextWidth(text_width);
 
@@ -401,9 +600,12 @@ void SobreDialog::refresh_fixed_label_geometry() {
         layout()->activate();
     }
 
-    int available_width = fixed_label_->width();
-    if (available_width <= 0 && fixed_label_->parentWidget() != nullptr) {
+    int available_width = 0;
+    if (fixed_label_->parentWidget() != nullptr) {
         available_width = fixed_label_->parentWidget()->contentsRect().width();
+    }
+    if (available_width <= 0) {
+        available_width = fixed_label_->width();
     }
     if (available_width <= 0) {
         available_width = contentsRect().width();
@@ -488,13 +690,7 @@ void SobreDialog::on_idioma_alterado(const QString& novo_idioma) {
         }
 
         if (loc_ != nullptr && fixed_label_ != nullptr) {
-            const QString cabecalho_fixo = QStringLiteral("<h3>LINCEU LIGHTHOUSE</h3>")
-                + QStringLiteral("<p><b>") + get_text(loc_, "version", "Version") + QStringLiteral(":</b> 2026.4.27.0</p>")
-                + QStringLiteral("<p><b>") + get_text(loc_, "authors", "Authors") + QStringLiteral(":</b> Fernando Nillsson Cidade</p>")
-                + QStringLiteral("<p><b>") + get_text(loc_, "description", "Description") + QStringLiteral(":</b> ")
-                + get_text(loc_, "description_text", "Application information") + QStringLiteral("</p>");
-
-            fixed_label_->setText(cabecalho_fixo);
+            fixed_label_->setText(build_about_header_html(loc_));
             setWindowTitle(get_text(loc_, "about", "About") + QStringLiteral(" - LINCEU LIGHTHOUSE"));
         }
 
@@ -532,6 +728,9 @@ void SobreDialog::on_idioma_alterado(const QString& novo_idioma) {
         if (tabs_ != nullptr) {
             update_tab_labels(tabs_->currentIndex());
         }
+        update_search_texts();
+        apply_about_search();
+        update_about_search_buttons();
 
         if (ok_button_ != nullptr && loc_ != nullptr) {
             ok_button_->setText(get_text(loc_, "ok", "OK"));
@@ -541,6 +740,18 @@ void SobreDialog::on_idioma_alterado(const QString& novo_idioma) {
     } catch (...) {
         source::utils::LogManager::get_logger().error("Erro ao aplicar tradução dinâmica no diálogo Sobre", true);
     }
+}
+
+bool SobreDialog::eventFilter(QObject* watched, QEvent* event) {
+    if (watched == search_edit_ && event != nullptr && event->type() == QEvent::KeyPress) {
+        auto* key_event = static_cast<QKeyEvent*>(event);
+        if (key_event->key() == Qt::Key_Return || key_event->key() == Qt::Key_Enter) {
+            navigate_about_search(key_event->modifiers().testFlag(Qt::ShiftModifier) ? -1 : 1);
+            return true;
+        }
+    }
+
+    return QDialog::eventFilter(watched, event);
 }
 
 void SobreDialog::resizeEvent(QResizeEvent* event) {
@@ -567,6 +778,85 @@ void SobreDialog::update_tab_labels(int current_index) {
     } catch (...) {
         source::utils::LogManager::get_logger().error("Erro ao atualizar rótulos das abas", true);
     }
+}
+
+void SobreDialog::update_search_texts() {
+    if (search_label_ == nullptr || search_edit_ == nullptr ||
+        search_previous_button_ == nullptr || search_next_button_ == nullptr) {
+        return;
+    }
+
+    search_label_->setText(get_text(loc_, QStringLiteral("search_label"), QStringLiteral("Buscar:")));
+    search_edit_->setPlaceholderText(get_text(
+        loc_, QStringLiteral("about_search_placeholder"), QStringLiteral("Buscar texto na janela Sobre...")));
+    search_previous_button_->setToolTip(get_text(
+        loc_, QStringLiteral("about_search_previous"), QStringLiteral("Resultado anterior")));
+    search_next_button_->setToolTip(get_text(
+        loc_, QStringLiteral("about_search_next"), QStringLiteral("Próximo resultado")));
+    search_previous_button_->setAccessibleName(search_previous_button_->toolTip());
+    search_next_button_->setAccessibleName(search_next_button_->toolTip());
+}
+
+void SobreDialog::apply_about_search() {
+    if (tabs_ == nullptr) {
+        return;
+    }
+
+    const QString query = search_edit_ != nullptr ? search_edit_->text() : QString();
+    if (query.trimmed().isEmpty()) {
+        reset_about_search_position();
+    }
+
+    apply_about_search_highlights(tabs_, query, search_current_browser_, search_current_start_);
+}
+
+void SobreDialog::navigate_about_search(int step) {
+    if (tabs_ == nullptr || search_edit_ == nullptr || step == 0) {
+        return;
+    }
+
+    QWidget* current_page = tabs_->currentWidget();
+    const QString query = search_edit_->text().trimmed();
+    const QVector<AboutSearchMatch> matches = collect_about_search_matches(current_page, query, true);
+    if (matches.isEmpty()) {
+        reset_about_search_position();
+        apply_about_search();
+        update_about_search_buttons();
+        return;
+    }
+
+    int index = find_about_search_match_index(matches, search_current_browser_, search_current_start_);
+    if (index < 0) {
+        index = step < 0 ? matches.size() - 1 : 0;
+    } else {
+        index = (index + step + matches.size()) % matches.size();
+    }
+
+    const AboutSearchMatch match = matches.at(index);
+    search_current_browser_ = match.browser;
+    search_current_start_ = match.start;
+    apply_about_search();
+    scroll_about_search_match_to_view(match);
+    update_about_search_buttons();
+}
+
+void SobreDialog::update_about_search_buttons() {
+    const bool has_query = search_edit_ != nullptr && !search_edit_->text().trimmed().isEmpty();
+    const bool has_matches =
+        has_query && tabs_ != nullptr &&
+        !collect_about_search_matches(tabs_->currentWidget(), search_edit_->text().trimmed(), true).isEmpty();
+
+    if (search_previous_button_ != nullptr) {
+        search_previous_button_->setEnabled(has_matches);
+    }
+    if (search_next_button_ != nullptr) {
+        search_next_button_->setEnabled(has_matches);
+    }
+}
+
+void SobreDialog::reset_about_search_position() {
+    search_current_browser_ = nullptr;
+    search_current_start_ = -1;
 }
 
 }  // namespace source::ui::GerenciamentoMenusUI

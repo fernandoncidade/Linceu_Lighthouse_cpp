@@ -1,5 +1,5 @@
 KOMMERZIELLER LIZENZVERTRAG - Linceu Lighthouse
-Version 2026.4.27.0, 27 de April de 2026
+Version 2026.8.25.0, 25. August 2026
 
 Dieser Lizenzvertrag ("Vertrag") wird geschlossen zwischen:
 

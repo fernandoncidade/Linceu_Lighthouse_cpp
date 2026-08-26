@@ -4,6 +4,8 @@
 #include <QApplication>
 #include <QDialog>
 #include <QDir>
+#include <QFile>
+#include <QFileInfo>
 #include <QLabel>
 #include <QMessageBox>
 #include <QMetaObject>
@@ -19,6 +21,8 @@
 #include <stdexcept>
 
 #include "source/security/secui_01_SecurityUiController.h"
+#include "source/services/GerenciamentoBaseEvento/gbank_02_criar_banco_de_dados.h"
+#include "source/services/GerenciamentoBaseEvento/gbank_20_db_writer.h"
 #include "source/ui/ui_02_GerenciadorBotoesUI.h"
 #include "source/services/GerenciamentoTabela/gtab_47_EventTableModel.h"
 #include "source/tools/fil_01_Filtros.h"
@@ -142,43 +146,111 @@ LimpezaAlvo selecionar_alvo_limpeza(QWidget* parent, QObject* loc) {
     return alvo_selecionado;
 }
 
+void fechar_todas_conexoes_db(const QString& db_path) {
+    const QStringList names = QSqlDatabase::connectionNames();
+    for (const QString& name : names) {
+        bool match = false;
+        if (name.startsWith(QStringLiteral("dbwriter_")) ||
+            name.startsWith(QStringLiteral("baseevento_")) ||
+            name.startsWith(QStringLiteral("limpeza_db_")) ||
+            name.startsWith(QStringLiteral("stats_db_")) ||
+            name.startsWith(QStringLiteral("import_db_")) ||
+            name.startsWith(QStringLiteral("geve_")) ||
+            name.startsWith(QStringLiteral("security_monitoramento_"))) {
+            match = true;
+        }
+        if (!match && QSqlDatabase::contains(name)) {
+            QSqlDatabase db = QSqlDatabase::database(name, false);
+            if (db.isValid() && db.databaseName() == db_path) {
+                match = true;
+            }
+        }
+        if (match) {
+            {
+                QSqlDatabase db = QSqlDatabase::database(name, false);
+                if (db.isValid() && db.isOpen()) {
+                    db.close();
+                }
+            }
+            QSqlDatabase::removeDatabase(name);
+        }
+    }
+}
+
 bool limpar_banco_dados_direto(const QString& db_path) {
     if (db_path.isEmpty()) {
         return false;
     }
 
-    const QString conn_name = QStringLiteral("limpeza_db_%1")
-                                  .arg(reinterpret_cast<quintptr>(db_path.constData()));
-    if (QSqlDatabase::contains(conn_name)) {
-        QSqlDatabase::removeDatabase(conn_name);
+    auto writer = source::services::GerenciamentoBaseEvento::DatabaseWriter::get_instance(db_path);
+    if (writer) {
+        writer->discard_pending();
+        writer->suspend_processing(3000);
     }
 
-    QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), conn_name);
-    db.setDatabaseName(db_path);
-    if (!db.open()) {
-        db = QSqlDatabase();
-        QSqlDatabase::removeDatabase(conn_name);
-        return false;
-    }
+    fechar_todas_conexoes_db(db_path);
 
-    bool ok = true;
-    {
-        QSqlQuery q(db);
-        const QStringList tabelas = {QStringLiteral("monitoramento"), QStringLiteral("snapshot"),
-                                     QStringLiteral("adicionado"), QStringLiteral("excluido"),
-                                     QStringLiteral("modificado"), QStringLiteral("renomeado"),
-                                     QStringLiteral("movido"), QStringLiteral("escaneado")};
-        for (const QString& t : tabelas) {
-            ok = q.exec(QStringLiteral("DELETE FROM %1").arg(t)) && ok;
-            ok = q.exec(QStringLiteral("DELETE FROM sqlite_sequence WHERE name='%1'").arg(t)) && ok;
+    QFile::remove(db_path + QStringLiteral("-wal"));
+    QFile::remove(db_path + QStringLiteral("-shm"));
+
+    const bool file_removed = QFile::remove(db_path);
+    if (file_removed) {
+        source::services::GerenciamentoBaseEvento::criar_banco_de_dados_path(db_path);
+    } else {
+        const QString conn_name = QStringLiteral("limpeza_db_%1")
+                                      .arg(reinterpret_cast<quintptr>(db_path.constData()));
+        if (QSqlDatabase::contains(conn_name)) {
+            QSqlDatabase::removeDatabase(conn_name);
         }
-        q.exec(QStringLiteral("VACUUM"));
+
+        {
+            QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), conn_name);
+            db.setDatabaseName(db_path);
+            if (db.open()) {
+                QSqlQuery pragma(db);
+                pragma.exec(QStringLiteral("PRAGMA busy_timeout=5000"));
+
+                if (db.transaction()) {
+                    QSqlQuery q(db);
+                    const QStringList tabelas = {
+                        QStringLiteral("monitoramento"),
+                        QStringLiteral("snapshot"),
+                        QStringLiteral("adicionado"),
+                        QStringLiteral("excluido"),
+                        QStringLiteral("modificado"),
+                        QStringLiteral("renomeado"),
+                        QStringLiteral("movido"),
+                        QStringLiteral("escaneado")
+                    };
+                    for (const QString& t : tabelas) {
+                        q.exec(QStringLiteral("DELETE FROM %1").arg(t));
+                        q.exec(QStringLiteral("DELETE FROM sqlite_sequence WHERE name='%1'").arg(t));
+                    }
+                    db.commit();
+                }
+
+                QSqlQuery checkpoint(db);
+                checkpoint.exec(QStringLiteral("PRAGMA wal_checkpoint(TRUNCATE)"));
+                checkpoint.exec(QStringLiteral("PRAGMA optimize"));
+                checkpoint.exec(QStringLiteral("VACUUM"));
+                checkpoint.exec(QStringLiteral("PRAGMA wal_checkpoint(TRUNCATE)"));
+
+                db.close();
+            }
+        }
+        QSqlDatabase::removeDatabase(conn_name);
+
+        fechar_todas_conexoes_db(db_path);
+
+        QFile::remove(db_path + QStringLiteral("-wal"));
+        QFile::remove(db_path + QStringLiteral("-shm"));
     }
 
-    db.close();
-    db = QSqlDatabase();
-    QSqlDatabase::removeDatabase(conn_name);
-    return ok;
+    if (writer) {
+        writer->resume_processing();
+    }
+
+    return true;
 }
 
 void limpar_tabela_ui(QObject* interface_obj) {
@@ -253,8 +325,11 @@ void GerenciadorLimpeza::limpar_dados() {
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
         try {
+            bool observador_ativo = false;
+            if (interface_->property("_observador_cpp_ptr").toULongLong() != 0) {
+                observador_ativo = true;
+            }
             auto* observador = interface_->property("observador").value<QObject*>();
-            bool observador_ativo = (observador != nullptr);
             if (observador != nullptr && observador->property("ativo").isValid()) {
                 observador_ativo = observador->property("ativo").toBool();
             }
@@ -263,7 +338,7 @@ void GerenciadorLimpeza::limpar_dados() {
             const bool limpar_ui = (alvo == LimpezaAlvo::TabelaUI || alvo == LimpezaAlvo::Ambos);
             const bool limpar_banco_seguranca = (alvo == LimpezaAlvo::Ambos);
 
-            if (limpar_banco && observador != nullptr && observador_ativo) {
+            if (limpar_banco && observador_ativo) {
                 invoke_if_available(interface_->property("gerenciador_botoes").value<QObject*>(), "alternar_analise_diretorio");
             }
 
@@ -283,6 +358,12 @@ void GerenciadorLimpeza::limpar_dados() {
             }
 
             if (limpar_banco) {
+                QString db_path = interface_->property("_monitoramento_db_path").toString();
+                if (db_path.isEmpty()) {
+                    db_path = QDir(source::utils::obter_caminho_persistente())
+                                  .filePath(QStringLiteral("monitoramento.db"));
+                }
+
                 auto* evento_base = interface_->property("evento_base").value<QObject*>();
                 bool limpou_via_evento_base = false;
                 if (evento_base != nullptr) {
@@ -290,16 +371,18 @@ void GerenciadorLimpeza::limpar_dados() {
                 }
 
                 if (!limpou_via_evento_base) {
-                    QString db_path = interface_->property("_monitoramento_db_path").toString();
-                    if (db_path.isEmpty()) {
-                        db_path = QDir(source::utils::obter_caminho_persistente())
-                                      .filePath(QStringLiteral("monitoramento.db"));
-                    }
                     if (!limpar_banco_dados_direto(db_path)) {
                         source::utils::LogManager::get_logger().warning(
                             QStringLiteral("Falha ao limpar banco de dados diretamente: %1").arg(db_path));
                     }
                 }
+
+                interface_->setProperty("_monitoramento_db_tem_dados", false);
+                interface_->setProperty("contador_eventos", 0);
+                interface_->setProperty("excluidos_recentemente", QVariantMap());
+                interface_->setProperty("_scan_contador", 0);
+                interface_->setProperty("_scan_total", 0);
+                interface_->setProperty("_scan_em_execucao", false);
             }
 
             if (limpar_ui) {

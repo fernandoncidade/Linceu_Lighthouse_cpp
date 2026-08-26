@@ -13,12 +13,13 @@ Item {
     readonly property var sections: [
         {
             title: "Visao geral",
-            subtitle: "Aplicacao desktop C++17/Qt6 para monitoramento, auditoria, estatisticas e seguranca.",
+            subtitle: "Plataforma Local de Inteligencia, Historico e Auditoria de Arquivos em C++17/Qt6 (Local-First).",
             summary: [
                 "Ponto de entrada em main.cpp, delegando para source::iniciar_aplicacao.",
-                "InterfaceMonitor centraliza a janela principal e agrega os gerenciadores de UI, servicos e seguranca.",
-                "Eventos de arquivo fluem por Observador, BaseEvento, DatabaseWriter, EventTableModel e SecurityManager.",
-                "Graficos e diagramas usam subsistema proprio em source/data/Charts."
+                "Arquitetura soberana 100% offline, sem nuvem, sem telemetria e sem modelos de IA/LLM.",
+                "InterfaceMonitor centraliza a janela principal e agrega servicos de monitoramento, historico e seguranca.",
+                "Pipeline de dados: ReadDirectoryChangesW -> Normalizacao/Move/Rename -> Metadados -> SQLite Local -> 17 Graficos -> Auditoria.",
+                "Graficos e diagramas usam subsistema nativo acelerado em source/data/Charts."
             ],
             files: [
                 "main.cpp",

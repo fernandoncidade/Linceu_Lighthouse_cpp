@@ -1,5 +1,8 @@
 #include "gbank_02_criar_banco_de_dados.h"
 
+#include <QDir>
+#include <QFileInfo>
+#include <QSet>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
@@ -14,14 +17,20 @@ QString conn_name(const QString& db) { return QStringLiteral("baseevento_create_
 
 namespace source::services::GerenciamentoBaseEvento {
 
-void criar_banco_de_dados(source::services::BaseEvento* self) {
+void criar_banco_de_dados_path(const QString& db_path) {
     try {
-        if (!self) return;
+        if (db_path.isEmpty()) return;
 
-        const QString connName = conn_name(self->db_path);
+        QDir().mkpath(QFileInfo(db_path).absolutePath());
+
+        const QString connName = conn_name(db_path);
+        if (QSqlDatabase::contains(connName)) {
+            QSqlDatabase::removeDatabase(connName);
+        }
+
         {
             QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), connName);
-            db.setDatabaseName(self->db_path);
+            db.setDatabaseName(db_path);
             if (!db.open()) {
                 source::utils::LogManager::get_logger().error(QString("Erro ao abrir DB: %1").arg(db.lastError().text()), true);
                 return;
@@ -31,9 +40,9 @@ void criar_banco_de_dados(source::services::BaseEvento* self) {
             q.exec("PRAGMA journal_mode = WAL");
             q.exec("PRAGMA synchronous = NORMAL");
             q.exec("PRAGMA temp_store = MEMORY");
-            q.exec("PRAGMA cache_size = -1");
-            q.exec("PRAGMA page_size = 65536");
-            q.exec("PRAGMA mmap_size = -1");
+            q.exec("PRAGMA cache_size = -65536");
+            q.exec("PRAGMA page_size = 4096");
+            q.exec("PRAGMA mmap_size = 536870912");
             q.exec("PRAGMA busy_timeout = 30000");
             q.exec("PRAGMA auto_vacuum = NONE");
             q.exec("PRAGMA secure_delete = OFF");
@@ -57,7 +66,13 @@ void criar_banco_de_dados(source::services::BaseEvento* self) {
                 }
             }
 
-            q.exec("CREATE TABLE IF NOT EXISTS snapshot (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, diretorio TEXT, tipo TEXT, data_criacao TEXT, data_modificacao TEXT, data_acesso TEXT, size_b REAL, size_kb REAL, size_mb REAL, size_gb REAL, size_tb REAL, atributos TEXT, autor TEXT, dimensoes TEXT, duracao TEXT, taxa_bits TEXT, protegido TEXT, paginas TEXT, linhas TEXT, palavras TEXT, paginas_estimadas TEXT, linhas_codigo TEXT, total_linhas TEXT, slides_estimados TEXT, arquivos TEXT, unzipped_b REAL, unzipped_kb REAL, unzipped_mb REAL, unzipped_gb REAL, unzipped_tb REAL, slides TEXT, binary_file_b REAL, binary_file_kb REAL, binary_file_mb REAL, binary_file_gb REAL, binary_file_tb REAL, planilhas TEXT, colunas TEXT, registros TEXT, tabelas TEXT, timestamp TEXT)");
+            q.exec("CREATE TABLE IF NOT EXISTS snapshot (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, diretorio TEXT, tipo TEXT, mime TEXT, data_criacao TEXT, data_modificacao TEXT, data_acesso TEXT, size_b REAL, size_kb REAL, size_mb REAL, size_gb REAL, size_tb REAL, atributos TEXT, autor TEXT, dimensoes TEXT, duracao TEXT, taxa_bits TEXT, protegido TEXT, paginas TEXT, linhas TEXT, palavras TEXT, paginas_estimadas TEXT, linhas_codigo TEXT, total_linhas TEXT, slides_estimados TEXT, arquivos TEXT, unzipped_b REAL, unzipped_kb REAL, unzipped_mb REAL, unzipped_gb REAL, unzipped_tb REAL, slides TEXT, binary_file_b REAL, binary_file_kb REAL, binary_file_mb REAL, binary_file_gb REAL, binary_file_tb REAL, planilhas TEXT, colunas TEXT, registros TEXT, tabelas TEXT, timestamp TEXT)");
+            q.exec("PRAGMA table_info(snapshot)");
+            QSet<QString> snapshot_existentes;
+            while (q.next()) snapshot_existentes.insert(q.value(1).toString());
+            if (!snapshot_existentes.contains(QStringLiteral("mime"))) {
+                q.exec("ALTER TABLE snapshot ADD COLUMN mime TEXT");
+            }
 
             for (const QString& tabela : tabelas_eventos + QStringList{"snapshot"}) {
                 q.exec(QString("CREATE INDEX IF NOT EXISTS idx_%1_nome ON %1 (nome)").arg(tabela));
@@ -74,6 +89,11 @@ void criar_banco_de_dados(source::services::BaseEvento* self) {
     } catch (...) {
         source::utils::LogManager::get_logger().error("Erro ao criar banco de dados", true);
     }
+}
+
+void criar_banco_de_dados(source::services::BaseEvento* self) {
+    if (!self || self->db_path.isEmpty()) return;
+    criar_banco_de_dados_path(self->db_path);
 }
 
 }  // namespace source::services::GerenciamentoBaseEvento

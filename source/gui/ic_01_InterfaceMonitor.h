@@ -7,6 +7,7 @@
 class QObject;
 class QEvent;
 class QHideEvent;
+class QModelIndex;
 class QShowEvent;
 
 namespace source::services {
@@ -91,6 +92,7 @@ public slots:
     void inserir_evento_streaming(const QVariantMap& evento);
     void inserir_eventos_streaming(const QVariantList& eventos);
     void atualizar_cores_tabela(const QVariantMap& resultado_cores);
+    void abrir_arquivo_reportado(const QModelIndex& index);
 
 protected:
     void changeEvent(QEvent* event) override;

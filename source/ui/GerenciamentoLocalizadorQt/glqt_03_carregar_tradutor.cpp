@@ -40,7 +40,8 @@ bool carregar_tradutor(source::ui::LocalizadorQt* self, const QString& idioma) {
         QLocale::setDefault(qt_locale);
         const QString qt_translations_path = QDir(self->translations_dir_).filePath("qt");
         if (QDir(qt_translations_path).exists()) {
-            if (self->qt_translator_->load(qt_locale, "qtbase", "_", qt_translations_path)) {
+            if (self->qt_translator_->load(qt_locale, "qtbase", "_", qt_translations_path) ||
+                self->qt_translator_->load(qt_locale, "qt", "_", qt_translations_path)) {
                 app->installTranslator(self->qt_translator_);
             }
         }

@@ -1,3 +1,117 @@
+RELEASE NOTES: Version 2026.8.25.0
+
+HIGHLIGHTS OF THIS VERSION
+
+This consolidated release of Linceu Lighthouse brings together a comprehensive suite of advancements in performance, monitoring accuracy, statistical fidelity, usability, internationalized documentation, security, and strict local privacy.
+
+The real-time monitoring engine has been significantly upgraded to handle high data volumes and massive file modifications (additions, modifications, smooth continuous individual deletions, renames, and moves without duplicate events), ensuring instantaneous extraction of over 30 metadata categories for every reported item.
+
+Data cleanup operations have been completely overhauled: when requesting a table or database reset, the application halts background tasks, removes residual auxiliary files, and dynamically recreates storage files in their fresh initial compact state, physically reclaiming 100% of free disk space at runtime.
+
+The 17 statistical charts now feature accelerated rendering for large datasets, preserved animations, refined visual layering with readable axis scales, and the ability to interactively highlight any data point even in high-density areas. The application now supports opening files directly through Windows default applications with an intuitive app-picker dialog and clear natural-language MIME type descriptions.
+
+The User Manual and all system documentation have been redesigned with a top quick-navigation bar and interactive collapsible sections ("Condensed Manual" and "Complete Manual") across six languages (Portuguese, English, Spanish, French, Italian, and German). Security and privacy are fully consolidated under a 100% local ("Local-First") architecture with zero telemetry, zero remote reporting, and thoroughly updated and synchronized legal notices. Finally, the core system platform and compilation toolchains have been upgraded to their latest editions for long-term stability.
+
+
+NEW FEATURES AND IMPROVEMENTS
+
+1. High-Performance Monitoring and Metadata Extraction
+- Ultra-smooth real-time monitoring resilient to rapid and intensive modifications within the same directory.
+- Enhanced handling of massive file deletions, presenting each deleted item individually and continuously without batching delays.
+- File move and rename performance elevated to match initial scan throughput.
+- Full metadata extraction maintained across all monitored event types, immediately accompanying each item as it appears in the table.
+- Comprehensive timestamp auditing for folders and directories, capturing creation, modification, and last-access dates deterministically.
+- Improved recognition and handling of database auxiliary files (".db-shm", ".db-wal") and shortcuts (".lnk"), eliminating duplicate and spurious added events.
+- Stable, steady event table behavior when processing thousands of rapid incoming entries.
+
+2. Dynamic Storage Cleanup and Reset
+- Complete data reset architecture: triggering a table or database cleanup safely halts background writers and rebuilds storage from scratch in its pristine initial format.
+- Instant, physical reclamation of all disk space previously occupied by monitored records, returning free space directly to the operating system.
+- Complete removal of auxiliary temporary storage files ("-wal" and "-shm"), guaranteeing a clean environment from the very first run.
+- Concurrency safeguards preventing new events from being recorded while storage recreation is in progress.
+
+3. Advanced Graphical Visualizations and Statistics
+- Substantial rendering speedup across all statistical charts when processing large datasets (distribution by operation, file type, time of day, size category, timeline, and scatter plots).
+- Full preservation of animation effects and visual transitions in optimized charts.
+- Full interactivity in scatter charts: every plotted point can be hovered, highlighted, and inspected even in dense clusters.
+- Calibrated visual layering: translucent data surfaces allow scale lines and axes to be visible underneath while data points remain prominent and sharp.
+- Enhanced readability of scale rulers and coordinate axes without compromising chart visual aesthetics.
+
+4. Windows Integration and File Opening
+- Direct file opening through associated Windows default applications, removing text-viewer restrictions for non-text files.
+- Visual app chooser dialog displayed when multiple programs are registered in the operating system for a file type.
+- Enhanced MIME type column: displays clear natural-language content descriptions in the active interface language alongside the technical identifier in parentheses.
+
+5. Strict Privacy and 100% Local Security (Zero Telemetry)
+- Definitive consolidation of the Local-First architecture: the application never uses telemetry, never tracks user behavior, and never transmits diagnostic reports to remote servers.
+- Diagnostics, forensic reports, security alerts, and session history operate and remain strictly on the user's local machine.
+- Comprehensive update and alignment of Privacy Policies and License Terms across all 6 official languages to version 2026.8.25.0.
+- Eliminated all external service dependencies and network requirements for the security and protection modules.
+
+6. Comprehensive Multilingual User Manual and Documentation
+- All system documentation and user manuals fully translated and synchronized across 6 languages: Brazilian Portuguese, English, Spanish, French, Italian, and German.
+- Top quick-navigation bar across documentation files with instant language-switching anchor links and topic jump points.
+- Interactive reading experience with collapsible sections, allowing users to toggle between the "Condensed Manual" for quick reference and the "Complete Manual" for comprehensive step-by-step guidance.
+- Standardized terminology and feature descriptions across all supported languages.
+
+7. Interface, Search, and System Tools
+- Integrated search inside "About" and "Manual" windows, supporting Enter key navigation between matches without closing the dialog.
+- Search bar automatically localized according to the selected interface language.
+- Visual stability and spacing improvements in the "About" dialog during window resizing.
+- Redesigned visual version management utility organized into thematic tabs, offering 1-click version/date synchronization and file integrity verification.
+- Updated official Windows installation packages with initial language selection, localized terms, and organized shortcuts.
+- Instant visual synchronization across the main table, status indicators, filter panels, and counters following cleanup actions.
+
+8. Structural Modernization and Build Platform
+- Core framework updated to Qt 6.11.1 along with modern integrated development components.
+- Toolchains and Windows SDK components upgraded to recent stable releases.
+- Optimized translation compilation utilities and workspace maintenance routines, resulting in smaller, faster, and more predictable executables.
+
+
+FIXES AND STABILITY IMPROVEMENTS
+
+- Fixed an issue where data storage files on disk retained their allocated size after clicking "Clear Table, Security and Database" or "Clear Database".
+- Fixed background worker task suspension to ensure clean file reset without locking delays.
+- Fixed interface counter and status synchronization following initial directory scans.
+- Fixed versioning and effective date alignments in multilingual privacy policy documents.
+- Fixed terminology discrepancies and inconsistencies between documentation manuals and interface strings across different languages.
+- Fixed date and number formatting in informational documents to properly adhere to regional standards.
+- Fixed version display in the "About" dialog and internal documentation viewers.
+- Fixed potential lookup issues with translation bundles during executable deployment.
+- Fixed temporary folder management to prevent conflict between previously generated build outputs and new releases.
+- Fixed extraction of creation, modification, and access dates for folders and subdirectories.
+- Fixed file opening routines for unknown and non-text extensions.
+- Fixed inconsistent MIME type translations in secondary languages.
+- Fixed an issue where pressing Enter in the search bar of "About" and "Manual" dialogs closed the active window.
+- Fixed excessive whitespace between description text and search bar in the "About" dialog.
+- Fixed a visual white artifact that could appear in the upper-left interface area between menu and main views.
+- Fixed missing support text files in the "About" dialog when running generated executables.
+- Fixed untranslated interface strings in compiled distribution packages.
+- Fixed spurious "Added" events generated for ".db-shm" and ".db-wal" files during ".db" rename and move operations.
+- Fixed duplicate or redundant events created for database auxiliary files during property inspection.
+- Fixed incorrect classification of ".lnk" shortcuts as "Executable" instead of their proper extension.
+- Fixed unidentified file type display for ".db-shm" and ".db-wal" auxiliary database files.
+- Fixed performance degradation and delayed batching during massive file deletions.
+- Fixed visual layer ordering and performance bottlenecks in high-volume statistical charts.
+- Fixed hover and selection interactivity in dense scatter chart clusters.
+
+
+BENEFITS FOR THE USER
+
+- Faster, smoother, and highly reliable real-time monitoring with zero event duplication.
+- Comprehensive metadata extraction and deterministic timestamp auditing for both files and folders.
+- True, immediate reclamation of disk space upon triggering data cleanup.
+- Interactive, responsive, and easy-to-read statistical visual representations.
+- Seamless opening of any monitored file using the appropriate Windows desktop software.
+- Modern, fully localized User Manual and documentation in 6 languages.
+- Absolute guarantee of privacy and security with 100% local processing and zero telemetry.
+- Snappy, polished, intuitive user interface synchronized in real time with system state.
+- Lighter, more reliable installation packages and standalone executables.
+
+
+_________________________________________________
+
+
 RELEASE NOTES: Version 2026.4.27.0
 
 HIGHLIGHTS OF THIS VERSION

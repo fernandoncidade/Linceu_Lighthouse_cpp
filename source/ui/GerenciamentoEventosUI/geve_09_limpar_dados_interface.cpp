@@ -8,6 +8,7 @@
 
 #include <exception>
 
+#include "source/services/GerenciamentoEventoMovido/gevmov_10_PendenciasMovimentacao.h"
 #include "source/services/ob_09_GerenciadorColunas.h"
 #include "source/tools/fil_01_Filtros.h"
 #include "source/ui/ui_04_GerenciadorEventosUI.h"
@@ -58,14 +59,7 @@ void limpar_dados_interface(source::ui::GerenciadorEventosUI* self) {
         interface_obj->setProperty("ultimo_salvamento", QVariant());
         interface_obj->setProperty("diretorio_atual", QVariant());
 
-        if (interface_obj->property("excluidos_recentemente").isValid()) {
-            interface_obj->setProperty("excluidos_recentemente", QVariantMap());
-        } else {
-            QObject* excluidos = interface_obj->property("excluidos_recentemente_obj").value<QObject*>();
-            if (excluidos != nullptr) {
-                QMetaObject::invokeMethod(excluidos, "clear");
-            }
-        }
+        source::services::GerenciamentoEventoMovido::limpar_pendencias_movimentacao(interface_obj);
 
         QMetaObject::invokeMethod(interface_obj, "atualizar_status");
     } catch (const std::exception& e) {

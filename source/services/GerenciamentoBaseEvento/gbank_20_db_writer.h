@@ -16,13 +16,16 @@ class DatabaseWriter {
 public:
     static std::shared_ptr<DatabaseWriter> get_instance(const QString& db_path);
 
-    explicit DatabaseWriter(const QString& db_path, int batch_size = 500, int batch_timeout_ms = 500);
+    explicit DatabaseWriter(const QString& db_path, int batch_size = 500, int batch_timeout_ms = 100);
     ~DatabaseWriter();
 
     void start();
     void stop();
     void enqueue_event(const QString& tabela, const QVariantMap& evento);
     bool wait_until_idle(int timeout_ms = 2000);
+    bool suspend_processing(int timeout_ms = 2000);
+    void resume_processing();
+    void discard_pending();
 
 private:
     void worker();
@@ -37,6 +40,7 @@ private:
     std::deque<QPair<QString, QVariantMap>> queue_;
     std::atomic<bool> stop_event_;
     std::atomic<bool> started_;
+    std::atomic<bool> suspended_;
     std::atomic<bool> persisting_;
     std::thread thread_;
 

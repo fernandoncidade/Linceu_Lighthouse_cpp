@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
 set(LINCEU_MOCK_QT_ROOT
-    "C:/Qt/6.11.0/mingw_64"
+    "C:/Qt/6.11.1/mingw_64"
     CACHE PATH "Qt 6 MinGW root used to build the VersionEditor mock")
 
 if(DEFINED ENV{QTDIR} AND EXISTS "$ENV{QTDIR}/lib/cmake/Qt6/Qt6Config.cmake")
@@ -37,12 +37,32 @@ list(PREPEND CMAKE_PREFIX_PATH "${LINCEU_MOCK_QT_ROOT}/lib/cmake")
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 
-set(LINCEU_MOCK_OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/output")
+get_filename_component(LINCEU_MOCK_PROJECT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/.." ABSOLUTE)
+
+set(LINCEU_MOCK_OUTPUT_DIR
+    "${LINCEU_MOCK_PROJECT_ROOT}/build/build_mocks"
+    CACHE PATH "Output directory used to generate Linceu mock executables and runtime dependencies")
+
+set(LINCEU_MOCK_DISTRIBUTION_DIR
+    "D:/MISCELANEAS/VSCode/LinceuLighthouse/mocks"
+    CACHE PATH "External directory used to distribute Linceu mock executables and runtime dependencies")
+
+file(TO_CMAKE_PATH "${LINCEU_MOCK_OUTPUT_DIR}" LINCEU_MOCK_OUTPUT_DIR)
 file(MAKE_DIRECTORY "${LINCEU_MOCK_OUTPUT_DIR}")
+message(STATUS "Linceu mocks build directory: ${LINCEU_MOCK_OUTPUT_DIR}")
+
+if(LINCEU_MOCK_DISTRIBUTION_DIR)
+    file(TO_CMAKE_PATH "${LINCEU_MOCK_DISTRIBUTION_DIR}" LINCEU_MOCK_DISTRIBUTION_DIR)
+    file(MAKE_DIRECTORY "${LINCEU_MOCK_DISTRIBUTION_DIR}")
+    message(STATUS "Linceu mocks external distribution directory: ${LINCEU_MOCK_DISTRIBUTION_DIR}")
+endif()
 
 function(linceu_configure_mock_target target_name)
     target_include_directories(${target_name} PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    target_compile_definitions(${target_name} PRIVATE
+        LINCEU_PROJECT_ROOT_PATH="${LINCEU_MOCK_PROJECT_ROOT}")
 
     set_target_properties(${target_name} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${LINCEU_MOCK_OUTPUT_DIR}")
@@ -71,8 +91,23 @@ function(linceu_enable_qt_deploy target_name)
             --compiler-runtime
             --no-translations
             "$<TARGET_FILE:${target_name}>"
-        COMMENT "Deploying Qt runtime for ${target_name}"
+        COMMENT "Deploying Qt runtime for ${target_name} in build directory"
         VERBATIM)
+
+    if(LINCEU_MOCK_DISTRIBUTION_DIR)
+        add_custom_command(TARGET ${target_name} POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E make_directory "${LINCEU_MOCK_DISTRIBUTION_DIR}"
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                "$<TARGET_FILE:${target_name}>"
+                "${LINCEU_MOCK_DISTRIBUTION_DIR}/$<TARGET_FILE_NAME:${target_name}>"
+            COMMAND "${LINCEU_MOCK_WINDEPLOYQT}"
+                --dir "${LINCEU_MOCK_DISTRIBUTION_DIR}"
+                --compiler-runtime
+                --no-translations
+                "${LINCEU_MOCK_DISTRIBUTION_DIR}/$<TARGET_FILE_NAME:${target_name}>"
+            COMMENT "Deploying ${target_name} and Qt runtime to external distribution: ${LINCEU_MOCK_DISTRIBUTION_DIR}"
+            VERBATIM)
+    endif()
 endfunction()
 
 if(WIN32)
@@ -107,6 +142,9 @@ target_link_libraries(compile_translations PRIVATE
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets)
+
+target_compile_definitions(compile_translations PRIVATE
+    LINCEU_MOCK_QT_ROOT_PATH="${LINCEU_MOCK_QT_ROOT}")
 
 linceu_configure_mock_target(compile_translations)
 linceu_enable_qt_deploy(compile_translations)

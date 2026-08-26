@@ -20,11 +20,13 @@ namespace source::services::GerenciamentoTabela {
 
 namespace {
 constexpr int kRawSecurityValueRole = Qt::UserRole + 100;
+constexpr int kRawMetadataValueRole = Qt::UserRole + 101;
 
 QSet<QString> campos_traduziveis() {
     return {
         QStringLiteral("tipo_operacao"), QStringLiteral("nome"), QStringLiteral("dir_anterior"), QStringLiteral("dir_atual"),
         QStringLiteral("data_criacao"), QStringLiteral("data_modificacao"), QStringLiteral("data_acesso"), QStringLiteral("tipo"),
+        QStringLiteral("mime"),
         QStringLiteral("size_b"), QStringLiteral("size_kb"), QStringLiteral("size_mb"), QStringLiteral("size_gb"), QStringLiteral("size_tb"),
         QStringLiteral("atributos"), QStringLiteral("autor"), QStringLiteral("dimensoes"), QStringLiteral("duracao"), QStringLiteral("taxa_bits"),
         QStringLiteral("protegido"), QStringLiteral("paginas"), QStringLiteral("linhas"), QStringLiteral("palavras"),
@@ -178,6 +180,8 @@ void atualizar_linha_mais_recente(source::services::GerenciadorTabela* self, QOb
             auto* item = new QTableWidgetItem(valor);
             if (eh_campo_seguranca) {
                 item->setData(kRawSecurityValueRole, valor_bruto);
+            } else if (traduziveis.contains(key)) {
+                item->setData(kRawMetadataValueRole, valor_bruto);
             }
             tabela->setItem(0, col, item);
         }

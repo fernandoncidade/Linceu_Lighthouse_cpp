@@ -47,6 +47,34 @@ QPointF vertex_point(const ColoredVertex& vertex) {
     return QPointF(vertex.x, vertex.y);
 }
 
+void paint_triangle_vertices(QPainter& painter, const QVector<ColoredVertex>& vertices) {
+    painter.setRenderHint(QPainter::Antialiasing, false);
+    painter.setPen(Qt::NoPen);
+    for (int i = 0; i + 2 < vertices.size(); i += 3) {
+        const ColoredVertex& a = vertices.at(i);
+        const ColoredVertex& b = vertices.at(i + 1);
+        const ColoredVertex& c = vertices.at(i + 2);
+        QPainterPath triangle;
+        triangle.moveTo(vertex_point(a));
+        triangle.lineTo(vertex_point(b));
+        triangle.lineTo(vertex_point(c));
+        triangle.closeSubpath();
+        painter.fillPath(triangle, vertex_color(a));
+    }
+}
+
+void paint_line_vertices(QPainter& painter, const QVector<ColoredVertex>& vertices) {
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    for (int i = 0; i + 1 < vertices.size(); i += 2) {
+        const ColoredVertex& a = vertices.at(i);
+        const ColoredVertex& b = vertices.at(i + 1);
+        QPen pen(vertex_color(a), 1.15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+        pen.setCosmetic(true);
+        painter.setPen(pen);
+        painter.drawLine(vertex_point(a), vertex_point(b));
+    }
+}
+
 ChartDataSet reveal_data_set(const ChartDataSet& source, double t) {
     ChartDataSet revealed = source;
     for (ChartSeries& series : revealed.series) {
@@ -265,29 +293,10 @@ void RasterChartView::paintScene(QPainter& painter) {
     const QColor clear = m_scene.background.isValid() ? m_scene.background : QColor(QStringLiteral("#f2f4f7"));
     painter.fillRect(rect(), clear);
 
-    painter.setRenderHint(QPainter::Antialiasing, false);
-    painter.setPen(Qt::NoPen);
-    for (int i = 0; i + 2 < m_scene.fillVertices.size(); i += 3) {
-        const ColoredVertex& a = m_scene.fillVertices.at(i);
-        const ColoredVertex& b = m_scene.fillVertices.at(i + 1);
-        const ColoredVertex& c = m_scene.fillVertices.at(i + 2);
-        QPainterPath triangle;
-        triangle.moveTo(vertex_point(a));
-        triangle.lineTo(vertex_point(b));
-        triangle.lineTo(vertex_point(c));
-        triangle.closeSubpath();
-        painter.fillPath(triangle, vertex_color(a));
-    }
-
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    for (int i = 0; i + 1 < m_scene.lineVertices.size(); i += 2) {
-        const ColoredVertex& a = m_scene.lineVertices.at(i);
-        const ColoredVertex& b = m_scene.lineVertices.at(i + 1);
-        QPen pen(vertex_color(a), 1.15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-        pen.setCosmetic(true);
-        painter.setPen(pen);
-        painter.drawLine(vertex_point(a), vertex_point(b));
-    }
+    paint_triangle_vertices(painter, m_scene.fillVertices);
+    paint_line_vertices(painter, m_scene.lineVertices);
+    paint_triangle_vertices(painter, m_scene.foregroundFillVertices);
+    paint_line_vertices(painter, m_scene.foregroundLineVertices);
 
     for (const LegendEntry& entry : m_scene.legends) {
         painter.setPen(Qt::NoPen);

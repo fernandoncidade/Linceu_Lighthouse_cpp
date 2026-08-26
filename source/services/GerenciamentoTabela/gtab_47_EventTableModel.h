@@ -21,6 +21,8 @@ class FixedLanguageLocalizer;
 class EventTableModel : public QAbstractTableModel {
     Q_OBJECT
 public:
+    static constexpr int EventDataRole = Qt::UserRole + 200;
+
     explicit EventTableModel(QObject* interface_obj,
                              const QString& idioma_exibicao = QString(),
                              QObject* parent = nullptr);

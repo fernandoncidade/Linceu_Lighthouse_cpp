@@ -40,6 +40,60 @@ std::vector<ManualSection> doc_es_es() {
             }
         },
         {
+            QStringLiteral("abrir-archivos-mime-fechas-carpetas"),
+            QStringLiteral("Apertura de archivos, MIME y fechas de carpetas"),
+            {
+                QStringLiteral("La tabla ahora ayuda a abrir los elementos reportados aunque no sean archivos de texto. Al usar Abrir o doble clic en una fila de archivo, la aplicación intenta usar la aplicación predeterminada de Windows y puede ofrecer otras opciones compatibles."),
+                QStringLiteral("La columna MIME muestra el tipo real de contenido en lenguaje legible según el idioma actual, manteniendo el identificador original entre paréntesis para auditoría. Las columnas Fecha de creación, Fecha de modificación y Fecha de acceso también se rellenan para carpetas, subcarpetas y directorios hijos durante el escaneo."),
+            },
+            {
+                QStringLiteral("Use Abrir o doble clic para abrir documentos, imágenes, vídeos, hojas de cálculo, ejecutables, archivos comprimidos y otros tipos reconocidos por el sistema."),
+                QStringLiteral("Cuando Windows informe más de una opción, elija la aplicación deseada en la ventana de selección."),
+                QStringLiteral("Active la columna MIME para revisar la familia y el subtipo de contenido detectado."),
+                QStringLiteral("Active las tres columnas de fecha para auditar cuándo se crearon, modificaron o accedieron carpetas y archivos."),
+            },
+            {
+                {
+                    QStringLiteral("Cómo abrir cualquier tipo de archivo"),
+                    {
+                        QStringLiteral("1) Seleccione una fila que represente un archivo existente."),
+                        QStringLiteral("2) Haga doble clic o use la acción Abrir."),
+                        QStringLiteral("3) Si aparece una ventana de elección, seleccione la aplicación deseada y confirme."),
+                        QStringLiteral("4) Si el elemento es una carpeta, use la acción de abrir carpeta para navegar hasta ella en el Explorador de archivos."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Cómo interpretar la columna MIME"),
+                    {
+                        QStringLiteral("La primera parte muestra la familia del contenido, como Texto, Imagen, Vídeo, Audio o Aplicación."),
+                        QStringLiteral("La segunda parte muestra el subtipo en lenguaje simple, como PDF, PNG, ZIP o Texto sin formato."),
+                        QStringLiteral("El texto entre paréntesis conserva el identificador original, por ejemplo text/plain o application/pdf."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Cómo revisar fechas en carpetas y subcarpetas"),
+                    {
+                        QStringLiteral("1) Abra el menú de columnas y active Fecha de creación, Fecha de modificación y Fecha de acceso."),
+                        QStringLiteral("2) Ejecute un nuevo escaneo en el directorio elegido."),
+                        QStringLiteral("3) Ordene o filtre la tabla para revisar carpetas hijas y directorios más profundos."),
+                        QStringLiteral("4) Use estas fechas para comparar cambios recientes con eventos registrados."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Si un archivo no se abre"),
+                    {
+                        QStringLiteral("Confirme que la ruta todavía exista y que tenga permiso de lectura."),
+                        QStringLiteral("Verifique si Windows tiene una aplicación asociada a ese tipo de archivo."),
+                        QStringLiteral("Cuando sea necesario, elija manualmente otra aplicación compatible en la ventana de selección."),
+                    },
+                    {}
+                },
+            }
+        },
+        {
             QStringLiteral("operacion-alto-volumen"),
             QStringLiteral("Operación con alto volumen"),
             {

@@ -24,6 +24,7 @@
 namespace source::services::GerenciamentoTabela {
 namespace {
 constexpr int kRawSecurityValueRole = Qt::UserRole + 100;
+constexpr int kRawMetadataValueRole = Qt::UserRole + 101;
 constexpr int kMinLinhasPorIteracao = 8;
 constexpr int kMaxLinhasPorIteracao = 64;
 constexpr int kOrcamentoTempoMs = 6;
@@ -298,8 +299,12 @@ void processar_lote_retraducao(const std::shared_ptr<RetraducaoEstado>& estado,
                     const QString atual = item->text();
                     const QString valor_bruto_seguranca =
                         eh_campo_seguranca ? item->data(kRawSecurityValueRole).toString() : QString();
+                    const QString valor_bruto_metadado =
+                        !eh_campo_seguranca ? item->data(kRawMetadataValueRole).toString() : QString();
                     const QString valor_origem =
-                        !valor_bruto_seguranca.isEmpty() ? valor_bruto_seguranca : item->text();
+                        !valor_bruto_seguranca.isEmpty()
+                            ? valor_bruto_seguranca
+                            : (!valor_bruto_metadado.isEmpty() ? valor_bruto_metadado : item->text());
                     if (!valor_origem.isEmpty()) {
                         const QString traduzido = eh_campo_seguranca
                                                       ? source::security::traduzir_valor_ui(loc_qt, key, valor_origem)
@@ -439,6 +444,7 @@ void executar_retraducao_agendada(source::services::GerenciadorTabela* self) {
             const QSet<QString> colunas_traduziveis = {
                 QStringLiteral("tipo_operacao"),
                 QStringLiteral("tipo"),
+                QStringLiteral("mime"),
                 QStringLiteral("atributos"),
                 QStringLiteral("autor"),
                 QStringLiteral("protegido"),

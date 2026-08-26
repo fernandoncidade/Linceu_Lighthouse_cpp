@@ -3,7 +3,9 @@
 #include <QString>
 #include <vector>
 
-namespace source::ui::manual {
+namespace source {
+namespace ui {
+namespace manual {
 
 struct ManualDetails {
     QString summary;
@@ -35,4 +37,6 @@ QString to_unicode_bold(const QString& s);
 std::vector<ShortcutEntry> shortcut_entries(const QString& lang);
 std::vector<QString> shortcut_lines(const QString& lang);
 
-} // namespace source::ui::manual
+} // namespace manual
+} // namespace ui
+} // namespace source

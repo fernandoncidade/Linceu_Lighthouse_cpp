@@ -1,6 +1,6 @@
 Linceu Lighthouse Privacy Policy
-Last updated: April 27, 2026
-Version: 2026.4.27.0
+Last updated: August 25, 2026
+Version: 2026.8.25.0
 
 Your privacy is fundamental to us. This Privacy Policy explains what information Linceu Lighthouse ("Software") uses and, more importantly, how it remains under your control.
 
@@ -46,11 +46,9 @@ You have absolute control over your data. At any time, you can:
  - Clear the entire monitoring history directly from the Software's interface.
  - Uninstall the Software, which will remove the application and its components from your system. The database and log files can be manually deleted by you to ensure complete removal.
 
-6. Microsoft Error Reporting Data
+6. Zero Telemetry and Local Diagnostics
 
-To improve the stability and quality of Linceu Lighthouse, we may use the Microsoft Error Reporting service. If the application encounters a critical error, anonymous diagnostic information may be sent to Microsoft and subsequently shared with us.
-
-This practice is governed by the Microsoft App Developer Agreement. The error data we receive is used exclusively to fix bugs and improve the software. These reports do not include your personal files or any information that directly identifies you.
+Linceu Lighthouse operates on the premise of Local Privacy and Zero Application Telemetry. The Software does not implement proprietary telemetry mechanisms, remote analytics, usage tracking, or automated transmission of crash reports over the internet. Any error logs or diagnostics are strictly generated and stored in local files on the user's device for personal troubleshooting, without any transmission to remote servers.
 
 7. Children's Privacy
 

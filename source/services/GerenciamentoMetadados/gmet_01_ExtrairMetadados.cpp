@@ -3,6 +3,8 @@
 #include <QDateTime>
 #include <QFileInfo>
 #include <QImageReader>
+#include <QMimeDatabase>
+#include <QMimeType>
 #include <QSet>
 
 #include "gmet_03_ExtrairMetadadosImagem.h"
@@ -19,7 +21,10 @@ QPair<QString, QVariantMap> extrair_metadados(const QString& caminho, source::ui
     try {
         QFileInfo fi(caminho);
         if (!fi.exists()) return {caminho, metadados};
+        QMimeDatabase mime_db;
+        const QMimeType mime = mime_db.mimeTypeForFile(fi);
         metadados.insert("tamanho", fi.size());
+        metadados.insert("mime", mime.isValid() ? mime.name() : QString());
         metadados.insert("data_acesso", fi.lastRead().toSecsSinceEpoch());
         metadados.insert("data_modificacao", fi.lastModified().toSecsSinceEpoch());
         metadados.insert("data_criacao", fi.birthTime().toSecsSinceEpoch());

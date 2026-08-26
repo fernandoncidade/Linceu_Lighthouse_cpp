@@ -204,9 +204,11 @@ void Configurador::setup_ui(InterfaceMonitor* interface_monitor) {
         interface_monitor->setGeometry(100, 100, 900, 500);
 
         auto* widget_central = new QWidget(interface_monitor);
+        widget_central->setContentsMargins(0, 0, 0, 0);
         interface_monitor->setCentralWidget(widget_central);
 
         auto* splitter_principal = new QSplitter(Qt::Horizontal, widget_central);
+        splitter_principal->setContentsMargins(0, 0, 0, 0);
         auto* painel_lateral = new QWidget(splitter_principal);
         auto* layout_painel_lateral = new QVBoxLayout(painel_lateral);
         layout_painel_lateral->setContentsMargins(0, 0, 0, 0);
@@ -368,6 +370,7 @@ void Configurador::setup_ui(InterfaceMonitor* interface_monitor) {
 
         auto* layout_wrapper = new QHBoxLayout(widget_central);
         layout_wrapper->setContentsMargins(0, 0, 0, 0);
+        layout_wrapper->setSpacing(0);
         layout_wrapper->addWidget(splitter_principal);
 
         QTimer::singleShot(0, interface_monitor, [interface_monitor]() {
@@ -413,6 +416,7 @@ void Configurador::setup_menu_bar(InterfaceMonitor* interface_monitor) {
         if (bar == nullptr) {
             return;
         }
+        bar->setContentsMargins(0, 0, 0, 0);
         bar->clear();
 
         QMenu* menu_arquivo = bar->addMenu(get_text(interface_monitor->loc, "file", "Arquivo"));

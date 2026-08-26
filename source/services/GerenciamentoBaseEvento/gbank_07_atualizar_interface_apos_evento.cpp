@@ -25,6 +25,13 @@ constexpr int kMaxEventosPorFlushUi = 512;
 QMutex g_batch_mutex;
 QHash<QObject*, InterfaceBatchState> g_batches_por_interface;
 
+bool eh_evento_exclusao(const QVariantMap& evento) {
+    const QString operacao = evento.value(QStringLiteral("tipo_operacao")).toString().toLower();
+    return operacao == QStringLiteral("op_deleted") ||
+           operacao.contains(QStringLiteral("deleted")) ||
+           operacao.contains(QStringLiteral("exclu"));
+}
+
 void limpar_batch_interface(QObject* interface) {
     if (interface == nullptr) {
         return;
@@ -171,6 +178,15 @@ void _atualizar_interface_apos_evento(source::services::BaseEvento* self, const 
             interface = self->observador->interface;
         }
         if (!interface) return;
+
+        if (eh_evento_exclusao(evento) &&
+            interface->metaObject()->indexOfMethod("inserir_evento_streaming(QVariantMap)") >= 0) {
+            QMetaObject::invokeMethod(interface,
+                                      "inserir_evento_streaming",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(QVariantMap, evento));
+            return;
+        }
 
         enfileirar_evento_interface(interface, evento);
 

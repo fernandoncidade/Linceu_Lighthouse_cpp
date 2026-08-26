@@ -40,6 +40,60 @@ std::vector<ManualSection> doc_fr_fr() {
             }
         },
         {
+            QStringLiteral("ouvrir-fichiers-mime-dates-dossiers"),
+            QStringLiteral("Ouverture des fichiers, MIME et dates des dossiers"),
+            {
+                QStringLiteral("Le tableau peut désormais aider à ouvrir les éléments signalés même lorsqu'il ne s'agit pas de fichiers texte. Avec Ouvrir ou un double-clic sur une ligne de fichier, l'application essaie l'application par défaut de Windows et peut proposer d'autres choix compatibles."),
+                QStringLiteral("La colonne MIME affiche le type réel du contenu dans une forme lisible selon la langue actuelle, tout en conservant l'identifiant original entre parenthèses pour l'audit. Les colonnes Date de création, Date de modification et Date d'accès sont également renseignées pour les dossiers, sous-dossiers et répertoires enfants pendant l'analyse."),
+            },
+            {
+                QStringLiteral("Utilisez Ouvrir ou le double-clic pour ouvrir documents, images, vidéos, feuilles de calcul, exécutables, archives et autres types reconnus par le système."),
+                QStringLiteral("Lorsque Windows indique plusieurs options, choisissez l'application souhaitée dans la fenêtre de sélection."),
+                QStringLiteral("Activez la colonne MIME pour vérifier la famille et le sous-type de contenu détectés."),
+                QStringLiteral("Activez les trois colonnes de date pour auditer la création, la modification et l'accès aux dossiers et fichiers."),
+            },
+            {
+                {
+                    QStringLiteral("Ouvrir tout type de fichier"),
+                    {
+                        QStringLiteral("1) Sélectionnez une ligne représentant un fichier existant."),
+                        QStringLiteral("2) Double-cliquez dessus ou utilisez l'action Ouvrir."),
+                        QStringLiteral("3) Si une fenêtre de choix apparaît, sélectionnez l'application souhaitée et confirmez."),
+                        QStringLiteral("4) Si l'élément est un dossier, utilisez l'action d'ouverture de dossier pour y accéder dans l'Explorateur de fichiers."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Lire la colonne MIME"),
+                    {
+                        QStringLiteral("La première partie indique la famille du contenu, comme Texte, Image, Vidéo, Audio ou Application."),
+                        QStringLiteral("La deuxième partie indique le sous-type en langage simple, comme PDF, PNG, ZIP ou Texte brut."),
+                        QStringLiteral("Le texte entre parenthèses conserve l'identifiant original, par exemple text/plain ou application/pdf."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Vérifier les dates des dossiers et sous-dossiers"),
+                    {
+                        QStringLiteral("1) Ouvrez le menu des colonnes et activez Date de création, Date de modification et Date d'accès."),
+                        QStringLiteral("2) Lancez une nouvelle analyse sur le répertoire choisi."),
+                        QStringLiteral("3) Triez ou filtrez le tableau pour examiner les dossiers enfants et les répertoires plus profonds."),
+                        QStringLiteral("4) Utilisez ces dates pour comparer les changements récents aux événements enregistrés."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Si un fichier ne s'ouvre pas"),
+                    {
+                        QStringLiteral("Vérifiez que le chemin existe toujours et que vous disposez du droit de lecture."),
+                        QStringLiteral("Vérifiez qu'une application est associée à ce type de fichier dans Windows."),
+                        QStringLiteral("Si nécessaire, choisissez manuellement une autre application compatible dans la fenêtre de sélection."),
+                    },
+                    {}
+                },
+            }
+        },
+        {
             QStringLiteral("operation-grand-volume"),
             QStringLiteral("Exploitation en grand volume"),
             {

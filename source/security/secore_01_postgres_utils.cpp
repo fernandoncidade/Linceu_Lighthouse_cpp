@@ -40,74 +40,6 @@ RuntimeState& runtime_state() {
     return state;
 }
 
-QString env_value(const char* primary, const char* fallback, const QString& default_value = QString()) {
-    QString value = qEnvironmentVariable(primary);
-    if (value.isEmpty() && fallback != nullptr) {
-        value = qEnvironmentVariable(fallback);
-    }
-    return value.isEmpty() ? default_value : value;
-}
-
-int env_int_value(const char* primary, const char* fallback, int default_value) {
-    bool ok = false;
-    const int value = env_value(primary, fallback).toInt(&ok);
-    return ok ? value : default_value;
-}
-
-QString normalized_directory(const QString& path) {
-    return path.isEmpty() ? QString() : QDir::cleanPath(QDir(path).absolutePath());
-}
-
-QStringList client_library_candidates() {
-    QStringList candidates;
-
-    const QString configured_dir =
-        env_value("LINCEU_SECURITY_PGLIBDIR", "PGBINDIR", qEnvironmentVariable("POSTGRES_HOME"));
-    if (!configured_dir.isEmpty()) {
-        const QFileInfo info(configured_dir);
-        const QString dir = info.isDir() ? configured_dir : info.absolutePath();
-        if (!dir.isEmpty()) {
-            candidates.append(normalized_directory(dir));
-            if (QFileInfo(dir).fileName().compare(QStringLiteral("bin"), Qt::CaseInsensitive) != 0) {
-                candidates.append(normalized_directory(QDir(dir).filePath(QStringLiteral("bin"))));
-            }
-        }
-    }
-
-    const QString app_dir = QCoreApplication::applicationDirPath();
-    if (!app_dir.isEmpty()) {
-        candidates.append(normalized_directory(app_dir));
-        candidates.append(normalized_directory(QDir(app_dir).filePath(QStringLiteral("pgsql"))));
-        candidates.append(normalized_directory(QDir(app_dir).filePath(QStringLiteral("postgres"))));
-    }
-
-    candidates.removeDuplicates();
-    return candidates;
-}
-
-void prepend_to_path(const QString& directory) {
-    if (directory.isEmpty() || !QDir(directory).exists()) {
-        return;
-    }
-
-    const QByteArray current_path = qgetenv("PATH");
-    const QString current = QString::fromLocal8Bit(current_path);
-    const QString normalized = QDir::toNativeSeparators(directory);
-    if (current.contains(normalized, Qt::CaseInsensitive)) {
-        return;
-    }
-
-    const QString updated =
-        normalized + QString(QDir::listSeparator()) + current;
-    qputenv("PATH", QDir::toNativeSeparators(updated).toLocal8Bit());
-}
-
-QString connection_name(const QString& scope) {
-    return QStringLiteral("security_pg_%1_%2")
-        .arg(QString::number(reinterpret_cast<quintptr>(QThread::currentThreadId()), 16),
-             scope);
-}
-
 QString cache_connection_name(const QString& scope) {
     return QStringLiteral("security_cache_%1_%2")
         .arg(QString::number(reinterpret_cast<quintptr>(QThread::currentThreadId()), 16),
@@ -121,32 +53,6 @@ QString cache_connection_prefix_for_thread() {
 
 QString cache_connection_prefix_all() {
     return QStringLiteral("security_cache_");
-}
-
-QString connect_options(const ConnectionConfig& cfg) {
-    QStringList options;
-    options << QStringLiteral("connect_timeout=%1").arg(qMax(1, cfg.connect_timeout_s));
-    if (!cfg.application_name.trimmed().isEmpty()) {
-        options << QStringLiteral("application_name=%1").arg(cfg.application_name.trimmed());
-    }
-    if (!cfg.sslmode.trimmed().isEmpty()) {
-        options << QStringLiteral("sslmode=%1").arg(cfg.sslmode.trimmed());
-    }
-    options << QStringLiteral("keepalives=1");
-    options << QStringLiteral("keepalives_idle=30");
-    options << QStringLiteral("keepalives_interval=10");
-    options << QStringLiteral("keepalives_count=3");
-    return options.join(QLatin1Char(';'));
-}
-
-void apply_session_settings(QSqlDatabase& db) {
-    if (db.driverName().compare(QStringLiteral("QPSQL"), Qt::CaseInsensitive) != 0) {
-        return;
-    }
-    QSqlQuery query(db);
-    query.exec(QStringLiteral("SET statement_timeout = '15000ms'"));
-    query.exec(QStringLiteral("SET lock_timeout = '5000ms'"));
-    query.exec(QStringLiteral("SET idle_in_transaction_session_timeout = '30000ms'"));
 }
 
 void apply_local_cache_settings(QSqlDatabase& db) {
@@ -174,52 +80,7 @@ void record_failure(const QString& message) {
     state.next_retry_after_ms = QDateTime::currentMSecsSinceEpoch() + 10000;
 }
 
-bool retry_allowed() {
-    QMutexLocker locker(&runtime_lock());
-    return QDateTime::currentMSecsSinceEpoch() >= runtime_state().next_retry_after_ms;
-}
-
-void mark_backend_state(bool local_cache_active) {
-    QMutexLocker locker(&runtime_lock());
-    runtime_state().local_cache_active = local_cache_active;
-}
-
 }  // namespace
-
-bool ConnectionConfig::is_configured() const {
-    return !host.trimmed().isEmpty() && port > 0 && !database.trimmed().isEmpty() &&
-           !user.trimmed().isEmpty();
-}
-
-const ConnectionConfig& config() {
-    static const ConnectionConfig cfg = [] {
-        ConnectionConfig value;
-        value.host = env_value("LINCEU_SECURITY_PGHOST", "PGHOST", QStringLiteral("127.0.0.1"));
-        value.port = env_int_value("LINCEU_SECURITY_PGPORT", "PGPORT", 5432);
-        value.database =
-            env_value("LINCEU_SECURITY_PGDATABASE", "PGDATABASE", QStringLiteral("linceu_security"));
-        value.user = env_value("LINCEU_SECURITY_PGUSER", "PGUSER", QStringLiteral("postgres"));
-        value.password = env_value("LINCEU_SECURITY_PGPASSWORD", "PGPASSWORD");
-        value.sslmode = env_value("LINCEU_SECURITY_PGSSLMODE", "PGSSLMODE", QStringLiteral("prefer"));
-        value.connect_timeout_s =
-            env_int_value("LINCEU_SECURITY_PGCONNECT_TIMEOUT", "PGCONNECT_TIMEOUT", 2);
-        value.application_name = QStringLiteral("LinceuLighthouseSecurity");
-
-        const QStringList candidates = client_library_candidates();
-        for (const QString& candidate : candidates) {
-            if (QFileInfo(QDir(candidate).filePath(QStringLiteral("libpq.dll"))).exists() ||
-                QFileInfo(QDir(candidate).filePath(QStringLiteral("LIBPQ.dll"))).exists()) {
-                value.client_library_dir = candidate;
-                break;
-            }
-        }
-        if (value.client_library_dir.isEmpty() && !candidates.isEmpty()) {
-            value.client_library_dir = candidates.first();
-        }
-        return value;
-    }();
-    return cfg;
-}
 
 void prepare_runtime() {
     QMutexLocker locker(&runtime_lock());
@@ -260,8 +121,6 @@ QString last_error() {
     return runtime_state().last_error;
 }
 
-QString local_cache_path();
-
 QString describe_target() {
     return local_cache_path();
 }
@@ -286,7 +145,7 @@ QSqlDatabase open_local_cache_database(const QString& scope) {
         QMutexLocker locker(&runtime_lock());
         if (!runtime_state().sqlite_available) {
             runtime_state().last_error =
-                QStringLiteral("Driver QSQLITE indisponível para o cache local de segurança.");
+                QStringLiteral("Driver QSQLITE indisponível para o armazenamento local de segurança.");
             return QSqlDatabase();
         }
     }
@@ -299,13 +158,13 @@ QSqlDatabase open_local_cache_database(const QString& scope) {
                           ? QSqlDatabase::database(conn_name, false)
                           : QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), conn_name);
     if (!db.isValid()) {
-        record_failure(QStringLiteral("Falha ao inicializar o cache local de segurança."));
+        record_failure(QStringLiteral("Falha ao inicializar o banco local de segurança."));
         return QSqlDatabase();
     }
 
     db.setDatabaseName(cache_path);
     if (!db.isOpen() && !db.open()) {
-        record_failure(QStringLiteral("Falha ao abrir o cache local de segurança: %1")
+        record_failure(QStringLiteral("Falha ao abrir o banco local de segurança: %1")
                            .arg(db.lastError().text()));
         return QSqlDatabase();
     }

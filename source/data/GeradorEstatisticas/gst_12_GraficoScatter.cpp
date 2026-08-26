@@ -5,88 +5,306 @@
 #include <limits>
 
 #include <QVector>
+#include <QHash>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QStringList>
 
 #include "source/utils/LogManager.h"
 
 namespace source::data {
 
 namespace {
+constexpr int kMaxFileSizeScatterPoints = 20000;
+
+double to_double_locale(const QVariant& value) {
+    bool ok = false;
+    double parsed = value.toDouble(&ok);
+    if (ok) return parsed;
+
+    QString text = value.toString().trimmed();
+    if (text.isEmpty()) return 0.0;
+    text.replace(QLatin1Char(','), QLatin1Char('.'));
+    parsed = text.toDouble(&ok);
+    return ok ? parsed : 0.0;
+}
+
+double bytes_from_query(const QSqlQuery& query,
+                        int idx_size_b,
+                        int idx_size_kb,
+                        int idx_size_mb,
+                        int idx_size_gb,
+                        int idx_size_tb) {
+    const double sizeB = to_double_locale(query.value(idx_size_b));
+    if (sizeB > 0.0) return sizeB;
+    const double sizeKb = to_double_locale(query.value(idx_size_kb));
+    if (sizeKb > 0.0) return sizeKb * 1024.0;
+    const double sizeMb = to_double_locale(query.value(idx_size_mb));
+    if (sizeMb > 0.0) return sizeMb * 1024.0 * 1024.0;
+    const double sizeGb = to_double_locale(query.value(idx_size_gb));
+    if (sizeGb > 0.0) return sizeGb * 1024.0 * 1024.0 * 1024.0;
+    const double sizeTb = to_double_locale(query.value(idx_size_tb));
+    if (sizeTb > 0.0) return sizeTb * 1024.0 * 1024.0 * 1024.0 * 1024.0;
+    return 0.0;
+}
+
+QDateTime parse_scatter_timestamp(const QVariant& value) {
+    if (value.canConvert<QDateTime>()) {
+        const QDateTime dt = value.toDateTime();
+        if (dt.isValid()) return dt;
+    }
+
+    const QString text = value.toString().trimmed();
+    if (text.isEmpty()) return {};
+
+    bool epochOk = false;
+    const qlonglong epoch = text.toLongLong(&epochOk);
+    if (epochOk) {
+        const int digits = text.startsWith(QLatin1Char('-')) ? text.size() - 1 : text.size();
+        if (digits >= 16) return QDateTime::fromMSecsSinceEpoch(epoch / 1000);
+        if (digits >= 13) return QDateTime::fromMSecsSinceEpoch(epoch);
+        return QDateTime::fromSecsSinceEpoch(epoch);
+    }
+
+    QDateTime dt = QDateTime::fromString(text, Qt::ISODateWithMs);
+    if (dt.isValid()) return dt;
+    dt = QDateTime::fromString(text, Qt::ISODate);
+    if (dt.isValid()) return dt;
+
+    const QString isoGuess = (text.contains(QLatin1Char(' ')) && !text.contains(QLatin1Char('T')))
+                                 ? QString(text).replace(QLatin1Char(' '), QLatin1Char('T'))
+                                 : text;
+    if (isoGuess != text) {
+        dt = QDateTime::fromString(isoGuess, Qt::ISODateWithMs);
+        if (dt.isValid()) return dt;
+        dt = QDateTime::fromString(isoGuess, Qt::ISODate);
+        if (dt.isValid()) return dt;
+    }
+
+    const QStringList formats = {
+        QStringLiteral("yyyy-MM-dd HH:mm:ss"),
+        QStringLiteral("yyyy-MM-dd HH:mm:ss.zzz"),
+        QStringLiteral("yyyy/MM/dd HH:mm:ss"),
+        QStringLiteral("yyyy/MM/dd HH:mm:ss.zzz"),
+        QStringLiteral("dd/MM/yyyy HH:mm:ss"),
+        QStringLiteral("dd/MM/yyyy HH:mm:ss.zzz"),
+        QStringLiteral("MM/dd/yyyy HH:mm:ss"),
+        QStringLiteral("MM/dd/yyyy HH:mm:ss.zzz"),
+    };
+    for (const QString& format : formats) {
+        dt = QDateTime::fromString(text, format);
+        if (dt.isValid()) return dt;
+    }
+    return {};
+}
+
 double percentile(QVector<double> values, const double q) {
     if (values.isEmpty()) return 0.0;
-    std::sort(values.begin(), values.end());
     if (values.size() == 1) return values.first();
 
     const double idx = (values.size() - 1) * q;
     const int lo = static_cast<int>(std::floor(idx));
     const int hi = static_cast<int>(std::ceil(idx));
     const double frac = idx - lo;
-    if (lo == hi) return values.at(lo);
-    return values.at(lo) + (values.at(hi) - values.at(lo)) * frac;
+    auto nthLo = values.begin() + lo;
+    std::nth_element(values.begin(), nthLo, values.end());
+    const double loValue = values.at(lo);
+    if (lo == hi) return loValue;
+    auto nthHi = values.begin() + hi;
+    std::nth_element(values.begin(), nthHi, values.end());
+    return loValue + (values.at(hi) - loValue) * frac;
+}
+
+QString translated_value(const QHash<QString, QString>& map, const QString& raw, const QString& fallback) {
+    const QString trimmed = raw.trimmed();
+    if (trimmed.isEmpty()) return fallback;
+    return map.value(trimmed, trimmed);
+}
+
+struct ScatterSamplePoint {
+    qint64 timestampMs = 0;
+    double sizeMb = 0.0;
+    QString operacao;
+    QString operacaoRaw;
+    QString tipo;
+    QString tipoRaw;
+    QString arquivo;
+    QString timestampText;
+};
+
+struct ScatterSampler {
+    int limit = kMaxFileSizeScatterPoints;
+    int stride = 1;
+    int seen = 0;
+    QVector<ScatterSamplePoint> points;
+
+    void consider(const ScatterSamplePoint& point) {
+        if ((seen % stride) == 0) {
+            points.append(point);
+            if (points.size() > limit) {
+                QVector<ScatterSamplePoint> reduced;
+                reduced.reserve((points.size() + 1) / 2);
+                for (int i = 0; i < points.size(); i += 2) {
+                    reduced.append(points.at(i));
+                }
+                points = std::move(reduced);
+                stride *= 2;
+            }
+        }
+        ++seen;
+    }
+};
+
+double scaled_time_value(qint64 offsetMs, const QString& escala) {
+    if (escala == QStringLiteral("milliseconds")) return static_cast<double>(offsetMs);
+    if (escala == QStringLiteral("centiseconds")) return (static_cast<double>(offsetMs) / 1000.0) * 100.0;
+    if (escala == QStringLiteral("minutes")) return (static_cast<double>(offsetMs) / 1000.0) / 60.0;
+    if (escala == QStringLiteral("hours")) return (static_cast<double>(offsetMs) / 1000.0) / 3600.0;
+    if (escala == QStringLiteral("days")) return (static_cast<double>(offsetMs) / 1000.0) / 86400.0;
+    return static_cast<double>(offsetMs) / 1000.0;
 }
 }  // namespace
 
 QVariant GraficoScatter::gerar() {
     try {
-        const auto dados = _obter_dados();
         const QString titulo = obter_texto("file_size_analysis", QStringLiteral("Análise de Tamanho de Arquivo"));
-        if (dados.isEmpty()) return _criar_grafico_sem_dados(titulo);
-
-        struct Registro {
-            QVariantMap row;
-            QDateTime timestamp;
-            double tamanho_mb = 0.0;
-        };
-
-        QVector<Registro> registros;
-        registros.reserve(dados.size());
-        int invalid_size = 0;
-        int invalid_timestamp = 0;
-
-        for (const QVariant& v : dados) {
-            const QVariantMap row = v.toMap();
-            const double bytes = extrair_tamanho_bytes(row);
-            if (bytes <= 0) {
-                invalid_size += 1;
-                continue;
-            }
-
-            const QDateTime timestamp = extrair_timestamp(row);
-            if (!timestamp.isValid()) {
-                invalid_timestamp += 1;
-                continue;
-            }
-
-            Registro r;
-            r.row = row;
-            r.timestamp = timestamp;
-            r.tamanho_mb = bytes / (1024.0 * 1024.0);
-            registros.append(r);
-        }
-
-        if (registros.isEmpty()) {
-            return _criar_grafico_sem_dados(obter_texto("no_size_data", QStringLiteral("Sem dados de tamanho disponíveis")));
-        }
+        constexpr double bytesPorMb = 1024.0 * 1024.0;
+        const QString unknown = obter_texto("unknown", QStringLiteral("Desconhecido"));
+        const QHash<QString, QString> mapa_ops = _obter_mapeamento_operacoes();
+        const QHash<QString, QString> mapa_tipos = _obter_mapeamento_tipos();
 
         QVector<double> valores_mb;
-        valores_mb.reserve(registros.size());
-        for (const Registro& r : registros) valores_mb.append(r.tamanho_mb);
+        int invalid_size = 0;
+        int invalid_timestamp = 0;
+        qint64 valid_source_rows = 0;
 
-        const double limite_superior = percentile(valores_mb, 0.99);
-        QVector<Registro> filtrados;
-        filtrados.reserve(registros.size());
-        for (const Registro& r : registros) {
-            if (r.tamanho_mb <= limite_superior) filtrados.append(r);
+        int outliers_removidos = 0;
+        qint64 filtered_rows = 0;
+        QDateTime data_min;
+        QDateTime data_max;
+        double min_y = std::numeric_limits<double>::max();
+        double max_y = 0.0;
+        QHash<QString, int> contagem_por_op;
+        QHash<QString, ScatterSampler> samplers;
+
+        const QString conn_name = QStringLiteral("file_size_scatter_conn_%1_%2")
+                                      .arg(reinterpret_cast<quintptr>(this))
+                                      .arg(QDateTime::currentMSecsSinceEpoch());
+        bool ok = true;
+        {
+            QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), conn_name);
+            db.setConnectOptions(QStringLiteral("QSQLITE_OPEN_READONLY;QSQLITE_BUSY_TIMEOUT=5000"));
+            db.setDatabaseName(db_path_);
+            if (!db.open()) {
+                source::utils::LogManager::get_logger().error(
+                    QStringLiteral("Erro SQL ao abrir base para dispersão de tamanhos: %1").arg(db.lastError().text()),
+                    true);
+                ok = false;
+            } else {
+                QSqlQuery pragma(db);
+                pragma.exec(QStringLiteral("PRAGMA query_only=ON"));
+                pragma.exec(QStringLiteral("PRAGMA temp_store=MEMORY"));
+                pragma.exec(QStringLiteral("PRAGMA cache_size=-65536"));
+
+                const QString sql = QStringLiteral(
+                    "SELECT tipo_operacao, tipo, timestamp, nome, size_b, size_kb, size_mb, size_gb, size_tb "
+                    "FROM monitoramento WHERE timestamp IS NOT NULL");
+
+                QSqlQuery query(db);
+                query.setForwardOnly(true);
+                if (!query.exec(sql)) {
+                    source::utils::LogManager::get_logger().error(
+                        QStringLiteral("Erro SQL ao consultar tamanhos para percentil: %1").arg(query.lastError().text()),
+                        true);
+                    ok = false;
+                } else {
+                    while (query.next()) {
+                        const double bytes = bytes_from_query(query, 4, 5, 6, 7, 8);
+                        if (bytes <= 0.0) {
+                            ++invalid_size;
+                            continue;
+                        }
+                        const QDateTime timestamp = parse_scatter_timestamp(query.value(2));
+                        if (!timestamp.isValid()) {
+                            ++invalid_timestamp;
+                            continue;
+                        }
+                        valores_mb.append(bytes / bytesPorMb);
+                        ++valid_source_rows;
+                    }
+                }
+
+                if (ok && valores_mb.isEmpty()) {
+                    db.close();
+                }
+            }
+        }
+        QSqlDatabase::removeDatabase(conn_name);
+        if (!ok || valores_mb.isEmpty()) {
+            return _criar_grafico_sem_dados(
+                obter_texto("no_size_data", QStringLiteral("Sem dados de tamanho disponíveis")));
         }
 
-        const int outliers_removidos = registros.size() - filtrados.size();
-        if (filtrados.isEmpty()) return _criar_grafico_sem_dados(titulo);
+        const double limite_percentil = percentile(valores_mb, 0.99);
+        outliers_removidos = valores_mb.size();
 
-        QDateTime data_min = filtrados.first().timestamp;
-        QDateTime data_max = data_min;
-        for (const Registro& r : filtrados) {
-            if (r.timestamp < data_min) data_min = r.timestamp;
-            if (r.timestamp > data_max) data_max = r.timestamp;
+        const QString conn_name_stats = QStringLiteral("file_size_scatter_stats_%1_%2")
+                                            .arg(reinterpret_cast<quintptr>(this))
+                                            .arg(QDateTime::currentMSecsSinceEpoch());
+        ok = true;
+        {
+            QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), conn_name_stats);
+            db.setConnectOptions(QStringLiteral("QSQLITE_OPEN_READONLY;QSQLITE_BUSY_TIMEOUT=5000"));
+            db.setDatabaseName(db_path_);
+            if (!db.open()) {
+                source::utils::LogManager::get_logger().error(
+                    QStringLiteral("Erro SQL ao abrir base para estatísticas de dispersão: %1").arg(db.lastError().text()),
+                    true);
+                ok = false;
+            } else {
+                QSqlQuery pragma(db);
+                pragma.exec(QStringLiteral("PRAGMA query_only=ON"));
+                pragma.exec(QStringLiteral("PRAGMA temp_store=MEMORY"));
+                pragma.exec(QStringLiteral("PRAGMA cache_size=-65536"));
+
+                const QString sql = QStringLiteral(
+                    "SELECT tipo_operacao, tipo, timestamp, nome, size_b, size_kb, size_mb, size_gb, size_tb "
+                    "FROM monitoramento WHERE timestamp IS NOT NULL");
+                QSqlQuery query(db);
+                query.setForwardOnly(true);
+                if (!query.exec(sql)) {
+                    source::utils::LogManager::get_logger().error(
+                        QStringLiteral("Erro SQL ao consultar estatísticas de dispersão: %1").arg(query.lastError().text()),
+                        true);
+                    ok = false;
+                } else {
+                    while (query.next()) {
+                        const double bytes = bytes_from_query(query, 4, 5, 6, 7, 8);
+                        if (bytes <= 0.0) continue;
+                        const double tamanho_mb = bytes / bytesPorMb;
+                        if (tamanho_mb > limite_percentil) continue;
+                        const QDateTime timestamp = parse_scatter_timestamp(query.value(2));
+                        if (!timestamp.isValid()) continue;
+
+                        const QString operacao =
+                            translated_value(mapa_ops, query.value(0).toString(), unknown);
+                        if (!data_min.isValid() || timestamp < data_min) data_min = timestamp;
+                        if (!data_max.isValid() || timestamp > data_max) data_max = timestamp;
+                        min_y = std::min(min_y, tamanho_mb);
+                        max_y = std::max(max_y, tamanho_mb);
+                        contagem_por_op[operacao] += 1;
+                        ++filtered_rows;
+                    }
+                }
+                db.close();
+            }
         }
+        QSqlDatabase::removeDatabase(conn_name_stats);
+        if (!ok || filtered_rows <= 0 || !data_min.isValid() || !data_max.isValid()) {
+            return _criar_grafico_sem_dados(titulo);
+        }
+        outliers_removidos -= static_cast<int>(filtered_rows);
 
         const double total_segundos = data_min.secsTo(data_max);
         const double total_minutos = total_segundos / 60.0;
@@ -98,7 +316,7 @@ QVariant GraficoScatter::gerar() {
         bool x_numerico = true;
         QString x_tick_suffix = QStringLiteral("s");
 
-        if (filtrados.size() > 1) {
+        if (filtered_rows > 1) {
             if (total_segundos < 60.0) {
                 if (total_segundos < 1.0) {
                     escala = QStringLiteral("milliseconds");
@@ -129,53 +347,6 @@ QVariant GraficoScatter::gerar() {
             }
         }
 
-        QVariantList pontos;
-        pontos.reserve(filtrados.size());
-        double min_y = std::numeric_limits<double>::max();
-        double max_y = 0.0;
-        double min_x = std::numeric_limits<double>::max();
-        double max_x = std::numeric_limits<double>::lowest();
-        QHash<QString, int> contagem_por_op;
-
-        for (const Registro& r : filtrados) {
-            QVariantMap p;
-            const qint64 offset_ms = data_min.msecsTo(r.timestamp);
-            double x = offset_ms / 1000.0;  // default seconds
-            if (escala == QStringLiteral("milliseconds")) {
-                x = static_cast<double>(offset_ms);
-            } else if (escala == QStringLiteral("centiseconds")) {
-                x = (offset_ms / 1000.0) * 100.0;
-            } else if (escala == QStringLiteral("seconds")) {
-                x = offset_ms / 1000.0;
-            } else if (escala == QStringLiteral("minutes")) {
-                x = (offset_ms / 1000.0) / 60.0;
-            } else if (escala == QStringLiteral("hours")) {
-                x = (offset_ms / 1000.0) / 3600.0;
-            } else if (escala == QStringLiteral("days")) {
-                x = (offset_ms / 1000.0) / 86400.0;
-            }
-            p.insert("x", x);
-
-            p.insert("timestamp", r.timestamp.toString(Qt::ISODate));
-            p.insert("y_mb", r.tamanho_mb);
-            QString operacao = r.row.value("tipo_operacao").toString().trimmed();
-            if (operacao.isEmpty()) operacao = obter_texto("unknown", QStringLiteral("Desconhecido"));
-            const QString tipo = r.row.value("tipo").toString().trimmed();
-            QString arquivo = r.row.value("nome").toString().trimmed();
-            if (arquivo.isEmpty()) arquivo = r.row.value("nome_anterior").toString().trimmed();
-            p.insert("tipo_operacao", operacao);
-            p.insert("tipo", tipo);
-            p.insert("arquivo", arquivo);
-            p.insert("color", cores_operacoes_.value(operacao, QStringLiteral("#333333")));
-            pontos.append(p);
-
-            min_y = std::min(min_y, r.tamanho_mb);
-            max_y = std::max(max_y, r.tamanho_mb);
-            min_x = std::min(min_x, x);
-            max_x = std::max(max_x, x);
-            contagem_por_op[operacao] += 1;
-        }
-
         const bool y_log = (max_y / (min_y + 0.001)) > 100.0;
 
         QList<QString> ordem_preferida = {
@@ -197,6 +368,97 @@ QVariant GraficoScatter::gerar() {
         std::sort(restantes.begin(), restantes.end(),
                   [](const QPair<QString, int>& a, const QPair<QString, int>& b) { return a.second > b.second; });
         for (const auto& it : restantes) operation_order.append(it.first);
+
+        const int per_operation_limit =
+            qBound(1200, kMaxFileSizeScatterPoints / qMax(1, operation_order.size()), kMaxFileSizeScatterPoints);
+        for (const QVariant& opVar : operation_order) {
+            ScatterSampler sampler;
+            sampler.limit = per_operation_limit;
+            sampler.points.reserve(qMin(per_operation_limit, contagem_por_op.value(opVar.toString(), 0)));
+            samplers.insert(opVar.toString(), sampler);
+        }
+
+        const QString conn_name_points = QStringLiteral("file_size_scatter_points_%1_%2")
+                                             .arg(reinterpret_cast<quintptr>(this))
+                                             .arg(QDateTime::currentMSecsSinceEpoch());
+        ok = true;
+        {
+            QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), conn_name_points);
+            db.setConnectOptions(QStringLiteral("QSQLITE_OPEN_READONLY;QSQLITE_BUSY_TIMEOUT=5000"));
+            db.setDatabaseName(db_path_);
+            if (!db.open()) {
+                source::utils::LogManager::get_logger().error(
+                    QStringLiteral("Erro SQL ao abrir base para pontos de dispersão: %1").arg(db.lastError().text()),
+                    true);
+                ok = false;
+            } else {
+                QSqlQuery pragma(db);
+                pragma.exec(QStringLiteral("PRAGMA query_only=ON"));
+                pragma.exec(QStringLiteral("PRAGMA temp_store=MEMORY"));
+                pragma.exec(QStringLiteral("PRAGMA cache_size=-65536"));
+
+                QSqlQuery query(db);
+                query.setForwardOnly(true);
+                if (!query.exec(QStringLiteral(
+                        "SELECT tipo_operacao, tipo, timestamp, nome, size_b, size_kb, size_mb, size_gb, size_tb "
+                        "FROM monitoramento WHERE timestamp IS NOT NULL"))) {
+                    source::utils::LogManager::get_logger().error(
+                        QStringLiteral("Erro SQL ao consultar pontos de dispersão: %1").arg(query.lastError().text()),
+                        true);
+                    ok = false;
+                } else {
+                    while (query.next()) {
+                        const double bytes = bytes_from_query(query, 4, 5, 6, 7, 8);
+                        if (bytes <= 0.0) continue;
+                        const double tamanho_mb = bytes / bytesPorMb;
+                        if (tamanho_mb > limite_percentil) continue;
+                        const QDateTime timestamp = parse_scatter_timestamp(query.value(2));
+                        if (!timestamp.isValid()) continue;
+
+                        ScatterSamplePoint point;
+                        point.timestampMs = timestamp.toMSecsSinceEpoch();
+                        point.sizeMb = tamanho_mb;
+                        point.operacaoRaw = query.value(0).toString().trimmed();
+                        point.tipoRaw = query.value(1).toString().trimmed();
+                        point.operacao = translated_value(mapa_ops, point.operacaoRaw, unknown);
+                        point.tipo = translated_value(mapa_tipos, point.tipoRaw, QString());
+                        point.arquivo = query.value(3).toString().trimmed();
+                        if (point.arquivo.isEmpty()) point.arquivo = QStringLiteral("-");
+                        point.timestampText = timestamp.toString(Qt::ISODate);
+                        samplers[point.operacao].consider(point);
+                    }
+                }
+                db.close();
+            }
+        }
+        QSqlDatabase::removeDatabase(conn_name_points);
+        if (!ok) {
+            return _criar_grafico_sem_dados(titulo);
+        }
+
+        QVariantList pontos;
+        pontos.reserve(qMin<qint64>(filtered_rows, kMaxFileSizeScatterPoints));
+        const qint64 data_min_ms = data_min.toMSecsSinceEpoch();
+        const double min_x = 0.0;
+        double max_x = scaled_time_value(data_min.msecsTo(data_max), escala);
+        if (max_x <= min_x) max_x = min_x + 1.0;
+        for (const QVariant& opVar : operation_order) {
+            const QString op = opVar.toString();
+            const QVector<ScatterSamplePoint> sampled = samplers.value(op).points;
+            for (const ScatterSamplePoint& point : sampled) {
+                QVariantMap p;
+                p.insert("x", scaled_time_value(point.timestampMs - data_min_ms, escala));
+                p.insert("timestamp", point.timestampText);
+                p.insert("y_mb", point.sizeMb);
+                p.insert("tipo_operacao", point.operacao);
+                p.insert("tipo_operacao_raw", point.operacaoRaw);
+                p.insert("tipo", point.tipo);
+                p.insert("tipo_raw", point.tipoRaw);
+                p.insert("arquivo", point.arquivo);
+                p.insert("color", cores_operacoes_.value(point.operacao, QStringLiteral("#333333")));
+                pontos.append(p);
+            }
+        }
 
         QVariantMap op_colors;
         for (const QVariant& ov : operation_order) {
@@ -223,6 +485,10 @@ QVariant GraficoScatter::gerar() {
         out.insert("outliers_removed", outliers_removidos);
         out.insert("invalid_size_rows", invalid_size);
         out.insert("invalid_timestamp_rows", invalid_timestamp);
+        out.insert(QStringLiteral("grid_overlay"), true);
+        out.insert(QStringLiteral("fast_point_cloud"), true);
+        out.insert(QStringLiteral("source_points"), valid_source_rows);
+        out.insert(QStringLiteral("display_points"), pontos.size());
         return out;
     } catch (...) {
         source::utils::LogManager::get_logger().error("Erro ao gerar scatter", true);

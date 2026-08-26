@@ -7,6 +7,7 @@
 #include <QVariantMap>
 #include <Qt>
 
+#include "source/services/GerenciamentoEventoMovido/gevmov_10_PendenciasMovimentacao.h"
 #include "source/services/ob_01_Observador.h"
 #include "source/services/ob_09_GerenciadorColunas.h"
 #include "source/ui/ui_01_GerenciadorBotoes.h"
@@ -50,14 +51,7 @@ void limpar_dados(source::ui::GerenciadorBotoes* self) {
             }
         }
 
-        if (interface_obj->property("excluidos_recentemente").isValid()) {
-            interface_obj->setProperty("excluidos_recentemente", QVariantMap());
-        } else {
-            QObject* excluidos_obj = interface_obj->property("excluidos_recentemente_obj").value<QObject*>();
-            if (excluidos_obj != nullptr) {
-                QMetaObject::invokeMethod(excluidos_obj, "clear");
-            }
-        }
+        source::services::GerenciamentoEventoMovido::limpar_pendencias_movimentacao(interface_obj);
 
         QObject* gerenciador_colunas_obj = interface_obj->property("gerenciador_colunas").value<QObject*>();
         if (gerenciador_colunas_obj != nullptr) {

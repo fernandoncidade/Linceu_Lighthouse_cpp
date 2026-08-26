@@ -1,6 +1,6 @@
 Datenschutzrichtlinie für Linceu Lighthouse
-Letzte Aktualisierung: 27 de April de 2026
-Version: 2026.4.27.0
+Letzte Aktualisierung: 25. August 2026
+Version: 2026.8.25.0
 
 Ihre Privatsphäre ist für uns von grundlegender Bedeutung. Diese Datenschutzrichtlinie erklärt, welche Informationen Linceu Lighthouse ("Software") verwendet und, was noch wichtiger ist, wie diese unter Ihrer Kontrolle bleiben.
 
@@ -46,11 +46,9 @@ Sie haben die absolute Kontrolle über Ihre Daten. Sie können jederzeit:
  - den gesamten Überwachungsverlauf direkt in der Benutzeroberfläche der Software löschen.
  - die Software deinstallieren, wodurch die Anwendung und ihre Komponenten von Ihrem System entfernt werden. Die Datenbank- und Protokolldateien können von Ihnen manuell gelöscht werden, um eine vollständige Entfernung zu gewährleisten.
 
-6. Daten aus Microsoft-Fehlerberichten
+6. Keine Telemetrie und lokale Diagnose
 
-Um die Stabilität und Qualität von Linceu Lighthouse zu verbessern, können wir den Fehlerberichterstattungsdienst von Microsoft nutzen. Wenn die Anwendung einen kritischen Fehler feststellt, können anonyme Diagnoseinformationen an Microsoft gesendet und anschließend mit uns geteilt werden.
-
-Diese Praxis wird durch die App-Entwicklervereinbarung von Microsoft geregelt. Die Fehlerdaten, die wir erhalten, werden ausschließlich zur Behebung von Fehlern und zur Verbesserung der Software verwendet. Diese Berichte enthalten keine Ihrer persönlichen Dateien oder Informationen, die Sie direkt identifizieren.
+Linceu Lighthouse arbeitet nach dem Grundsatz des lokalen Datenschutzes und der Zero-Telemetrie der Anwendung. Die Software implementiert keine proprietären Mechanismen für Telemetrie, Remote-Analysen, Nutzungsverfolgung oder automatische Übertragung von Absturzberichten über das Internet. Alle Fehlerprotokolle oder Diagnosen werden ausschließlich in lokalen Dateien auf dem Gerät des Benutzers zur persönlichen Fehlerbehebung generiert und gespeichert, ohne Übertragung an Remote-Server.
 
 7. Datenschutz von Kindern
 

@@ -35,6 +35,20 @@ void registrar_dialogo_na_interface(QObject* iface, const char* property_name, Q
     });
     iface->setProperty(property_name, QVariant::fromValue(static_cast<QObject*>(dialog)));
 }
+
+QString build_about_header_html(QObject* loc) {
+    return QStringLiteral(
+               "<div style=\"margin:0; padding:0;\">"
+               "<span style=\"font-size:13pt; font-weight:600;\">LINCEU LIGHTHOUSE</span><br><br>"
+               "<b>%1:</b> 2026.8.25.0<br>"
+               "<b>%2:</b> Fernando Nillsson Cidade<br>"
+               "<b>%3:</b> %4"
+               "</div>")
+        .arg(get_text(loc, "version", "Version").toHtmlEscaped(),
+             get_text(loc, "authors", "Authors").toHtmlEscaped(),
+             get_text(loc, "description", "Description").toHtmlEscaped(),
+             get_text(loc, "description_text", "Application information").toHtmlEscaped());
+}
 }  // namespace
 
 namespace source::ui::GerenciamentoMenusUI {
@@ -94,11 +108,7 @@ void exibir_sobre(source::ui::GerenciadorMenusUI* self) {
                                           : (idioma == QStringLiteral("de_DE")) ? source::ui::OpcoesSobre::RELEASE_NOTES_DE_DE
                                                                                 : source::ui::OpcoesSobre::RELEASE_NOTES_EN_US;
 
-        const QString cabecalho_fixo = QStringLiteral("<h3>LINCEU LIGHTHOUSE</h3>")
-            + QStringLiteral("<p><b>") + get_text(loc, "version", "Version") + QStringLiteral(":</b> 2026.4.27.0</p>")
-            + QStringLiteral("<p><b>") + get_text(loc, "authors", "Authors") + QStringLiteral(":</b> Fernando Nillsson Cidade</p>")
-            + QStringLiteral("<p><b>") + get_text(loc, "description", "Description") + QStringLiteral(":</b> ")
-            + get_text(loc, "description_text", "Application information") + QStringLiteral("</p>");
+        const QString cabecalho_fixo = build_about_header_html(loc);
 
         auto* dialog = new SobreDialog(
             nullptr,

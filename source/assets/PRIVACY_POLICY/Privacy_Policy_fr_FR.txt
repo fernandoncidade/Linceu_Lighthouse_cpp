@@ -1,6 +1,6 @@
 Politique de Confidentialité de Linceu Lighthouse
-Dernière mise à jour: 27 Avril 2026
-Version: 2026.4.27.0
+Dernière mise à jour: 25 août 2026
+Version: 2026.8.25.0
 
 Votre vie privée est fondamentale pour nous. Cette Politique de Confidentialité explique quelles informations Linceu Lighthouse ("Logiciel") utilise et, plus important encore, comment elles restent sous votre contrôle.
 
@@ -46,11 +46,9 @@ Vous avez un contrôle absolu sur vos données. À tout moment, vous pouvez :
  - Effacer tout l'historique de surveillance directement depuis l'interface du Logiciel.
  - Désinstaller le Logiciel, ce qui supprimera l'application et ses composants de votre système. Les fichiers de base de données et les journaux peuvent être supprimés manuellement par vous pour garantir une suppression complète.
 
-6. Données des Rapports d'Erreurs de Microsoft
+6. Zéro Télémétrie et Diagnostics Locaux
 
-Pour améliorer la stabilité et la qualité de Linceu Lighthouse, nous pouvons utiliser le service de Rapports d'Erreurs de Microsoft. Si l'application rencontre une erreur critique, des informations de diagnostic anonymes peuvent être envoyées à Microsoft et partagées ultérieurement avec nous.
-
-Cette pratique est régie par l'Accord de Développeur d'Applications de Microsoft. Les données d'erreur que nous recevons sont utilisées exclusivement pour corriger les bogues et améliorer le logiciel. Ces rapports n'incluent pas vos fichiers personnels ni aucune information vous identifiant directement.
+Linceu Lighthouse fonctionne selon le principe de Confidentialité Locale et Zéro Télémétrie applicative. Le Logiciel n'implémente aucun mécanisme propriétaire de télémétrie, d'analyse à distance, de suivi d'utilisation ou de transmission automatisée de rapports d'erreur sur Internet. Tous les journaux d'erreurs ou de diagnostics sont strictement générés et conservés dans des fichiers locaux sur l'appareil de l'utilisateur pour le dépannage personnel, sans aucune transmission vers des serveurs distants.
 
 7. Confidentialité des Enfants
 

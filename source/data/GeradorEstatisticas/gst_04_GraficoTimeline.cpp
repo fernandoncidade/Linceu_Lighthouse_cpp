@@ -50,6 +50,11 @@ QVariant GraficoTimeline::gerar() {
             return _criar_grafico_sem_dados(titulo);
         }
 
+        QSqlQuery pragma(db);
+        pragma.exec(QStringLiteral("PRAGMA query_only=ON"));
+        pragma.exec(QStringLiteral("PRAGMA temp_store=MEMORY"));
+        pragma.exec(QStringLiteral("PRAGMA cache_size=-65536"));
+
         QSqlQuery query(db);
         query.setForwardOnly(true);
         if (!query.exec(QStringLiteral(
@@ -131,6 +136,7 @@ QVariant GraficoTimeline::gerar() {
         out.insert(QStringLiteral("source_points"), total_validos);
         out.insert(QStringLiteral("display_points"), pontos.size());
         out.insert(QStringLiteral("sample_stride"), stride);
+        out.insert(QStringLiteral("fast_point_cloud"), true);
         return out;
     } catch (...) {
         source::utils::LogManager::get_logger().error("Erro ao gerar gráfico timeline", true);

@@ -101,6 +101,8 @@ QSGNode* QuickChartItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     auto* root = oldNode != nullptr ? oldNode : new QSGNode();
     ensure_geometry_node(root, 0, QSGGeometry::DrawTriangles, m_scene.fillVertices);
     ensure_geometry_node(root, 1, QSGGeometry::DrawLines, m_scene.lineVertices);
+    ensure_geometry_node(root, 2, QSGGeometry::DrawTriangles, m_scene.foregroundFillVertices);
+    ensure_geometry_node(root, 3, QSGGeometry::DrawLines, m_scene.foregroundLineVertices);
     return root;
 }
 

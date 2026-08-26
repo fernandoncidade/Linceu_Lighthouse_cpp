@@ -1,3 +1,117 @@
+VERÖFFENTLICHUNGSNOTIZEN: Version 2026.8.25.0
+
+HÖHEPUNKTE DIESER VERSION
+
+Diese konsolidierte Version von Linceu Lighthouse vereint ein umfassendes Paket an Fortschritten in den Bereichen Leistung, Überwachungsgenauigkeit, statistische Genauigkeit, Benutzerfreundlichkeit, mehrsprachige Dokumentation, Sicherheit und strenger lokaler Datenschutz.
+
+Die Echtzeit-Überwachungsengine wurde erheblich verbessert, um große Datenmengen und massive Dateiänderungen (Hinzufügungen, Änderungen, kontinuierliche individuelle Löschungen, Umbenennungen und Verschiebungen ohne doppelte Ereignisse) reibungslos zu verarbeiten und über 30 Metadatenkategorien für jedes erfasste Element sofort zu extrahieren.
+
+Die Datenbereinigungsroutinen wurden grundlegend optimiert: Beim Zurücksetzen der Tabelle oder der Datenbank stoppt die Anwendung Hintergrundprozesse, entfernt temporäre Hilfsdateien und erstellt die Speicherdateien sofort in ihrem sauberen Anfangszustand neu, wodurch 100 % des freien Festplattenspeichers zur Laufzeit physisch freigegeben werden.
+
+Die 17 statistischen Diagramme bieten nun eine beschleunigte Darstellung großer Datenmengen, erhaltene Animationen, verfeinerte visuelle Ebenen mit gut lesbaren Achsen und die Möglichkeit, einzelne Datenpunkte selbst in dichten Bereichen interaktiv hervorzuheben. Die Anwendung ermöglicht das direkte Öffnen von Dateien mit den Standardprogrammen von Windows über ein praktisches Auswahldialogfeld und bietet klare MIME-Typbeschreibungen in natürlicher Sprache.
+
+Das Benutzerhandbuch und die gesamte Dokumentation wurden mit einer oberen Schnellnavigationsleiste und interaktiven aufklappbaren Abschnitten („Kurzhandbuch“ und „Vollständiges Handbuch“) in sechs Sprachen (Portugiesisch, Englisch, Spanisch, Französisch, Italienisch und Deutsch) modernisiert. Sicherheit und Datenschutz wurden vollständig auf das 100 % lokale Modell („Local-First“) ohne Telemetrie und ohne Datenübertragung ausgerichtet, begleitet von vollständig aktualisierten Datenschutzrichtlinien. Schließlich wurden die Systemplattform und die Erstellungswerkzeuge auf moderne Versionen aktualisiert.
+
+
+NEUE FUNKTIONEN UND VERBESSERUNGEN
+
+1. Hochleistungsüberwachung und Metadatenextraktion
+- Äußerst flüssige Echtzeitüberwachung, die auch schnellen und intensiven Dateiänderungen im selben Verzeichnis standhält.
+- Optimierte Verarbeitung von Massenlöschungen mit kontinuierlicher und individueller Anzeige jeder gelöschten Datei ohne blockweise Verzögerungen.
+- Leistungsniveau bei Dateiübertragungen und Umbenennungen an die Geschwindigkeit des anfänglichen Verzeichnisscans angeglichen.
+- Vollständige Metadatenextraktion für alle Ereignisse gewährleistet, direkt beim Erscheinen des Eintrags in der Tabelle.
+- Vollständige Zeitstempelprüfung für Ordner und Unterverzeichnisse (Erstellungs-, Änderungs- und Zugriffsdaten).
+- Verbesserte Erkennung und Behandlung von Hilfsdateien (".db-shm", ".db-wal") und Verknüpfungen (".lnk"), wodurch Fehldarstellungen und doppelte Ereignisse vermieden werden.
+- Stabiles und gleichmäßiges Verhalten der Ereignistabelle bei tausenden eingehenden Ereignissen in kurzen Zeitabständen.
+
+2. Dynamische Speicherbereinigung und Wiederherstellung
+- Umfassender Datenrücksetzungsmechanismus: Beim Bereinigen der Tabelle oder Datenbank werden Hintergrundaufgaben verworfen und die Speicherdateien im sauberen Ausgangszustand neu erstellt.
+- Sofortige physische Freigabe des gesamten zuvor von Ereignissen belegten Festplattenspeichers direkt an das Betriebssystem.
+- Vollständige Beseitigung temporärer Protokoll- und Cache-Dateien ("-wal" und "-shm"), wodurch ein sauberer Zustand ab der ersten Sitzung gewährleistet ist.
+- Nebenläufigkeitsschutz, der verhindert, dass neue Ereignisse während des Bereinigungsprozesses geschrieben werden.
+
+3. Erweiterte grafische Visualisierungen und Statistiken
+- Spürbare Beschleunigung der Diagrammdarstellung bei großen Datenmengen (Verteilung nach Vorgang, Dateityp, Uhrzeit, Größenkategorie, Zeitachse und Streudiagramme).
+- Vollständige Beibehaltung von Animationseffekten und visuellen Übergängen in optimierten Diagrammen.
+- Umfassende Interaktivität in Streudiagrammen: Jeder geplottete Punkt kann hervorgehoben und inspiziert werden, auch in dichten Bereichen.
+- Kalibrierte visuelle Ebenen: Halbtransparente Datenflächen ermöglichen die Sichtbarkeit darunterliegender Skalen- und Achsenlinien bei scharfen Datenpunkten.
+- Verbesserte Lesbarkeit von Skalen und Koordinatenachsen ohne Beeinträchtigung des Diagrammdesigns.
+
+4. Windows-Integration und Dateiöffnung
+- Direktes Öffnen beliebiger Dateien aus der Tabelle mit der verknüpften Windows-Standardanwendung ohne Textanzeigebeschränkungen.
+- Grafischer Anwendungsauswahldialog, falls mehrere Programme im Betriebssystem registriert sind.
+- Erweiterte MIME-Typ-Spalte: Anzeige klarer Inhaltsbeschreibungen in der aktiven Oberflächensprache neben der technischen Kennung in Klammern.
+
+5. Strenger Datenschutz und 100 % lokale Sicherheit (Keine Telemetrie)
+- Endgültige Konsolidierung der lokalen Architektur („Local-First“): Die Anwendung verwendet keine Telemetrie, verfolgt kein Benutzerverhalten und sendet keine Diagnoseberichte an externe Server.
+- Diagnosen, forensische Berichte, Sicherheitswarnungen und Sitzungsverläufe verbleiben ausschließlich auf dem lokalen Rechner des Benutzers.
+- Vollständige Aktualisierung und Angleichung der Datenschutzrichtlinien und Lizenzbedingungen in allen 6 offiziellen Sprachen auf Version 2026.8.25.0.
+- Vollständiger Verzicht auf externe Abhängigkeiten oder Netzwerkanforderungen für Sicherheits- und Schutzmodule.
+
+6. Vollständiges mehrsprachiges Benutzerhandbuch und Dokumentation
+- Gesamte Dokumentation und Benutzerhandbücher vollständig in 6 Sprachen übersetzt und synchronisiert: brasilianisches Portugiesisch, Englisch, Spanisch, Französisch, Italienisch und Deutsch.
+- Schnellnavigationsleiste am Dokumentanfang mit direkten Ankerlinks zum sofortigen Sprachwechsel und Auffinden von Themen.
+- Interaktives Lesesystem mit einklappbaren Abschnitten, das den Wechsel zwischen dem „Kurzhandbuch“ und dem ausführlichen „Vollständigen Handbuch“ ermöglicht.
+- Einheitliche Terminologie und Funktionsbeschreibungen in allen Sprachen.
+
+7. Benutzeroberfläche, Suche und Systemwerkzeuge
+- Integrierte Textsuche in den Fenstern „Über das Programm“ und „Handbuch“ mit Weiterschaltung über die Eingabetaste ohne Schließen des Dialogs.
+- Automatische Anpassung der Suchleiste an die gewählte Oberflächensprache.
+- Verbesserte visuelle Stabilität und optimierte Abstände im Fenster „Über das Programm“ bei Größenänderungen.
+- Neues visuelles Versionsverwaltungswerkzeug mit thematischen Registerkarten, 1-Klick-Synchronisation von Versionen/Daten und Dateiintegritätsprüfung.
+- Aktualisierte offizielle Windows-Installationsprogramme mit Sprachauswahl, entsprechenden Bedingungen und organisierten Verknüpfungen.
+- Sofortige Synchronisation von Haupttabelle, Statusanzeigen, Filterleisten und Zählern nach Abschluss von Bereinigungen.
+
+8. Strukturelle Modernisierung und Erstellungsplattform
+- Aktualisierung der Kernplattform auf Qt 6.11.1 sowie der integrierten Entwicklungskomponenten.
+- Windows-Build-Tools und SDKs auf moderne stabile Versionen angehoben.
+- Optimierte Übersetzungskompilierung und Paketorganisation für schlankere, schnellere und verlässlichere Programmdateien.
+
+
+DURCHGEFÜHRTE KORREKTUREN
+
+- Behoben: Speicherdateien auf der Festplatte behielten ihre zugewiesene Größe nach dem Klick auf „Tabelle, Sicherheits- und Datenbank leeren“ oder „Datenbank leeren“ bei.
+- Behoben: Sicheres Anhalten von Hintergrund-Schreibdiensten vor der Neuerstellung der Speicherdateien.
+- Behoben: Synchronisation der Zähler und visuellen Zustände der Benutzeroberfläche nach dem ersten Verzeichnisscan.
+- Behoben: Versions- und Datumsabweichungen in den mehrsprachigen Datenschutzdokumenten.
+- Behoben: Terminologieabweichungen zwischen Handbüchern und Benutzeroberflächentiteln in verschiedenen Sprachen.
+- Behoben: Regionale Datums- und Zahlenformatierung in Informationsdokumenten.
+- Behoben: Versionsanzeige im Dialog „Über das Programm“ und in internen Dokumentenanzeigen.
+- Behoben: Mögliche Suchprobleme bei Übersetzungskatalogen während der Anwendungsbereitstellung.
+- Behoben: Verwaltung temporärer Ordner zur Vermeidung von Konflikten zwischen vorherigen und neuen Erstellungen.
+- Behoben: Extraktion von Erstellungs-, Änderungs- und Zugriffsdaten für Ordner und Unterverzeichnisse.
+- Behoben: Dateiöffnungsroutinen für Nicht-Text-Dateien oder unbekannte Dateiendungen.
+- Behoben: Inkonsistente Übersetzungen von MIME-Typen in Zweitsprachen.
+- Behoben: Schließen der Fenster „Über das Programm“ und „Handbuch“ beim Drücken der Eingabetaste in der Suchleiste.
+- Behoben: Übermäßiger Abstand zwischen Beschreibungstext und Suchleiste im Fenster „Über das Programm“.
+- Behoben: Weißes visuelles Artefakt in der oberen linken Ecke der Benutzeroberfläche.
+- Behoben: Laden unterstützender Textdateien im Fenster „Über das Programm“ in der kompilierten Anwendung.
+- Behoben: Nicht übersetzte Texte in fertigen Installationspaketen.
+- Behoben: Fehlerhafte „Hinzugefügt“-Ereignisse für „.db-shm“- und „.db-wal“-Dateien beim Umbenennen oder Verschieben von „.db“-Dateien.
+- Behoben: Doppelte Ereignisse bei der Eigenschaftsprüfung von Datenbankhilfsdateien.
+- Behoben: Falsche Klassifizierung von „.lnk“-Verknüpfungen als „Ausführbare Datei“.
+- Behoben: Darstellung von „.db-shm“- und „.db-wal“-Hilfsdateien als „Unbekannt“.
+- Behoben: Leistungsabfall und verzögerte Aktualisierungen bei Massenlöschungen während der Überwachung.
+- Behoben: Visuelle Ebenenüberlagerungen und Leistungsengpässe bei umfangreichen Statistikdiagrammen.
+- Behoben: Interaktive Hervorhebung von Datenpunkten in dichten Streudiagrammbereichen.
+
+
+VORTEILE FÜR DEN BENUTZER
+
+- Schnellere, flüssigere, stabilere Echtzeitüberwachung ohne doppelte Ereignisse.
+- Vollständige Metadaten und präzise Zeitstempelprüfung für Dateien und Verzeichnisse.
+- Echte und sofortige Festplattenplatzfreigabe beim Bereinigen der überwachten Daten.
+- Interaktive, übersichtliche, reaktionsschnelle und leicht interpretierbare Statistikdiagramme.
+- Nahtloses Öffnen jeder Datei mit dem passenden Windows-Programm.
+- Modernes, vollständiges Benutzerhandbuch und Dokumentation in 6 Sprachen.
+- Absolute Sicherheit und garantierter Datenschutz durch rein lokale Verarbeitung ohne Telemetrie.
+- Reaktionsschnelle, elegante und intuitive Benutzeroberfläche, die stets mit dem Speicherstatus synchronisiert ist.
+- Schlankere, verlässlichere Installationspakete und Programmdateien.
+
+
+_________________________________________________
+
+
 RELEASE-HINWEISE: Version 2026.4.27.0
 
 HIGHLIGHTS OF THIS VERSION

@@ -190,6 +190,67 @@ QString humanizar_token(QString value) {
     return value.simplified();
 }
 
+QString normalizar_chave_mime(QString value) {
+    value = value.trimmed().toLower();
+    QString out;
+    out.reserve(value.size());
+    bool last_underscore = false;
+    for (const QChar ch : value) {
+        if (ch.isLetterOrNumber()) {
+            out.append(ch);
+            last_underscore = false;
+        } else if (!last_underscore) {
+            out.append(QLatin1Char('_'));
+            last_underscore = true;
+        }
+    }
+    while (out.startsWith(QLatin1Char('_'))) out.remove(0, 1);
+    while (out.endsWith(QLatin1Char('_'))) out.chop(1);
+    return out;
+}
+
+QString humanizar_subtipo_mime(QString value) {
+    value = value.trimmed();
+    if (value.isEmpty()) {
+        return value;
+    }
+
+    QString normalized = value.toLower();
+    if (normalized.startsWith(QStringLiteral("x-"))) {
+        normalized = normalized.mid(2);
+    }
+    if (normalized.startsWith(QStringLiteral("vnd."))) {
+        normalized = normalized.mid(4);
+    }
+
+    normalized.replace(QLatin1Char('+'), QLatin1Char(' '));
+    normalized.replace(QLatin1Char('-'), QLatin1Char(' '));
+    normalized.replace(QLatin1Char('.'), QLatin1Char(' '));
+    normalized.replace(QLatin1Char('_'), QLatin1Char(' '));
+
+    static const QSet<QString> acronimos = {
+        QStringLiteral("7z"), QStringLiteral("avi"), QStringLiteral("bmp"), QStringLiteral("csv"),
+        QStringLiteral("epub"), QStringLiteral("gif"), QStringLiteral("gzip"), QStringLiteral("html"),
+        QStringLiteral("jpeg"), QStringLiteral("jpg"), QStringLiteral("json"), QStringLiteral("mp3"),
+        QStringLiteral("mp4"), QStringLiteral("mpeg"), QStringLiteral("ogg"), QStringLiteral("pdf"),
+        QStringLiteral("png"), QStringLiteral("rar"), QStringLiteral("rtf"), QStringLiteral("svg"),
+        QStringLiteral("tiff"), QStringLiteral("wav"), QStringLiteral("webm"), QStringLiteral("webp"),
+        QStringLiteral("xhtml"), QStringLiteral("xml"), QStringLiteral("zip")
+    };
+
+    QStringList words;
+    const QStringList tokens = normalized.simplified().split(QLatin1Char(' '), Qt::SkipEmptyParts);
+    words.reserve(tokens.size());
+    for (const QString& token : tokens) {
+        if (acronimos.contains(token)) {
+            words.append(token.toUpper());
+        } else {
+            words.append(token.left(1).toUpper() + token.mid(1));
+        }
+    }
+    return words.join(QLatin1Char(' '));
+}
+
 bool is_security_field(const QString& field_key) {
     static const QStringList fields = {
         QStringLiteral("baseline_status"),
@@ -211,7 +272,8 @@ bool is_metadata_field(const QString& field_key) {
         QStringLiteral("atributos"),
         QStringLiteral("autor"),
         QStringLiteral("protegido"),
-        QStringLiteral("dimensoes")
+        QStringLiteral("dimensoes"),
+        QStringLiteral("mime")
     };
     return fields.contains(field_key);
 }
@@ -803,6 +865,33 @@ private:
         return texto_traduzido;
     }
 
+    QString traduzir_mime(const QString& valor) const {
+        const QString raw = valor.trimmed();
+        if (raw.isEmpty()) {
+            return raw;
+        }
+
+        const QStringList parts = raw.split(QLatin1Char('/'), Qt::SkipEmptyParts);
+        const QString primary = parts.value(0).trimmed().toLower();
+        const QString subtype = parts.size() > 1 ? parts.mid(1).join(QLatin1Char('/')).trimmed()
+                                                 : QString();
+
+        const QString primary_key = QStringLiteral("mime_primary_") + normalizar_chave_mime(primary);
+        const QString primary_fallback =
+            primary.isEmpty()
+                ? get_text(QStringLiteral("mime_primary_other"), QStringLiteral("Other"))
+                : humanizar_subtipo_mime(primary);
+        const QString primary_text = get_text(primary_key, primary_fallback);
+
+        if (subtype.isEmpty()) {
+            return QStringLiteral("%1 (%2)").arg(primary_text, raw);
+        }
+
+        const QString subtype_key = QStringLiteral("mime_subtype_") + normalizar_chave_mime(subtype);
+        const QString subtype_text = get_text(subtype_key, humanizar_subtipo_mime(subtype));
+        return QStringLiteral("%1: %2 (%3)").arg(primary_text, subtype_text, raw);
+    }
+
     QString traduzir_metadados(const QString& field_key, const QString& valor) const {
         const QString cache_key =
             field_key + QLatin1Char('\x1f') + valor + QLatin1Char('\x1f') + idioma_exibicao_;
@@ -823,6 +912,8 @@ private:
             resultado = traduzir_protegido(valor);
         } else if (field_lower == QStringLiteral("dimensoes") || field_lower == QStringLiteral("dimensions")) {
             resultado = traduzir_dimensoes(valor);
+        } else if (field_lower == QStringLiteral("mime")) {
+            resultado = traduzir_mime(valor);
         }
 
         cache_metadados_.insert(cache_key, resultado);
@@ -906,6 +997,10 @@ QVariant EventTableModel::data(const QModelIndex& index, int role) const {
 
     const QString key = colunas_disponiveis_[index.column()].first;
     const QVariantMap& row_data = data_[static_cast<size_t>(index.row())];
+    if (role == EventDataRole) {
+        return row_data;
+    }
+
     if (role == Qt::DisplayRole) {
         return valor_exibicao_traduzido(key, row_data);
     }

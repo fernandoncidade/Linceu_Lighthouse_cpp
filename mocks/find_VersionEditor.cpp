@@ -1,6 +1,7 @@
 #include "find_VersionEditor.h"
 
 #include <algorithm>
+#include <cctype>
 
 #include <QApplication>
 #include <QComboBox>
@@ -10,33 +11,25 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QFontDatabase>
 #include <QGroupBox>
 #include <QHash>
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMap>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QRegularExpression>
-#include <QStringList>
+#include <QSet>
 #include <QSpinBox>
+#include <QStringList>
+#include <QTabWidget>
 #include <QTextEdit>
-#include <QTextStream>
 #include <QVBoxLayout>
 
 namespace {
-
-struct FileCheckStatus {
-    bool exists;
-    QStringList found;
-    QStringList missing;
-};
-
-struct UpdateResult {
-    QString key;
-    bool ok;
-    QString msg;
-};
 
 struct LangInput {
     QString version;
@@ -45,7 +38,140 @@ struct LangInput {
     int year;
 };
 
+struct FileEntry {
+    QString key;
+    QString rel_path;
+    QString default_group;
+    QString lang;
+};
+
+struct FileCheckStatus {
+    QString key;
+    QString rel_path;
+    QString group;
+    QString lang;
+    QString absolute_path;
+    bool exists;
+    QString detected_version;
+    QString detected_date;
+    QStringList found_patterns;
+    QStringList missing_patterns;
+};
+
+struct UpdateResult {
+    QString key;
+    QString rel_path;
+    QString group;
+    bool ok;
+    QString msg;
+};
+
+const QStringList PT_MONTHS = {"Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
+const QStringList EN_MONTHS = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+const QStringList ES_MONTHS = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+const QStringList FR_MONTHS = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"};
+const QStringList IT_MONTHS = {"Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"};
+const QStringList DE_MONTHS = {"Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"};
+
+const QVector<FileEntry> ALL_FILE_ENTRIES = {
+    // PRIVACY_POLICY
+    {"privacy_pt", "source/assets/PRIVACY_POLICY/Privacy_Policy_pt_BR.txt", "PRIVACY_POLICY", "pt"},
+    {"privacy_en", "source/assets/PRIVACY_POLICY/Privacy_Policy_en_US.txt", "PRIVACY_POLICY", "en"},
+    {"privacy_es", "source/assets/PRIVACY_POLICY/Privacy_Policy_es_ES.txt", "PRIVACY_POLICY", "es"},
+    {"privacy_fr", "source/assets/PRIVACY_POLICY/Privacy_Policy_fr_FR.txt", "PRIVACY_POLICY", "fr"},
+    {"privacy_it", "source/assets/PRIVACY_POLICY/Privacy_Policy_it_IT.txt", "PRIVACY_POLICY", "it"},
+    {"privacy_de", "source/assets/PRIVACY_POLICY/Privacy_Policy_de_DE.txt", "PRIVACY_POLICY", "de"},
+
+    // EULA
+    {"eula_pt", "source/assets/EULA/EULA_pt_BR - Linceu Lighthouse.txt", "EULA", "pt"},
+    {"eula_en", "source/assets/EULA/EULA_en_US - Linceu Lighthouse.txt", "EULA", "en"},
+    {"eula_es", "source/assets/EULA/EULA_es_ES - Linceu Lighthouse.txt", "EULA", "es"},
+    {"eula_fr", "source/assets/EULA/EULA_fr_FR - Linceu Lighthouse.txt", "EULA", "fr"},
+    {"eula_it", "source/assets/EULA/EULA_it_IT - Linceu Lighthouse.txt", "EULA", "it"},
+    {"eula_de", "source/assets/EULA/EULA_de_DE - Linceu Lighthouse.txt", "EULA", "de"},
+
+    // CLC
+    {"clc_pt", "source/assets/CLC/CLC_pt_BR - Linceu Lighthouse.txt", "CLC", "pt"},
+    {"clc_en", "source/assets/CLC/CLC_en_US - Linceu Lighthouse.txt", "CLC", "en"},
+    {"clc_es", "source/assets/CLC/CLC_es_ES - Linceu Lighthouse.txt", "CLC", "es"},
+    {"clc_fr", "source/assets/CLC/CLC_fr_FR - Linceu Lighthouse.txt", "CLC", "fr"},
+    {"clc_it", "source/assets/CLC/CLC_it_IT - Linceu Lighthouse.txt", "CLC", "it"},
+    {"clc_de", "source/assets/CLC/CLC_de_DE - Linceu Lighthouse.txt", "CLC", "de"},
+
+    // ABOUT
+    {"about_pt", "source/assets/ABOUT/ABOUT_pt_BR.txt", "ABOUT", "pt"},
+    {"about_en", "source/assets/ABOUT/ABOUT_en_US.txt", "ABOUT", "en"},
+    {"about_es", "source/assets/ABOUT/ABOUT_es_ES.txt", "ABOUT", "es"},
+    {"about_fr", "source/assets/ABOUT/ABOUT_fr_FR.txt", "ABOUT", "fr"},
+    {"about_it", "source/assets/ABOUT/ABOUT_it_IT.txt", "ABOUT", "it"},
+    {"about_de", "source/assets/ABOUT/ABOUT_de_DE.txt", "ABOUT", "de"},
+
+    // RAIZ (Documentação e metadados de raiz)
+    {"readme", "README.md", "RAIZ", "all"},
+    {"observacao", "OBSERVACAO.md", "RAIZ", "pt"},
+    {"manual", "MANUAL.md", "RAIZ", "all"},
+    {"architecture", "ARCHITECTURE.md", "RAIZ", "pt"},
+
+    // UI (GerenciamentoMenusUI)
+    {"sobre_dialog_cpp", "source/ui/GerenciamentoMenusUI/gmui_03_SobreDialog.cpp", "GerenciamentoMenusUI", "pt"},
+    {"exibir_sobre_cpp", "source/ui/GerenciamentoMenusUI/gmui_22_exibir_sobre.cpp", "GerenciamentoMenusUI", "pt"},
+
+    // REPO (Instaladores Inno Setup)
+    {"installer_default", "repo/Linceu_Lighthouse.iss", "REPO", "pt"},
+    {"installer_mingw", "repo/Linceu_Lighthouse_mingw.iss", "REPO", "pt"},
+    {"installer_msvc", "repo/Linceu_Lighthouse_msvc.iss", "REPO", "pt"}
+};
+
+QString determine_file_group(const QString& rel_path) {
+    const QString normalized = QDir::fromNativeSeparators(rel_path);
+    if (!normalized.contains('/')) {
+        return QStringLiteral("RAIZ");
+    }
+
+    if (normalized.startsWith(QStringLiteral("source/assets/"))) {
+        const QString rest = normalized.mid(QStringLiteral("source/assets/").size());
+        const int slash_idx = rest.indexOf('/');
+        if (slash_idx > 0) {
+            return rest.left(slash_idx);
+        }
+        return QStringLiteral("assets");
+    }
+
+    if (normalized.startsWith(QStringLiteral("source/ui/GerenciamentoMenusUI/"))) {
+        return QStringLiteral("GerenciamentoMenusUI");
+    }
+
+    if (normalized.startsWith(QStringLiteral("source/ui/"))) {
+        const QString rest = normalized.mid(QStringLiteral("source/ui/").size());
+        const int slash_idx = rest.indexOf('/');
+        if (slash_idx > 0) {
+            return rest.left(slash_idx);
+        }
+        return QStringLiteral("UI");
+    }
+
+    if (normalized.startsWith(QStringLiteral("repo/"))) {
+        return QStringLiteral("REPO");
+    }
+
+    const int first_slash = normalized.indexOf('/');
+    if (first_slash > 0) {
+        return normalized.left(first_slash).toUpper();
+    }
+
+    return QStringLiteral("RAIZ");
+}
+
 QString project_root_dir() {
+#ifdef LINCEU_PROJECT_ROOT_PATH
+    const QString configured_root = QDir::cleanPath(QString::fromUtf8(LINCEU_PROJECT_ROOT_PATH));
+    const QFileInfo configured_cmake(configured_root + QStringLiteral("/CMakeLists.txt"));
+    const QFileInfo configured_source(configured_root + QStringLiteral("/source"));
+    if (configured_cmake.exists() && configured_cmake.isFile() && configured_source.exists() && configured_source.isDir()) {
+        return configured_root;
+    }
+#endif
+
     QDir dir(QCoreApplication::applicationDirPath());
 
     for (int depth = 0; depth < 8; ++depth) {
@@ -64,50 +190,10 @@ QString project_root_dir() {
     return QDir::cleanPath(QCoreApplication::applicationDirPath());
 }
 
-const QHash<QString, QString> FILES_REL = {
-    {"privacy_pt", "source/assets/PRIVACY_POLICY/Privacy_Policy_pt_BR.txt"},
-    {"privacy_en", "source/assets/PRIVACY_POLICY/Privacy_Policy_en_US.txt"},
-    {"privacy_es", "source/assets/PRIVACY_POLICY/Privacy_Policy_es_ES.txt"},
-    {"privacy_fr", "source/assets/PRIVACY_POLICY/Privacy_Policy_fr_FR.txt"},
-    {"privacy_it", "source/assets/PRIVACY_POLICY/Privacy_Policy_it_IT.txt"},
-    {"privacy_de", "source/assets/PRIVACY_POLICY/Privacy_Policy_de_DE.txt"},
-    {"eula_pt", "source/assets/EULA/EULA_pt_BR - Linceu Lighthouse.txt"},
-    {"eula_en", "source/assets/EULA/EULA_en_US - Linceu Lighthouse.txt"},
-    {"eula_es", "source/assets/EULA/EULA_es_ES - Linceu Lighthouse.txt"},
-    {"eula_fr", "source/assets/EULA/EULA_fr_FR - Linceu Lighthouse.txt"},
-    {"eula_it", "source/assets/EULA/EULA_it_IT - Linceu Lighthouse.txt"},
-    {"eula_de", "source/assets/EULA/EULA_de_DE - Linceu Lighthouse.txt"},
-    {"clc_pt", "source/assets/CLC/CLC_pt_BR - Linceu Lighthouse.txt"},
-    {"clc_en", "source/assets/CLC/CLC_en_US - Linceu Lighthouse.txt"},
-    {"clc_es", "source/assets/CLC/CLC_es_ES - Linceu Lighthouse.txt"},
-    {"clc_fr", "source/assets/CLC/CLC_fr_FR - Linceu Lighthouse.txt"},
-    {"clc_it", "source/assets/CLC/CLC_it_IT - Linceu Lighthouse.txt"},
-    {"clc_de", "source/assets/CLC/CLC_de_DE - Linceu Lighthouse.txt"},
-    {"about_pt", "source/assets/ABOUT/ABOUT_pt_BR.txt"},
-    {"about_en", "source/assets/ABOUT/ABOUT_en_US.txt"},
-    {"about_es", "source/assets/ABOUT/ABOUT_es_ES.txt"},
-    {"about_fr", "source/assets/ABOUT/ABOUT_fr_FR.txt"},
-    {"about_it", "source/assets/ABOUT/ABOUT_it_IT.txt"},
-    {"about_de", "source/assets/ABOUT/ABOUT_de_DE.txt"},
-    {"readme", "README.md"},
-    {"observacao", "OBSERVACAO.md"},
-    {"sobre_dialog_cpp", "source/ui/GerenciamentoMenusUI/gmui_03_SobreDialog.cpp"},
-    {"exibir_sobre_cpp", "source/ui/GerenciamentoMenusUI/gmui_22_exibir_sobre.cpp"},
-    {"installer_default", "repo/Linceu_Lighthouse.iss"},
-    {"installer_mingw", "repo/Linceu_Lighthouse_mingw.iss"},
-    {"installer_msvc", "repo/Linceu_Lighthouse_msvc.iss"}
-};
-
-const QStringList PT_MONTHS = {"Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
-const QStringList EN_MONTHS = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-const QStringList ES_MONTHS = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-const QStringList FR_MONTHS = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"};
-const QStringList IT_MONTHS = {"Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"};
-const QStringList DE_MONTHS = {"Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"};
-
 QString find_window_icon_path() {
     const QString base_dir = project_root_dir();
     const QStringList candidates = {
+        QDir(base_dir).filePath("source/assets/images/icons/linceu_sem_fundo.ico"),
         QDir(base_dir).filePath("source/assets/icones/linceu_sem_fundo.ico")
     };
 
@@ -147,74 +233,136 @@ QString plain_version(const QString& version) {
     return normalized;
 }
 
-QHash<QString, QStringList> build_patterns() {
-    return {
-        {"privacy_pt", {R"(^(Versão:?\s*.*)$)", R"(^(Última atualização:?\s*.*)$)"}},
-        {"privacy_en", {R"(^(Version:?\s*.*)$)", R"(^(Last updated:?\s*.*)$)"}},
-        {"privacy_es", {R"(^(Versión:?\s*.*)$)", R"(^(Última actualización:?\s*.*)$)"}},
-        {"privacy_fr", {R"(^(Version:?\s*.*)$)", R"(^(Dernière mise à jour\s*:?\s*.*)$)"}},
-        {"privacy_it", {R"(^(Versione:?\s*.*)$)", R"(^(Ultimo aggiornamento:?\s*.*)$)"}},
-        {"privacy_de", {R"(^(Version:?\s*.*)$)", R"(^(Letzte Aktualisierung:?\s*.*)$)"}},
-        {"eula_pt", {R"(^(Versão.*)$)"}},
-        {"eula_en", {R"(^(Version.*)$)"}},
-        {"eula_es", {R"(^(Versión.*)$)"}},
-        {"eula_fr", {R"(^(Version.*)$)"}},
-        {"eula_it", {R"(^(Versione.*)$)"}},
-        {"eula_de", {R"(^(Version.*)$)"}},
-        {"clc_pt", {R"(^(Versão.*)$)"}},
-        {"clc_en", {R"(^(Version.*)$)"}},
-        {"clc_es", {R"(^(Versión.*)$)"}},
-        {"clc_fr", {R"(^(Version.*)$)"}},
-        {"clc_it", {R"(^(Versione.*)$)"}},
-        {"clc_de", {R"(^(Version.*)$)"}},
-        {"about_pt", {R"(^(Versão:?\s*.*)$)"}},
-        {"about_en", {R"(^(Version:?\s*.*)$)"}},
-        {"about_es", {R"(^(Versión:?\s*.*)$)"}},
-        {"about_fr", {R"(^(Version:?\s*.*)$)"}},
-        {"about_it", {R"(^(Versione:?\s*.*)$)"}},
-        {"about_de", {R"(^(Version:?\s*.*)$)"}},
-        {"readme",
-         {R"(^(> \*\*Observação:\*\*.*)$)",
-          R"(^(> \*\*Note:\*\*.*)$)",
-          R"(^(Versão:\s*v[0-9]+(?:\.[0-9]+){3}<br>)$)",
-          R"(^(\*\*Versão:\*\*\s*v[0-9]+(?:\.[0-9]+){3}<br>)$)",
-          R"(^(Version:\s*v[0-9]+(?:\.[0-9]+){3}<br>)$)",
-          R"(^(\*\*Version:\*\*\s*v[0-9]+(?:\.[0-9]+){3}<br>)$)"}},
-        {"observacao", {R"(^(-\s*`v[0-9]+(?:\.[0-9]+){3}`)\s*$)"}},
-        {"sobre_dialog_cpp",
-         {R"(^(\s*\+ QStringLiteral\("<p><b>"\)\s*\+\s*get_text\(loc_,\s*"version",\s*"Version"\)\s*\+\s*QStringLiteral\(":</b> [0-9]+(?:\.[0-9]+){3}</p>"\).*)$)"}},
-        {"exibir_sobre_cpp",
-         {R"(^(\s*\+ QStringLiteral\("<p><b>"\)\s*\+\s*get_text\(loc,\s*"version",\s*"Version"\)\s*\+\s*QStringLiteral\(":</b> [0-9]+(?:\.[0-9]+){3}</p>"\).*)$)"}},
-        {"installer_default", {R"(^#define\s+MyAppVersion\s+"[0-9]+(?:\.[0-9]+){3}"\s*$)"}},
-        {"installer_mingw",
-         {R"(^#define\s+MyAppVersion\s+"[0-9]+(?:\.[0-9]+){3}"\s*$)",
-          R"(^OutputBaseFilename=.*_v[0-9]+(?:\.[0-9]+){3}\s*$)"}},
-        {"installer_msvc",
-         {R"(^#define\s+MyAppVersion\s+"[0-9]+(?:\.[0-9]+){3}"\s*$)",
-          R"(^OutputBaseFilename=.*_v[0-9]+(?:\.[0-9]+){3}\s*$)"}}
-    };
-}
+int parse_month_name_to_index(const QString& month_name) {
+    QString norm = month_name.trimmed().toLower();
 
-const QHash<QString, QStringList> PATTERNS = build_patterns();
-
-QHash<QString, QString> get_files_for_base(const QString& base_dir) {
-    QHash<QString, QString> files;
-    const QDir base(base_dir);
-
-    for (auto it = FILES_REL.constBegin(); it != FILES_REL.constEnd(); ++it) {
-        QString candidate = QDir::cleanPath(base.filePath(it.value()));
-        if (QFileInfo::exists(candidate)) {
-            files.insert(it.key(), QFileInfo(candidate).absoluteFilePath());
-            continue;
-        }
-
-        QString alt_rel = it.value();
-        if (alt_rel.startsWith("source/")) alt_rel = alt_rel.mid(QString("source/").size());
-        const QString alt = QDir::cleanPath(base.filePath(alt_rel));
-        files.insert(it.key(), QFileInfo(QFileInfo::exists(alt) ? alt : candidate).absoluteFilePath());
+    bool is_num = false;
+    int num = norm.toInt(&is_num);
+    if (is_num && num >= 1 && num <= 12) {
+        return num - 1;
     }
 
-    return files;
+    norm.replace(QStringLiteral("á"), QStringLiteral("a"))
+        .replace(QStringLiteral("ã"), QStringLiteral("a"))
+        .replace(QStringLiteral("à"), QStringLiteral("a"))
+        .replace(QStringLiteral("ä"), QStringLiteral("a"))
+        .replace(QStringLiteral("é"), QStringLiteral("e"))
+        .replace(QStringLiteral("ê"), QStringLiteral("e"))
+        .replace(QStringLiteral("è"), QStringLiteral("e"))
+        .replace(QStringLiteral("ë"), QStringLiteral("e"))
+        .replace(QStringLiteral("í"), QStringLiteral("i"))
+        .replace(QStringLiteral("ì"), QStringLiteral("i"))
+        .replace(QStringLiteral("ï"), QStringLiteral("i"))
+        .replace(QStringLiteral("ó"), QStringLiteral("o"))
+        .replace(QStringLiteral("õ"), QStringLiteral("o"))
+        .replace(QStringLiteral("ô"), QStringLiteral("o"))
+        .replace(QStringLiteral("ö"), QStringLiteral("o"))
+        .replace(QStringLiteral("ú"), QStringLiteral("u"))
+        .replace(QStringLiteral("ù"), QStringLiteral("u"))
+        .replace(QStringLiteral("ü"), QStringLiteral("u"))
+        .replace(QStringLiteral("ç"), QStringLiteral("c"))
+        .replace(QStringLiteral("ñ"), QStringLiteral("n"))
+        .replace(QStringLiteral("ß"), QStringLiteral("ss"));
+
+    if (norm.startsWith("jan")) return 0;
+    if (norm.startsWith("fev") || norm.startsWith("feb")) return 1;
+    if (norm.startsWith("mar")) return 2;
+    if (norm.startsWith("abr") || norm.startsWith("apr") || norm.startsWith("av")) return 3; // avril
+    if (norm.startsWith("mai") || norm.startsWith("may") || norm.startsWith("mag")) return 4; // maggio
+    if (norm.startsWith("jun") || norm.startsWith("gui")) return 5; // giugno
+    if (norm.startsWith("jul") || norm.startsWith("lug")) return 6; // luglio
+    if (norm.startsWith("ago") || norm.startsWith("aug") || norm.startsWith("aou")) return 7; // aout
+    if (norm.startsWith("set") || norm.startsWith("sep")) return 8;
+    if (norm.startsWith("out") || norm.startsWith("oct") || norm.startsWith("okt")) return 9;
+    if (norm.startsWith("nov")) return 10;
+    if (norm.startsWith("dez") || norm.startsWith("dec")) return 11;
+
+    return -1;
+}
+
+bool parse_date_string(const QString& raw_text, int& day, int& month_index, int& year) {
+    QString text = raw_text.trimmed();
+    if (text.startsWith('`') && text.endsWith('`') && text.size() >= 2) {
+        text = text.mid(1, text.size() - 2).trimmed();
+    }
+
+    // 1. Textual: e.g. "23 de agosto de 2026", "23 Agosto 2026", "23. August 2026", "23 Août 2026"
+    static const QRegularExpression rx_textual_day_first(
+        R"((\d{1,2})\.?\s+(?:de\s+)?([A-Za-zÀ-ÿ]+)(?:\s+de)?\s+(\d{4}))",
+        QRegularExpression::CaseInsensitiveOption);
+    QRegularExpressionMatch m = rx_textual_day_first.match(text);
+    if (m.hasMatch()) {
+        int d = m.captured(1).toInt();
+        int y = m.captured(3).toInt();
+        int m_idx = parse_month_name_to_index(m.captured(2));
+        if (m_idx >= 0 && d >= 1 && d <= 31 && y >= 1900 && y <= 3000) {
+            day = d;
+            month_index = m_idx;
+            year = y;
+            return true;
+        }
+    }
+
+    // 2. Textual month first: e.g. "August 23, 2026", "August 23rd, 2026"
+    static const QRegularExpression rx_textual_month_first(
+        R"(([A-Za-zÀ-ÿ]+)\s+(\d{1,2})(?:st|nd|rd|th)?,\s*(\d{4}))",
+        QRegularExpression::CaseInsensitiveOption);
+    m = rx_textual_month_first.match(text);
+    if (m.hasMatch()) {
+        int m_idx = parse_month_name_to_index(m.captured(1));
+        int d = m.captured(2).toInt();
+        int y = m.captured(3).toInt();
+        if (m_idx >= 0 && d >= 1 && d <= 31 && y >= 1900 && y <= 3000) {
+            day = d;
+            month_index = m_idx;
+            year = y;
+            return true;
+        }
+    }
+
+    // 3. Numeric ISO: e.g. "2026-08-23", "2026/08/23"
+    static const QRegularExpression rx_numeric_iso(
+        R"((\d{4})[-/.](\d{1,2})[-/.](\d{1,2}))");
+    m = rx_numeric_iso.match(text);
+    if (m.hasMatch()) {
+        int y = m.captured(1).toInt();
+        int mo = m.captured(2).toInt();
+        int d = m.captured(3).toInt();
+        if (mo >= 1 && mo <= 12 && d >= 1 && d <= 31 && y >= 1900 && y <= 3000) {
+            day = d;
+            month_index = mo - 1;
+            year = y;
+            return true;
+        }
+    }
+
+    // 4. Numeric DMY: e.g. "23/08/2026", "23/8/2026", "23.08.2026"
+    static const QRegularExpression rx_numeric_dmy(
+        R"((\d{1,2})[-/.](\d{1,2})[-/.](\d{4}))");
+    m = rx_numeric_dmy.match(text);
+    if (m.hasMatch()) {
+        int d = m.captured(1).toInt();
+        int mo = m.captured(2).toInt();
+        int y = m.captured(3).toInt();
+        if (mo >= 1 && mo <= 12 && d >= 1 && d <= 31 && y >= 1900 && y <= 3000) {
+            day = d;
+            month_index = mo - 1;
+            year = y;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool parse_version_string(const QString& raw_text, QString& version_out) {
+    static const QRegularExpression rx_ver(R"(\b(v?[0-9]+(?:\.[0-9]+){1,3})\b)", QRegularExpression::CaseInsensitiveOption);
+    QRegularExpressionMatch m = rx_ver.match(raw_text);
+    if (m.hasMatch()) {
+        version_out = m.captured(1);
+        return true;
+    }
+    return false;
 }
 
 QString read_file_robust(const QString& path, bool* ok_out = nullptr) {
@@ -264,12 +412,36 @@ QString replace_line_by_regex(const QString& text, const QString& pattern, const
     return out;
 }
 
-QString replace_regex_capture(const QString& text, const QString& pattern, int capture_index, const QString& replacement);
+QString replace_regex_capture(const QString& text, const QString& pattern, int capture_index, const QString& replacement) {
+    struct CaptureReplacement {
+        qsizetype start;
+        qsizetype length;
+        QString replacement;
+    };
+
+    QRegularExpression re(pattern, QRegularExpression::MultilineOption);
+    QString out = text;
+    QRegularExpressionMatchIterator it = re.globalMatch(text);
+    QList<CaptureReplacement> replacements;
+
+    while (it.hasNext()) {
+        const QRegularExpressionMatch match = it.next();
+        if (match.capturedStart(capture_index) >= 0) {
+            replacements.append({match.capturedStart(capture_index), match.capturedLength(capture_index), replacement});
+        }
+    }
+
+    for (int i = replacements.size() - 1; i >= 0; --i) {
+        out.replace(replacements[i].start, replacements[i].length, replacements[i].replacement);
+    }
+
+    return out;
+}
 
 QString replace_line_value_after_prefix(const QString& text, const QString& prefix, const QString& new_value) {
     return replace_regex_capture(
         text,
-        QString(R"((^%1)(v?[0-9]+(?:\.[0-9]+){3})((?:<br>)?\r?)$)").arg(QRegularExpression::escape(prefix)),
+        QString(R"((^%1)(v?[0-9]+(?:\.[0-9]+){1,3})((?:<br>)?\r?)$)").arg(QRegularExpression::escape(prefix)),
         2,
         new_value);
 }
@@ -300,58 +472,122 @@ QString replace_line_segment(const QString& text, const QString& prefix, const Q
     return out;
 }
 
-QString replace_regex_capture(const QString& text, const QString& pattern, int capture_index, const QString& replacement) {
-    struct CaptureReplacement {
-        qsizetype start;
-        qsizetype length;
-        QString replacement;
-    };
-
-    QRegularExpression re(pattern, QRegularExpression::MultilineOption);
-    QString out = text;
-    QRegularExpressionMatchIterator it = re.globalMatch(text);
-    QList<CaptureReplacement> replacements;
-
-    while (it.hasNext()) {
-        const QRegularExpressionMatch match = it.next();
-        if (match.capturedStart(capture_index) >= 0) {
-            replacements.append({match.capturedStart(capture_index), match.capturedLength(capture_index), replacement});
-        }
+QString resolve_file_path(const QString& base_dir, const QString& rel_path) {
+    const QDir base(base_dir);
+    const QString candidate = QDir::cleanPath(base.filePath(rel_path));
+    if (QFileInfo::exists(candidate)) {
+        return QFileInfo(candidate).absoluteFilePath();
     }
 
-    for (int i = replacements.size() - 1; i >= 0; --i) {
-        out.replace(replacements[i].start, replacements[i].length, replacements[i].replacement);
+    QString alt_rel = rel_path;
+    if (alt_rel.startsWith("source/")) {
+        alt_rel = alt_rel.mid(QString("source/").size());
     }
-
-    return out;
+    const QString alt = QDir::cleanPath(base.filePath(alt_rel));
+    return QFileInfo(QFileInfo::exists(alt) ? alt : candidate).absoluteFilePath();
 }
+
+QHash<QString, QStringList> build_patterns() {
+    return {
+        {"privacy_pt", {R"(^(Versão:?\s*.*)$)", R"(^(Última atualização:?\s*.*)$)"}},
+        {"privacy_en", {R"(^(Version:?\s*.*)$)", R"(^(Last updated:?\s*.*)$)"}},
+        {"privacy_es", {R"(^(Versión:?\s*.*)$)", R"(^(Última actualización:?\s*.*)$)"}},
+        {"privacy_fr", {R"(^(Version:?\s*.*)$)", R"(^(Dernière mise à jour\s*:?\s*.*)$)"}},
+        {"privacy_it", {R"(^(Versione:?\s*.*)$)", R"(^(Ultimo aggiornamento:?\s*.*)$)"}},
+        {"privacy_de", {R"(^(Version:?\s*.*)$)", R"(^(Letzte Aktualisierung:?\s*.*)$)"}},
+
+        {"eula_pt", {R"(^(Versão.*)$)"}},
+        {"eula_en", {R"(^(Version.*)$)"}},
+        {"eula_es", {R"(^(Versión.*)$)"}},
+        {"eula_fr", {R"(^(Version.*)$)"}},
+        {"eula_it", {R"(^(Versione.*)$)"}},
+        {"eula_de", {R"(^(Version.*)$)"}},
+
+        {"clc_pt", {R"(^(Versão.*)$)"}},
+        {"clc_en", {R"(^(Version.*)$)"}},
+        {"clc_es", {R"(^(Versión.*)$)"}},
+        {"clc_fr", {R"(^(Version.*)$)"}},
+        {"clc_it", {R"(^(Versione.*)$)"}},
+        {"clc_de", {R"(^(Version.*)$)"}},
+
+        {"about_pt", {R"(^(Versão:?\s*.*)$)"}},
+        {"about_en", {R"(^(Version:?\s*.*)$)"}},
+        {"about_es", {R"(^(Versión:?\s*.*)$)"}},
+        {"about_fr", {R"(^(Version:?\s*.*)$)"}},
+        {"about_it", {R"(^(Versione:?\s*.*)$)"}},
+          {"readme",
+         {R"(^(> \*\*Observação:\*\*.*)$)",
+          R"(^(> \*\*Note:\*\*.*)$)",
+          R"(^(> \*\*Nota:\*\*.*)$)",
+          R"(^(> \*\*Remarque\s*:\*\*.*)$)",
+          R"(^(> \*\*Hinweis:\*\*.*)$)",
+          R"(^(Versão:\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)",
+          R"(^(\*\*Versão:\*\*\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)",
+          R"(^(Version\s*:\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)",
+          R"(^(\*\*Version\s*:\*\*\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)",
+          R"(^(Versión:\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)",
+          R"(^(\*\*Versión:\*\*\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)",
+          R"(^(Versione:\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)",
+          R"(^(\*\*Versione:\*\*\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)"}},
+
+        {"observacao", {R"(^(-\s*`?v?[0-9]+(?:\.[0-9]+){1,3}`?)\s*$)"}},
+
+        {"manual",
+         {R"(^((?:Versão documentada|Documented version|Versión documentada|Version documentée|Versione documentata|Dokumentierte Version)\s*:\s*`?.*`?.*)$)",
+          R"(^((?:Data|Date|Fecha|Datum)\s*:\s*`?.*`?.*)$)"}},
+
+        {"sobre_dialog_cpp",
+         {R"(^(\s*"<b>%1:</b>\s*[0-9]+(?:\.[0-9]+){1,3}<br>"\s*)$)"}},
+
+        {"exibir_sobre_cpp",
+         {R"(^(\s*"<b>%1:</b>\s*[0-9]+(?:\.[0-9]+){1,3}<br>"\s*)$)"}},
+
+        {"installer_default", {R"(^#define\s+MyAppVersion\s+"[0-9]+(?:\.[0-9]+){1,3}"\s*$)"}},
+        {"installer_mingw",
+         {R"(^#define\s+MyAppVersion\s+"[0-9]+(?:\.[0-9]+){1,3}"\s*$)",
+          R"(^OutputBaseFilename=.*_v[0-9]+(?:\.[0-9]+){1,3}\s*$)"}},
+        {"installer_msvc",
+         {R"(^#define\s+MyAppVersion\s+"[0-9]+(?:\.[0-9]+){1,3}"\s*$)",
+          R"(^OutputBaseFilename=.*_v[0-9]+(?:\.[0-9]+){1,3}\s*$)"}}
+    };
+}
+
+const QHash<QString, QStringList> PATTERNS = build_patterns();
 
 QString update_about_cpp_version(const QString& text, const QString& version) {
-    return replace_regex_capture(
-        text,
-        R"((\+ QStringLiteral\("<p><b>"\)\s*\+\s*get_text\((?:loc_|loc),\s*"version",\s*"Version"\)\s*\+\s*QStringLiteral\(":</b> )([0-9]+(?:\.[0-9]+){3})(</p>"\)))",
-        2,
-        plain_version(version));
-}
-
-QString update_installer_version(const QString& text, const QString& version) {
     const QString normalized = plain_version(version);
-    QString updated = replace_line_by_regex(
+    QString updated = replace_regex_capture(
         text,
-        R"(^#define\s+MyAppVersion\s+"[0-9]+(?:\.[0-9]+){3}"\s*$)",
-        QString("#define MyAppVersion \"%1\"").arg(normalized));
+        R"((\s*"<b>%1:</b>\s*)([0-9]+(?:\.[0-9]+){1,3})(<br>"\s*))",
+        2,
+        normalized);
 
     updated = replace_regex_capture(
         updated,
-        R"((^OutputBaseFilename=.*_v)([0-9]+(?:\.[0-9]+){3})(\r?)$)",
+        R"((\+ QStringLiteral\("<p><b>"\)\s*\+\s*get_text\((?:loc_|loc),\s*"version",\s*"Version"\)\s*\+\s*QStringLiteral\(":</b> )([0-9]+(?:\.[0-9]+){1,3})(</p>"\)))",
         2,
         normalized);
 
     return updated;
 }
 
-QString update_readme_section(const QString& text, const QString& section_id, const QString& note_prefix, const QString& note_suffix,
-                              const QString& plain_prefix, const QString& bold_prefix, const QString& version) {
+QString update_installer_version(const QString& text, const QString& version) {
+    const QString normalized = plain_version(version);
+    QString updated = replace_line_by_regex(
+        text,
+        R"(^#define\s+MyAppVersion\s+"[0-9]+(?:\.[0-9]+){1,3}"\s*$)",
+        QString("#define MyAppVersion \"%1\"").arg(normalized));
+
+    updated = replace_regex_capture(
+        updated,
+        R"((^OutputBaseFilename=.*_v)([0-9]+(?:\.[0-9]+){1,3})(\r?)$)",
+        2,
+        normalized);
+
+    return updated;
+}
+
+QString update_readme_section(const QString& text, const QString& section_id, const QString& version) {
     const QString start_marker = QString("<h2 id=\"%1\">").arg(section_id);
     const int start_index = text.indexOf(start_marker);
     if (start_index < 0) {
@@ -364,9 +600,28 @@ QString update_readme_section(const QString& text, const QString& section_id, co
     }
 
     QString section = text.mid(start_index, end_index - start_index);
-    section = replace_line_segment(section, note_prefix, note_suffix, version);
-    section = replace_line_value_after_prefix(section, plain_prefix, version);
-    section = replace_line_value_after_prefix(section, bold_prefix, version);
+    const QString target_version = readme_version(version);
+
+    // 1. Bloco de Observação/Nota/Remarque/Hinweis (> **...:** ... **v...** ...)
+    section = replace_regex_capture(
+        section,
+        R"((^>\s*\*\*(?:Observação|Note|Nota|Remarque|Hinweis)\s*:\*\*.*?\*\*)(v?[0-9]+(?:\.[0-9]+){1,3})(\*\*.*$))",
+        2,
+        target_version);
+
+    // 2. Linha simples de versão (Versão: v...<br> / Version : v...<br> / etc.)
+    section = replace_regex_capture(
+        section,
+        R"((^(?:Versão|Version|Versión|Versione)\s*:\s*)(v?[0-9]+(?:\.[0-9]+){1,3})((?:<br>)?\r?$))",
+        2,
+        target_version);
+
+    // 3. Linha em negrito de versão (**Versão:** v...<br> / **Version :** v...<br> / etc.)
+    section = replace_regex_capture(
+        section,
+        R"((^\*\*(?:Versão|Version|Versión|Versione)\s*:\*\*\s*)(v?[0-9]+(?:\.[0-9]+){1,3})((?:<br>)?\r?$))",
+        2,
+        target_version);
 
     QString updated = text;
     updated.replace(start_index, end_index - start_index, section);
@@ -377,202 +632,230 @@ QString update_readme_versions(const QString& text, const LangInput& pt, const L
                                const LangInput& it, const LangInput& de) {
     QString updated = text;
 
-    updated = update_readme_section(
-        updated, "ptbr", "> **Observação:** Este repositório refere-se à versão **",
-        "** do Projeto Linceu Lighthouse. Apoie o projeto e adquira a versão paga através do link: [Instalar via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)",
-        "Versão: ", "**Versão:** ", readme_version(pt.version));
-    updated = update_readme_section(
-        updated, "enus", "> **Note:** This repository refers to the **",
-        "** version of the Linceu Lighthouse Project. Support the project and purchase the paid version through the link: [Install via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)",
-        "Version: ", "**Version:** ", readme_version(en.version));
-    updated = update_readme_section(
-        updated, "eses", "> **Nota:** Este repositorio se refere à versão **",
-        "** do Projeto Linceu Lighthouse. Apoya el proyecto y adquiere la versión de pago a través del enlace: [Instalar vía Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)",
-        "Versión: ", "**Versión:** ", readme_version(es.version));
-    updated = update_readme_section(
-        updated, "frfr", "> **Note :** Ce référentiel fait référence à la version **",
-        "** du projet Linceu Lighthouse. Soutenez le projet et achetez la version payante via le lien : [Installer via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)",
-        "Version : ", "**Version:** ", readme_version(fr.version));
-    updated = update_readme_section(
-        updated, "itit", "> **Nota:** Questo repository si riferisce alla versione **",
-        "** del Progetto Linceu Lighthouse. Supporta il progetto e acquista la versione a pagamento tramite il link: [Installa via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)",
-        "Versione: ", "**Versione:** ", readme_version(it.version));
-    updated = update_readme_section(
-        updated, "dede", "> **Hinweis:** Dieses Repository bezieht sich auf die Version **",
-        "** des Linceu Lighthouse Projekts. Unterstützen Sie das Projekt und erwerben Sie die kostenpflichtige Version über den Link: [Über Microsoft Store installieren](https://apps.microsoft.com/detail/9NN8Z5Z700TM)",
-        "Version: ", "**Version:** ", readme_version(de.version));
+    updated = update_readme_section(updated, "ptbr", pt.version);
+    updated = update_readme_section(updated, "enus", en.version);
+    updated = update_readme_section(updated, "eses", es.version);
+    updated = update_readme_section(updated, "frfr", fr.version);
+    updated = update_readme_section(updated, "itit", it.version);
+    updated = update_readme_section(updated, "dede", de.version);
 
     return updated;
 }
 
-QHash<QString, FileCheckStatus> check_expected_lines(const QString& base_dir) {
-    QHash<QString, FileCheckStatus> status;
-    const auto files = get_files_for_base(base_dir);
-
-    for (auto it = files.constBegin(); it != files.constEnd(); ++it) {
-        bool ok = false;
-        const QString txt = read_file_robust(it.value(), &ok);
-        if (!ok) {
-            status.insert(it.key(), {false, {}, {}});
-            continue;
-        }
-
-        QStringList found;
-        QStringList missing;
-        const QStringList patterns = PATTERNS.value(it.key());
-        for (const QString& pat : patterns) {
-            QRegularExpression re(pat, QRegularExpression::MultilineOption);
-            const QRegularExpressionMatch m = re.match(txt);
-            if (m.hasMatch()) found.append(m.captured(1).trimmed());
-            else missing.append(pat);
-        }
-
-        if (patterns.isEmpty()) {
-            const QStringList lines = txt.split(QRegularExpression("\\r?\\n"));
-            const int max_lines = std::min(3, static_cast<int>(lines.size()));
-            for (int i = 0; i < max_lines; ++i) found.append(lines[i]);
-        }
-
-        status.insert(it.key(), {true, found, missing});
+QString update_manual_section(const QString& text, const QString& section_id, const QString& version, const QString& date_str) {
+    const QString start_marker = QString("<h2 id=\"%1\">").arg(section_id);
+    const int start_index = text.indexOf(start_marker);
+    if (start_index < 0) {
+        return text;
     }
 
-    return status;
+    int end_index = text.indexOf("<h2 id=\"", start_index + start_marker.size());
+    if (end_index < 0) {
+        end_index = text.size();
+    }
+
+    QString section = text.mid(start_index, end_index - start_index);
+    const QString normalized_ver = plain_version(version);
+
+    // 1. Linha de versão documentada em qualquer um dos 6 idiomas (suporta espaço antes do :, backticks e trailing spaces)
+    section = replace_regex_capture(
+        section,
+        R"((^(?:Versão documentada|Documented version|Versión documentada|Version documentée|Versione documentata|Dokumentierte Version)\s*:\s*`?)(v?[0-9]+(?:\.[0-9]+){1,3})(`?.*$))",
+        2,
+        normalized_ver);
+
+    // 2. Linha de data em qualquer um dos 6 idiomas (suporta espaço antes do :, backticks e trailing spaces)
+    section = replace_regex_capture(
+        section,
+        R"((^(?:Data|Date|Fecha|Datum)\s*:\s*`?)([^`\r\n]+)(`?.*$))",
+        2,
+        date_str);
+
+    QString updated = text;
+    updated.replace(start_index, end_index - start_index, section);
+    return updated;
+}
+
+QString update_manual_versions(const QString& text, const LangInput& pt, const LangInput& en, const LangInput& es,
+                               const LangInput& fr, const LangInput& it, const LangInput& de) {
+    QString updated = text;
+
+    const QString pt_date = QString("%1 de %2 de %3").arg(pt.day).arg(PT_MONTHS.value(pt.month_index).toLower()).arg(pt.year);
+    const QString en_date = QString("%1 %2, %3").arg(EN_MONTHS.value(en.month_index)).arg(en.day).arg(en.year);
+    const QString es_date = QString("%1 de %2 de %3").arg(es.day).arg(ES_MONTHS.value(es.month_index).toLower()).arg(es.year);
+    const QString fr_date = QString("%1 %2 %3").arg(fr.day).arg(FR_MONTHS.value(fr.month_index).toLower()).arg(fr.year);
+    const QString it_date = QString("%1 %2 %3").arg(it.day).arg(IT_MONTHS.value(it.month_index).toLower()).arg(it.year);
+    const QString de_date = QString("%1. %2 %3").arg(de.day).arg(DE_MONTHS.value(de.month_index)).arg(de.year);
+
+    updated = update_manual_section(updated, "ptbr", pt.version, pt_date);
+    updated = update_manual_section(updated, "enus", en.version, en_date);
+    updated = update_manual_section(updated, "eses", es.version, es_date);
+    updated = update_manual_section(updated, "frfr", fr.version, fr_date);
+    updated = update_manual_section(updated, "itit", it.version, it_date);
+    updated = update_manual_section(updated, "dede", de.version, de_date);
+
+    return updated;
+}
+
+QList<FileCheckStatus> check_all_files(const QString& base_dir) {
+    QList<FileCheckStatus> statuses;
+
+    for (const FileEntry& entry : ALL_FILE_ENTRIES) {
+        FileCheckStatus st;
+        st.key = entry.key;
+        st.rel_path = entry.rel_path;
+        st.group = determine_file_group(entry.rel_path);
+        st.lang = entry.lang;
+        st.absolute_path = resolve_file_path(base_dir, entry.rel_path);
+
+        bool ok = false;
+        const QString txt = read_file_robust(st.absolute_path, &ok);
+        st.exists = ok;
+
+        if (ok) {
+            // Detect version
+            QString found_ver;
+            const QStringList lines = txt.split(QRegularExpression("\\r?\\n"));
+            for (const QString& line : lines) {
+                if (line.contains("Versão", Qt::CaseInsensitive) ||
+                    line.contains("Version", Qt::CaseInsensitive) ||
+                    line.contains("Versión", Qt::CaseInsensitive) ||
+                    line.contains("Versione", Qt::CaseInsensitive) ||
+                    line.contains("MyAppVersion", Qt::CaseInsensitive)) {
+                    if (parse_version_string(line, found_ver)) {
+                        st.detected_version = found_ver;
+                        break;
+                    }
+                }
+            }
+
+            // Detect date
+            int d = 0, m = 0, y = 0;
+            for (const QString& line : lines) {
+                if (line.contains("atualização", Qt::CaseInsensitive) ||
+                    line.contains("updated", Qt::CaseInsensitive) ||
+                    line.contains("mise à jour", Qt::CaseInsensitive) ||
+                    line.contains("aggiornamento", Qt::CaseInsensitive) ||
+                    line.contains("Aktualisierung", Qt::CaseInsensitive) ||
+                    line.contains("Data:", Qt::CaseInsensitive) ||
+                    line.contains("Date:", Qt::CaseInsensitive) ||
+                    line.contains("Fecha:", Qt::CaseInsensitive) ||
+                    line.contains("Datum:", Qt::CaseInsensitive) ||
+                    line.contains("Versão", Qt::CaseInsensitive) ||
+                    line.contains("Version", Qt::CaseInsensitive)) {
+                    if (parse_date_string(line, d, m, y)) {
+                        st.detected_date = QString("%1/%2/%3").arg(d).arg(m + 1).arg(y);
+                        break;
+                    }
+                }
+            }
+
+            const QStringList patterns = PATTERNS.value(entry.key);
+            for (const QString& pat : patterns) {
+                QRegularExpression re(pat, QRegularExpression::MultilineOption);
+                const QRegularExpressionMatch match = re.match(txt);
+                if (match.hasMatch()) {
+                    st.found_patterns.append(match.captured(1).trimmed());
+                } else {
+                    st.missing_patterns.append(pat);
+                }
+            }
+        }
+
+        statuses.append(st);
+    }
+
+    return statuses;
 }
 
 QList<UpdateResult> apply_updates(const LangInput& pt, const LangInput& en, const LangInput& es, const LangInput& fr,
                                   const LangInput& it, const LangInput& de, const QString& base_dir) {
     QList<UpdateResult> results;
-    const auto files = get_files_for_base(base_dir);
 
     const QString pt_date = QString("%1 de %2 de %3").arg(pt.day).arg(PT_MONTHS.value(pt.month_index).toLower()).arg(pt.year);
     const QString en_date = QString("%1 %2, %3").arg(EN_MONTHS.value(en.month_index)).arg(en.day).arg(en.year);
+    const QString es_date = QString("%1 de %2 de %3").arg(es.day).arg(ES_MONTHS.value(es.month_index).toLower()).arg(es.year);
+    const QString fr_date = QString("%1 %2 %3").arg(fr.day).arg(FR_MONTHS.value(fr.month_index).toLower()).arg(fr.year);
+    const QString it_date = QString("%1 %2 %3").arg(it.day).arg(IT_MONTHS.value(it.month_index).toLower()).arg(it.year);
+    const QString de_date = QString("%1. %2 %3").arg(de.day).arg(DE_MONTHS.value(de.month_index)).arg(de.year);
 
-    const auto make_date = [](const LangInput& x, const QStringList& months, bool use_de, bool dot_after_day) {
-        const QString month = months.value(x.month_index);
-        if (use_de) return QString("%1 de %2 de %3").arg(x.day).arg(month).arg(x.year);
-        if (dot_after_day) return QString("%1. %2 %3").arg(x.day).arg(month).arg(x.year);
-        return QString("%1 %2 %3").arg(x.day).arg(month).arg(x.year);
-    };
+    for (const FileEntry& entry : ALL_FILE_ENTRIES) {
+        const QString abs_path = resolve_file_path(base_dir, entry.rel_path);
+        const QString group = determine_file_group(entry.rel_path);
 
-    for (auto it_file = files.constBegin(); it_file != files.constEnd(); ++it_file) {
         bool ok_read = false;
-        const QString original = read_file_robust(it_file.value(), &ok_read);
+        const QString original = read_file_robust(abs_path, &ok_read);
         if (!ok_read) {
-            results.append({it_file.key(), false, "arquivo inexistente"});
+            results.append({entry.key, entry.rel_path, group, false, "Arquivo não encontrado"});
             continue;
         }
 
         QString new_txt = original;
 
         try {
-            const QString& key = it_file.key();
+            const QString& key = entry.key;
             if (key == "privacy_pt") {
-                new_txt = replace_line_by_regex(new_txt, R"(^Versão:?.*$)", QString("Versão: %1").arg(pt.version));
+                new_txt = replace_line_by_regex(new_txt, R"(^Versão:?.*$)", QString("Versão: %1").arg(plain_version(pt.version)));
                 new_txt = replace_line_by_regex(new_txt, R"(^Última atualização:?.*$)", QString("Última atualização: %1").arg(pt_date));
             } else if (key == "privacy_en") {
-                new_txt = replace_line_by_regex(new_txt, R"(^Version:?.*$)", QString("Version: %1").arg(en.version));
+                new_txt = replace_line_by_regex(new_txt, R"(^Version:?.*$)", QString("Version: %1").arg(plain_version(en.version)));
                 new_txt = replace_line_by_regex(new_txt, R"(^Last updated:?.*$)", QString("Last updated: %1").arg(en_date));
-            } else if (key == "privacy_es" || key == "privacy_fr" || key == "privacy_it" || key == "privacy_de") {
-                QString ver_label, upd_label, localized_date;
-                LangInput x;
-                if (key == "privacy_es") {
-                    ver_label = "Versión";
-                    upd_label = "Última actualización";
-                    x = es;
-                    localized_date = make_date(x, ES_MONTHS, false, false);
-                } else if (key == "privacy_fr") {
-                    ver_label = "Version";
-                    upd_label = "Dernière mise à jour";
-                    x = fr;
-                    localized_date = make_date(x, FR_MONTHS, false, false);
-                } else if (key == "privacy_it") {
-                    ver_label = "Versione";
-                    upd_label = "Ultimo aggiornamento";
-                    x = it;
-                    localized_date = make_date(x, IT_MONTHS, false, false);
-                } else {
-                    ver_label = "Version";
-                    upd_label = "Letzte Aktualisierung";
-                    x = de;
-                    localized_date = make_date(x, DE_MONTHS, true, false);
-                }
-                new_txt = replace_line_by_regex(new_txt, QString(R"(^%1:?.*$)").arg(QRegularExpression::escape(ver_label)), QString("%1: %2").arg(ver_label, x.version));
-                new_txt = replace_line_by_regex(new_txt, QString(R"(^%1\s*:?.*$)").arg(QRegularExpression::escape(upd_label)), QString("%1: %2").arg(upd_label, localized_date));
+            } else if (key == "privacy_es") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Versión:?.*$)", QString("Versión: %1").arg(plain_version(es.version)));
+                new_txt = replace_line_by_regex(new_txt, R"(^Última actualización:?.*$)", QString("Última actualización: %1").arg(es_date));
+            } else if (key == "privacy_fr") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Version:?.*$)", QString("Version: %1").arg(plain_version(fr.version)));
+                new_txt = replace_line_by_regex(new_txt, R"(^Dernière mise à jour\s*:?.*$)", QString("Dernière mise à jour: %1").arg(fr_date));
+            } else if (key == "privacy_it") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Versione:?.*$)", QString("Versione: %1").arg(plain_version(it.version)));
+                new_txt = replace_line_by_regex(new_txt, R"(^Ultimo aggiornamento:?.*$)", QString("Ultimo aggiornamento: %1").arg(it_date));
+            } else if (key == "privacy_de") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Version:?.*$)", QString("Version: %1").arg(plain_version(de.version)));
+                new_txt = replace_line_by_regex(new_txt, R"(^Letzte Aktualisierung:?.*$)", QString("Letzte Aktualisierung: %1").arg(de_date));
             } else if (key == "eula_pt") {
-                new_txt = replace_line_by_regex(new_txt, R"(^Versão\s*.*$)", QString("Versão %1, %2").arg(pt.version, pt_date));
+                new_txt = replace_line_by_regex(new_txt, R"(^Versão\s*.*$)", QString("Versão %1, %2").arg(plain_version(pt.version), pt_date));
             } else if (key == "eula_en") {
-                new_txt = replace_line_by_regex(new_txt, R"(^Version\s*.*$)", QString("Version %1, %2").arg(en.version, en_date));
-            } else if (key == "eula_es" || key == "eula_fr" || key == "eula_it" || key == "eula_de") {
-                QString label, date;
-                LangInput x;
-                if (key == "eula_es") {
-                    label = "Versión";
-                    x = es;
-                    date = make_date(x, ES_MONTHS, false, false);
-                } else if (key == "eula_fr") {
-                    label = "Version";
-                    x = fr;
-                    date = make_date(x, FR_MONTHS, false, false);
-                } else if (key == "eula_it") {
-                    label = "Versione";
-                    x = it;
-                    date = make_date(x, IT_MONTHS, false, false);
-                } else {
-                    label = "Version";
-                    x = de;
-                    date = make_date(x, DE_MONTHS, true, false);
-                }
-                new_txt = replace_line_by_regex(new_txt, QString(R"(^%1\s*.*$)").arg(QRegularExpression::escape(label)), QString("%1 %2, %3").arg(label, x.version, date));
+                new_txt = replace_line_by_regex(new_txt, R"(^Version\s*.*$)", QString("Version %1, %2").arg(plain_version(en.version), en_date));
+            } else if (key == "eula_es") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Versión\s*.*$)", QString("Versión %1, %2").arg(plain_version(es.version), es_date));
+            } else if (key == "eula_fr") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Version\s*.*$)", QString("Version %1, %2").arg(plain_version(fr.version), fr_date));
+            } else if (key == "eula_it") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Versione\s*.*$)", QString("Versione %1, %2").arg(plain_version(it.version), it_date));
+            } else if (key == "eula_de") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Version\s*.*$)", QString("Version %1, %2").arg(plain_version(de.version), de_date));
             } else if (key == "clc_pt") {
-                new_txt = replace_line_by_regex(new_txt, R"(^Versão\s*.*$)", QString("Versão %1, %2").arg(pt.version, pt_date));
+                new_txt = replace_line_by_regex(new_txt, R"(^Versão\s*.*$)", QString("Versão %1, %2").arg(plain_version(pt.version), pt_date));
             } else if (key == "clc_en") {
-                new_txt = replace_line_by_regex(new_txt, R"(^Version\s*.*$)", QString("Version %1, %2").arg(en.version, en_date));
-            } else if (key == "clc_es" || key == "clc_fr" || key == "clc_it" || key == "clc_de") {
-                QString label, date;
-                LangInput x;
-                if (key == "clc_es") {
-                    label = "Versión";
-                    x = es;
-                    date = make_date(x, ES_MONTHS, false, false);
-                } else if (key == "clc_fr") {
-                    label = "Version";
-                    x = fr;
-                    date = make_date(x, FR_MONTHS, false, false);
-                } else if (key == "clc_it") {
-                    label = "Versione";
-                    x = it;
-                    date = make_date(x, IT_MONTHS, false, false);
-                } else {
-                    label = "Version";
-                    x = de;
-                    date = make_date(x, DE_MONTHS, true, false);
-                }
-                new_txt = replace_line_by_regex(new_txt, QString(R"(^%1\s*.*$)").arg(QRegularExpression::escape(label)), QString("%1 %2, %3").arg(label, x.version, date));
+                new_txt = replace_line_by_regex(new_txt, R"(^Version\s*.*$)", QString("Version %1, %2").arg(plain_version(en.version), en_date));
+            } else if (key == "clc_es") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Versión\s*.*$)", QString("Versión %1, %2").arg(plain_version(es.version), es_date));
+            } else if (key == "clc_fr") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Version\s*.*$)", QString("Version %1, %2").arg(plain_version(fr.version), fr_date));
+            } else if (key == "clc_it") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Versione\s*.*$)", QString("Versione %1, %2").arg(plain_version(it.version), it_date));
+            } else if (key == "clc_de") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Version\s*.*$)", QString("Version %1, %2").arg(plain_version(de.version), de_date));
             } else if (key == "about_pt") {
-                new_txt = replace_line_by_regex(new_txt, R"(^Versão:?.*$)", QString("Versão: %1").arg(pt.version));
+                new_txt = replace_line_by_regex(new_txt, R"(^Versão:?.*$)", QString("Versão: %1").arg(plain_version(pt.version)));
             } else if (key == "about_en") {
-                new_txt = replace_line_by_regex(new_txt, R"(^Version:?.*$)", QString("Version: %1").arg(en.version));
-            } else if (key == "about_es" || key == "about_fr" || key == "about_it" || key == "about_de") {
-                QString label;
-                QString version;
-                if (key == "about_es") {
-                    label = "Versión";
-                    version = es.version;
-                } else if (key == "about_fr") {
-                    label = "Version";
-                    version = fr.version;
-                } else if (key == "about_it") {
-                    label = "Versione";
-                    version = it.version;
-                } else {
-                    label = "Version";
-                    version = de.version;
-                }
-                new_txt = replace_line_by_regex(new_txt, QString(R"(^%1:?.*$)").arg(QRegularExpression::escape(label)), QString("%1: %2").arg(label, version));
+                new_txt = replace_line_by_regex(new_txt, R"(^Version:?.*$)", QString("Version: %1").arg(plain_version(en.version)));
+            } else if (key == "about_es") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Versión:?.*$)", QString("Versión: %1").arg(plain_version(es.version)));
+            } else if (key == "about_fr") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Version:?.*$)", QString("Version: %1").arg(plain_version(fr.version)));
+            } else if (key == "about_it") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Versione:?.*$)", QString("Versione: %1").arg(plain_version(it.version)));
+            } else if (key == "about_de") {
+                new_txt = replace_line_by_regex(new_txt, R"(^Version:?.*$)", QString("Version: %1").arg(plain_version(de.version)));
             } else if (key == "readme") {
                 new_txt = update_readme_versions(new_txt, pt, en, es, fr, it, de);
             } else if (key == "observacao") {
-                new_txt = replace_line_by_regex(new_txt, R"(^-\s*`v[0-9]+(?:\.[0-9]+){3}`\s*$)", QString("- `%1`").arg(readme_version(pt.version)));
+                new_txt = replace_line_by_regex(new_txt, R"(^-\s*`?v?[0-9]+(?:\.[0-9]+){1,3}`?\s*$)", QString("- `%1`").arg(readme_version(pt.version)));
+            } else if (key == "manual") {
+                new_txt = update_manual_versions(new_txt, pt, en, es, fr, it, de);
+            } else if (key == "architecture") {
+                // Preserves or updates architecture version markers if applicable
             } else if (key == "sobre_dialog_cpp" || key == "exibir_sobre_cpp") {
                 new_txt = update_about_cpp_version(new_txt, pt.version);
             } else if (key == "installer_default" || key == "installer_mingw" || key == "installer_msvc") {
@@ -581,13 +864,16 @@ QList<UpdateResult> apply_updates(const LangInput& pt, const LangInput& en, cons
 
             if (new_txt != original) {
                 QString err;
-                if (write_file_utf8(it_file.value(), new_txt, &err)) results.append({it_file.key(), true, "atualizado"});
-                else results.append({it_file.key(), false, QString("erro escrita: %1").arg(err)});
+                if (write_file_utf8(abs_path, new_txt, &err)) {
+                    results.append({entry.key, entry.rel_path, group, true, "Atualizado com sucesso"});
+                } else {
+                    results.append({entry.key, entry.rel_path, group, false, QString("Erro ao gravar: %1").arg(err)});
+                }
             } else {
-                results.append({it_file.key(), false, "padrões não encontrados / sem alteração"});
+                results.append({entry.key, entry.rel_path, group, true, "Sem alterações necessárias (já atualizado)"});
             }
         } catch (...) {
-            results.append({it_file.key(), false, "erro durante atualização"});
+            results.append({entry.key, entry.rel_path, group, false, "Exceção inesperada durante atualização"});
         }
     }
 
@@ -629,9 +915,13 @@ QGroupBox* create_group(const QString& title, const QString& version_label, cons
 
 namespace mocks {
 
-VersionEditor::VersionEditor(QWidget* parent) : QWidget(parent), selected_base_dir_(project_root_dir()) {
-    setWindowTitle("Editor de Versões / Datas - Lúmen (PT/EN)");
-    resize(820, 520);
+VersionEditor::VersionEditor(QWidget* parent)
+    : QWidget(parent),
+      selected_base_dir_(project_root_dir()),
+      tab_widget_(nullptr),
+      general_status_(nullptr) {
+    setWindowTitle("Editor de Versões e Datas Multi-idioma - Linceu Lighthouse");
+    resize(980, 720);
 
     const QString icon_path = find_window_icon_path();
     if (!icon_path.isEmpty()) {
@@ -639,76 +929,247 @@ VersionEditor::VersionEditor(QWidget* parent) : QWidget(parent), selected_base_d
     }
 
     auto* root = new QVBoxLayout(this);
+    root->setContentsMargins(12, 12, 12, 12);
+    root->setSpacing(8);
 
+    // 1. Diretório base
     auto* folder_layout = new QHBoxLayout();
-    folder_layout->addWidget(new QLabel("Pasta dos arquivos:"));
+    folder_layout->addWidget(new QLabel("Pasta dos arquivos (Raiz do Projeto):"));
     folder_path_ = new QLineEdit(selected_base_dir_);
     folder_path_->setReadOnly(true);
-    folder_layout->addWidget(folder_path_);
+    folder_layout->addWidget(folder_path_, 1);
     auto* select_folder_btn = new QPushButton("Selecionar...");
     folder_layout->addWidget(select_folder_btn);
     root->addLayout(folder_layout);
 
-    root->addWidget(create_group("Português (pt-BR)", "Versão:", "Dia:", "Mês:", "Ano:", PT_MONTHS, pt_version_, pt_day_, pt_month_, pt_year_));
-    root->addWidget(create_group("English (en-US)", "Version:", "Day:", "Month:", "Year:", EN_MONTHS, en_version_, en_day_, en_month_, en_year_));
-    root->addWidget(create_group("Español (es-ES)", "Versión:", "Día:", "Mes:", "Año:", ES_MONTHS, es_version_, es_day_, es_month_, es_year_));
-    root->addWidget(create_group("Français (fr-FR)", "Version:", "Jour:", "Mois:", "Année:", FR_MONTHS, fr_version_, fr_day_, fr_month_, fr_year_));
-    root->addWidget(create_group("Italiano (it-IT)", "Versione:", "Giorno:", "Mese:", "Anno:", IT_MONTHS, it_version_, it_day_, it_month_, it_year_));
-    root->addWidget(create_group("Deutsch (de-DE)", "Version:", "Tag:", "Monat:", "Jahr:", DE_MONTHS, de_version_, de_day_, de_month_, de_year_));
+    // 2. Grupos de idiomas (Grid 3x2)
+    auto* lang_grid = new QGridLayout();
+    lang_grid->setHorizontalSpacing(8);
+    lang_grid->setVerticalSpacing(6);
 
+    auto* grp_pt = create_group("🇧🇷 Português (pt-BR)", "Versão:", "Dia:", "Mês:", "Ano:", PT_MONTHS, pt_version_, pt_day_, pt_month_, pt_year_);
+    auto* grp_en = create_group("🇺🇸 English (en-US)", "Version:", "Day:", "Month:", "Year:", EN_MONTHS, en_version_, en_day_, en_month_, en_year_);
+    auto* grp_es = create_group("🇪🇸 Español (es-ES)", "Versión:", "Día:", "Mes:", "Año:", ES_MONTHS, es_version_, es_day_, es_month_, es_year_);
+    auto* grp_fr = create_group("🇫🇷 Français (fr-FR)", "Version:", "Jour:", "Mois:", "Année:", FR_MONTHS, fr_version_, fr_day_, fr_month_, fr_year_);
+    auto* grp_it = create_group("🇮🇹 Italiano (it-IT)", "Versione:", "Giorno:", "Mese:", "Anno:", IT_MONTHS, it_version_, it_day_, it_month_, it_year_);
+    auto* grp_de = create_group("🇩🇪 Deutsch (de-DE)", "Version:", "Tag:", "Monat:", "Jahr:", DE_MONTHS, de_version_, de_day_, de_month_, de_year_);
+
+    lang_grid->addWidget(grp_pt, 0, 0);
+    lang_grid->addWidget(grp_en, 0, 1);
+    lang_grid->addWidget(grp_es, 1, 0);
+    lang_grid->addWidget(grp_fr, 1, 1);
+    lang_grid->addWidget(grp_it, 2, 0);
+    lang_grid->addWidget(grp_de, 2, 1);
+    root->addLayout(lang_grid);
+
+    // 3. Linha de ações rápidas e botões
     auto* btn_layout = new QHBoxLayout();
-    auto* check_btn = new QPushButton("🔍 Verificar arquivos");
-    auto* save_btn = new QPushButton("💾 Salvar alterações");
-    auto* refresh_btn = new QPushButton("🔄 Recarregar verificação");
-    btn_layout->addWidget(check_btn);
+    auto* load_btn = new QPushButton("🔍 Verificar e Carregar Arquivos");
+    auto* save_btn = new QPushButton("💾 Salvar Alterações em Todos");
+    auto* sync_ver_btn = new QPushButton("🔗 Sincronizar Versão PT");
+    auto* today_btn = new QPushButton("📅 Definir Hoje");
+
+    btn_layout->addWidget(load_btn);
     btn_layout->addWidget(save_btn);
-    btn_layout->addWidget(refresh_btn);
+    btn_layout->addWidget(sync_ver_btn);
+    btn_layout->addWidget(today_btn);
+    btn_layout->addStretch(1);
     root->addLayout(btn_layout);
 
-    status_ = new QTextEdit();
-    status_->setReadOnly(true);
-    root->addWidget(status_);
+    // 4. Abas organizadas por Grupo de Arquivos
+    tab_widget_ = new QTabWidget(this);
 
+    general_status_ = new QTextEdit(this);
+    general_status_->setReadOnly(true);
+    general_status_->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
+    tab_widget_->addTab(general_status_, QStringLiteral("📊 Geral"));
+
+    const QStringList group_order = {
+        QStringLiteral("PRIVACY_POLICY"),
+        QStringLiteral("EULA"),
+        QStringLiteral("CLC"),
+        QStringLiteral("ABOUT"),
+        QStringLiteral("RAIZ"),
+        QStringLiteral("GerenciamentoMenusUI"),
+        QStringLiteral("REPO")
+    };
+
+    const QHash<QString, QString> group_icons = {
+        {"PRIVACY_POLICY", "🔒 "},
+        {"EULA", "📜 "},
+        {"CLC", "💼 "},
+        {"ABOUT", "ℹ️ "},
+        {"RAIZ", "📁 "},
+        {"GerenciamentoMenusUI", "🖥️ "},
+        {"REPO", "📦 "}
+    };
+
+    for (const QString& grp : group_order) {
+        auto* te = new QTextEdit(this);
+        te->setReadOnly(true);
+        te->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
+        group_status_map_.insert(grp, te);
+        const QString icon = group_icons.value(grp, QStringLiteral("📄 "));
+        tab_widget_->addTab(te, icon + grp);
+    }
+
+    root->addWidget(tab_widget_, 1);
+
+    // Sinais e Slots
     QObject::connect(select_folder_btn, &QPushButton::clicked, this, &VersionEditor::on_select_folder);
-    QObject::connect(check_btn, &QPushButton::clicked, this, &VersionEditor::on_check);
+    QObject::connect(load_btn, &QPushButton::clicked, this, &VersionEditor::on_check);
     QObject::connect(save_btn, &QPushButton::clicked, this, &VersionEditor::on_save);
-    QObject::connect(refresh_btn, &QPushButton::clicked, this, &VersionEditor::on_check);
+    QObject::connect(sync_ver_btn, &QPushButton::clicked, this, &VersionEditor::on_sync_pt_version);
+    QObject::connect(today_btn, &QPushButton::clicked, this, &VersionEditor::on_set_today_all);
 
+    // Carga inicial dos arquivos
+    load_versions_and_dates_from_files();
     on_check();
 }
 
 void VersionEditor::on_select_folder() {
-    const QString dir_path = QFileDialog::getExistingDirectory(this, "Selecione a pasta onde os arquivos estão", selected_base_dir_);
+    const QString dir_path = QFileDialog::getExistingDirectory(this, "Selecione a pasta raiz do projeto", selected_base_dir_);
     if (!dir_path.isEmpty()) {
-        selected_base_dir_ = dir_path;
+        selected_base_dir_ = QDir::cleanPath(dir_path);
         folder_path_->setText(selected_base_dir_);
+        load_versions_and_dates_from_files();
         on_check();
     }
 }
 
-void VersionEditor::on_check() {
-    const auto status = check_expected_lines(selected_base_dir_);
-    QStringList lines;
-    lines << QString("Base: %1").arg(selected_base_dir_);
+void VersionEditor::load_versions_and_dates_from_files() {
+    const auto statuses = check_all_files(selected_base_dir_);
 
-    const auto files = get_files_for_base(selected_base_dir_);
-    for (auto it = files.constBegin(); it != files.constEnd(); ++it) {
-        const FileCheckStatus info = status.value(it.key(), {false, {}, {}});
-        lines << QString("%1: file %2").arg(it.key(), info.exists ? "exists" : "missing");
-        if (info.exists) {
-            if (!info.found.isEmpty()) {
-                lines << "  found:";
-                for (const QString& f : info.found) lines << QString("    - %1").arg(f);
-            }
-            if (!info.missing.isEmpty()) {
-                lines << "  missing:";
-                for (const QString& m : info.missing) lines << QString("    - %1").arg(m);
+    // Helper to update fields if found
+    auto try_populate = [](const QList<FileCheckStatus>& list, const QString& lang,
+                           QLineEdit* ver_edit, QSpinBox* day_spin, QComboBox* month_combo, QSpinBox* year_spin) {
+        for (const FileCheckStatus& st : list) {
+            if (st.lang == lang && st.exists) {
+                if (!st.detected_version.isEmpty()) {
+                    ver_edit->setText(plain_version(st.detected_version));
+                }
+                if (!st.detected_date.isEmpty()) {
+                    int d = 0, m = 0, y = 0;
+                    if (parse_date_string(st.detected_date, d, m, y)) {
+                        day_spin->setValue(d);
+                        month_combo->setCurrentIndex(m);
+                        year_spin->setValue(y);
+                    }
+                }
+                if (!st.detected_version.isEmpty() && !st.detected_date.isEmpty()) {
+                    break;
+                }
             }
         }
-        lines << "";
+    };
+
+    try_populate(statuses, "pt", pt_version_, pt_day_, pt_month_, pt_year_);
+    try_populate(statuses, "en", en_version_, en_day_, en_month_, en_year_);
+    try_populate(statuses, "es", es_version_, es_day_, es_month_, es_year_);
+    try_populate(statuses, "fr", fr_version_, fr_day_, fr_month_, fr_year_);
+    try_populate(statuses, "it", it_version_, it_day_, it_month_, it_year_);
+    try_populate(statuses, "de", de_version_, de_day_, de_month_, de_year_);
+}
+
+void VersionEditor::on_sync_pt_version() {
+    const QString pt_ver = plain_version(pt_version_->text().trimmed());
+    if (pt_ver.isEmpty()) return;
+
+    en_version_->setText(pt_ver);
+    es_version_->setText(pt_ver);
+    fr_version_->setText(pt_ver);
+    it_version_->setText(pt_ver);
+    de_version_->setText(pt_ver);
+}
+
+void VersionEditor::on_set_today_all() {
+    const QDate today = QDate::currentDate();
+    const int d = today.day();
+    const int m = today.month() - 1;
+    const int y = today.year();
+
+    pt_day_->setValue(d); pt_month_->setCurrentIndex(m); pt_year_->setValue(y);
+    en_day_->setValue(d); en_month_->setCurrentIndex(m); en_year_->setValue(y);
+    es_day_->setValue(d); es_month_->setCurrentIndex(m); es_year_->setValue(y);
+    fr_day_->setValue(d); fr_month_->setCurrentIndex(m); fr_year_->setValue(y);
+    it_day_->setValue(d); it_month_->setCurrentIndex(m); it_year_->setValue(y);
+    de_day_->setValue(d); de_month_->setCurrentIndex(m); de_year_->setValue(y);
+}
+
+void VersionEditor::on_check() {
+    const auto statuses = check_all_files(selected_base_dir_);
+
+    // Group files
+    QMap<QString, QList<FileCheckStatus>> grouped_status;
+    int total_files = statuses.size();
+    int found_files = 0;
+
+    for (const FileCheckStatus& st : statuses) {
+        grouped_status[st.group].append(st);
+        if (st.exists) ++found_files;
     }
 
-    status_->setPlainText(lines.join("\n"));
+    // 1. General tab summary
+    QStringList general_lines;
+    general_lines << QString("=== Resumo Geral da Verificação ===");
+    general_lines << QString("Raiz do projeto: %1").arg(selected_base_dir_);
+    general_lines << QString("Arquivos identificados: %1 / %2 encontrados").arg(found_files).arg(total_files);
+    general_lines << "";
+    general_lines << QString("Grupos monitorados:");
+    for (auto it = grouped_status.constBegin(); it != grouped_status.constEnd(); ++it) {
+        int grp_found = 0;
+        for (const auto& item : it.value()) {
+            if (item.exists) ++grp_found;
+        }
+        general_lines << QString("  - [%1]: %2 / %3 arquivos presentes").arg(it.key()).arg(grp_found).arg(it.value().size());
+    }
+    general_lines << "";
+    general_lines << QString("Versões e Datas carregadas no editor:");
+    general_lines << QString("  🇧🇷 pt-BR: Versão: %1 | Data: %2/%3/%4").arg(pt_version_->text()).arg(pt_day_->value()).arg(pt_month_->currentText()).arg(pt_year_->value());
+    general_lines << QString("  🇺🇸 en-US: Version: %1 | Date: %2 %3, %4").arg(en_version_->text()).arg(en_month_->currentText()).arg(en_day_->value()).arg(en_year_->value());
+    general_lines << QString("  🇪🇸 es-ES: Versión: %1 | Fecha: %2 %3 %4").arg(es_version_->text()).arg(es_day_->value()).arg(es_month_->currentText()).arg(es_year_->value());
+    general_lines << QString("  🇫🇷 fr-FR: Version: %1 | Date: %2 %3 %4").arg(fr_version_->text()).arg(fr_day_->value()).arg(fr_month_->currentText()).arg(fr_year_->value());
+    general_lines << QString("  🇮🇹 it-IT: Versione: %1 | Data: %2 %3 %4").arg(it_version_->text()).arg(it_day_->value()).arg(it_month_->currentText()).arg(it_year_->value());
+    general_lines << QString("  🇩🇪 de-DE: Version: %1 | Datum: %2. %3 %4").arg(de_version_->text()).arg(de_day_->value()).arg(de_month_->currentText()).arg(de_year_->value());
+
+    general_status_->setPlainText(general_lines.join("\n"));
+
+    // 2. Individual group tabs
+    for (auto it = group_status_map_.begin(); it != group_status_map_.end(); ++it) {
+        const QString group_name = it.key();
+        QTextEdit* text_edit = it.value();
+
+        const auto group_files = grouped_status.value(group_name);
+        QStringList lines;
+        lines << QString("=== Grupo: %1 ===").arg(group_name);
+        lines << QString("Total de arquivos no grupo: %1").arg(group_files.size());
+        lines << "";
+
+        for (const FileCheckStatus& st : group_files) {
+            lines << QString("📄 Arquivo: %1").arg(st.rel_path);
+            lines << QString("   Status: %1").arg(st.exists ? "✅ Presente" : "❌ Não encontrado");
+            lines << QString("   Caminho absoluto: %1").arg(st.absolute_path);
+            if (st.exists) {
+                lines << QString("   Versão detectada no arquivo: %1").arg(st.detected_version.isEmpty() ? "(não encontrada)" : st.detected_version);
+                lines << QString("   Data detectada no arquivo: %1").arg(st.detected_date.isEmpty() ? "(não encontrada)" : st.detected_date);
+                if (!st.found_patterns.isEmpty()) {
+                    lines << "   Padrões encontrados no arquivo:";
+                    for (const QString& f : st.found_patterns) {
+                        lines << QString("     • %1").arg(f);
+                    }
+                }
+                if (!st.missing_patterns.isEmpty()) {
+                    lines << "   Padrões pendentes / não correspondidos:";
+                    for (const QString& m : st.missing_patterns) {
+                        lines << QString("     ⚠️ %1").arg(m);
+                    }
+                }
+            }
+            lines << "";
+        }
+
+        text_edit->setPlainText(lines.join("\n"));
+    }
 }
 
 void VersionEditor::on_save() {
@@ -720,12 +1181,48 @@ void VersionEditor::on_save() {
     const LangInput de{de_version_->text().trimmed(), de_day_->value(), de_month_->currentIndex(), de_year_->value()};
 
     const QList<UpdateResult> results = apply_updates(pt, en, es, fr, it, de, selected_base_dir_);
-    QStringList lines;
-    lines << "Resultados:";
+
+    // Group results
+    QMap<QString, QList<UpdateResult>> grouped_results;
+    int success_count = 0;
+
     for (const UpdateResult& r : results) {
-        lines << QString("%1: %2 - %3").arg(r.key, r.ok ? "OK" : "FAIL", r.msg);
+        grouped_results[r.group].append(r);
+        if (r.ok) ++success_count;
     }
-    status_->setPlainText(lines.join("\n"));
+
+    // 1. General tab update report
+    QStringList general_lines;
+    general_lines << "=== Relatório de Gravação e Atualização ===";
+    general_lines << QString("Sucessos: %1 / %2 arquivos").arg(success_count).arg(results.size());
+    general_lines << "";
+    for (const UpdateResult& r : results) {
+        general_lines << QString("[%1] %2 (%3) -> %4").arg(r.ok ? "OK" : "FALHA", r.rel_path, r.group, r.msg);
+    }
+    general_status_->setPlainText(general_lines.join("\n"));
+
+    // 2. Group tabs update report
+    for (auto it = group_status_map_.begin(); it != group_status_map_.end(); ++it) {
+        const QString group_name = it.key();
+        QTextEdit* text_edit = it.value();
+
+        const auto grp_res = grouped_results.value(group_name);
+        QStringList lines;
+        lines << QString("=== Resultado da Gravação - Grupo: %1 ===").arg(group_name);
+        lines << "";
+
+        for (const UpdateResult& r : grp_res) {
+            lines << QString("📄 Arquivo: %1").arg(r.rel_path);
+            lines << QString("   Resultado: %1 - %2").arg(r.ok ? "✅ SUCESSO" : "❌ ERRO", r.msg);
+            lines << "";
+        }
+
+        text_edit->setPlainText(lines.join("\n"));
+    }
+
+    QMessageBox::information(this, "Atualização Concluída",
+                             QString("Atualização concluída!\n\n%1 de %2 arquivos atualizados com sucesso.")
+                                 .arg(success_count).arg(results.size()));
 }
 
 }  // namespace mocks

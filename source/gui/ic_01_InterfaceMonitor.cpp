@@ -2,18 +2,23 @@
 
 #include <algorithm>
 
+#include <QAbstractItemModel>
+#include <QAbstractItemView>
 #include <QDir>
 #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDateTime>
+#include <QDialog>
 #include <QEvent>
+#include <QFileInfo>
 #include <QFont>
 #include <QFontMetrics>
 #include <QHeaderView>
 #include <QHideEvent>
 #include <QLabel>
 #include <QMenu>
+#include <QMessageBox>
 #include <QMetaObject>
 #include <QItemSelectionModel>
 #include <QLayout>
@@ -52,6 +57,7 @@
 #include "source/services/ob_10_GerenciadorTabela.h"
 #include "source/tools/fil_01_Filtros.h"
 #include "source/tools/fil_03_AdministradorFiltros.h"
+#include "source/ui/AppChooserDialog.h"
 #include "source/ui/ui_01_GerenciadorBotoes.h"
 #include "source/ui/ui_02_GerenciadorBotoesUI.h"
 #include "source/ui/ui_03_GerenciadorMenusUI.h"
@@ -63,6 +69,7 @@
 #include "source/ui/ui_09_GerenciadorMonitoramento.h"
 #include "source/ui/ui_10_GerenciadorLimpeza.h"
 #include "source/ui/ui_12_LocalizadorQt.h"
+#include "source/utils/AssociatedApps.h"
 #include "source/utils/LogManager.h"
 
 namespace source::gui {
@@ -80,6 +87,7 @@ constexpr const char* kAssociatedWindowOrderProperty = "_interface_window_order"
 constexpr const char* kAssociatedWindowSyncingProperty = "_interface_window_syncing";
 constexpr const char* kInterfaceChartWarmupProperty = "_interface_chart_gl_warmup_ready";
 constexpr const char* kInterfaceChartWarmupObjectName = "_interface_chart_gl_warmup";
+constexpr const char* kOpenReportedFileConnectedProperty = "_open_reported_file_connected";
 
 void preaquecer_superficie_grafica_interface(source::gui::InterfaceMonitor* self) {
     if (self == nullptr || self->property(kInterfaceChartWarmupProperty).toBool()) {
@@ -101,14 +109,16 @@ void preaquecer_superficie_grafica_interface(source::gui::InterfaceMonitor* self
         warmup->setObjectName(QString::fromLatin1(kInterfaceChartWarmupObjectName));
         warmup->setAnimationsEnabled(false);
         warmup->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+        warmup->setAttribute(Qt::WA_DontShowOnScreen, true);
         warmup->setFocusPolicy(Qt::NoFocus);
         warmup->setFixedSize(1, 1);
     }
 
-    warmup->move(0, 0);
+    warmup->move(-2, -2);
     warmup->lower();
     warmup->show();
     warmup->update();
+    QTimer::singleShot(0, warmup, &QWidget::hide);
     self->setProperty(kInterfaceChartWarmupProperty, true);
 }
 
@@ -128,7 +138,151 @@ QString get_text(source::ui::LocalizadorQt* loc, const QString& key, const QStri
         return fallback;
     }
     const QString value = loc->get_text(key);
-    return value.isEmpty() ? fallback : value;
+    if (value.isEmpty() || (!fallback.isEmpty() && value == key)) {
+        return fallback;
+    }
+    return value;
+}
+
+bool contem_caminho(const QStringList& caminhos, const QString& caminho) {
+    for (const QString& existente : caminhos) {
+        if (existente.compare(caminho, Qt::CaseInsensitive) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+QString normalizar_caminho_abertura(QString caminho) {
+    caminho = caminho.trimmed();
+    if (caminho.isEmpty() || caminho == QStringLiteral(".")) {
+        return {};
+    }
+    if (caminho.size() >= 2 && caminho.startsWith(QLatin1Char('"')) && caminho.endsWith(QLatin1Char('"'))) {
+        caminho = caminho.mid(1, caminho.size() - 2).trimmed();
+    }
+    return QDir::cleanPath(QDir::fromNativeSeparators(caminho));
+}
+
+void adicionar_candidato_caminho(QStringList& candidatos, const QString& caminho, const QString& nome) {
+    const QString normalizado = normalizar_caminho_abertura(caminho);
+    if (normalizado.isEmpty()) {
+        return;
+    }
+
+    if (!contem_caminho(candidatos, normalizado)) {
+        candidatos.append(normalizado);
+    }
+
+    const QString nome_limpo = nome.trimmed();
+    if (nome_limpo.isEmpty()) {
+        return;
+    }
+
+    const QFileInfo info(normalizado);
+    const bool parece_diretorio =
+        (info.exists() && info.isDir()) ||
+        (!info.exists() && info.fileName().compare(nome_limpo, Qt::CaseInsensitive) != 0);
+    if (!parece_diretorio) {
+        return;
+    }
+
+    const QString combinado = normalizar_caminho_abertura(QDir(normalizado).filePath(nome_limpo));
+    if (!combinado.isEmpty() && !contem_caminho(candidatos, combinado)) {
+        candidatos.append(combinado);
+    }
+}
+
+QString primeiro_caminho_existente(const QStringList& candidatos) {
+    for (const QString& candidato : candidatos) {
+        const QFileInfo info(candidato);
+        if (info.exists()) {
+            return info.absoluteFilePath();
+        }
+    }
+    return {};
+}
+
+QString caminho_existente_do_evento(const QVariantMap& evento) {
+    if (evento.isEmpty()) {
+        return {};
+    }
+
+    QStringList candidatos;
+    const QString nome = evento.value(QStringLiteral("nome")).toString();
+    adicionar_candidato_caminho(candidatos, evento.value(QStringLiteral("dir_atual")).toString(), nome);
+    adicionar_candidato_caminho(candidatos, evento.value(QStringLiteral("dir_anterior")).toString(), nome);
+    return primeiro_caminho_existente(candidatos);
+}
+
+int indice_coluna_por_chave(source::services::GerenciadorColunas* gc, const QString& chave) {
+    if (gc == nullptr || gc->COLUNAS_DISPONIVEIS.isEmpty()) {
+        if (chave == QStringLiteral("tipo_operacao")) return 0;
+        if (chave == QStringLiteral("nome")) return 1;
+        if (chave == QStringLiteral("dir_anterior")) return 2;
+        if (chave == QStringLiteral("dir_atual")) return 3;
+        return -1;
+    }
+
+    QList<QPair<QString, QVariantMap>> colunas;
+    colunas.reserve(gc->COLUNAS_DISPONIVEIS.size());
+    for (auto it = gc->COLUNAS_DISPONIVEIS.constBegin(); it != gc->COLUNAS_DISPONIVEIS.constEnd(); ++it) {
+        colunas.append({it.key(), it.value()});
+    }
+    std::sort(colunas.begin(), colunas.end(), [](const auto& lhs, const auto& rhs) {
+        return lhs.second.value(QStringLiteral("ordem")).toInt() <
+               rhs.second.value(QStringLiteral("ordem")).toInt();
+    });
+
+    for (int i = 0; i < colunas.size(); ++i) {
+        if (colunas.at(i).first == chave) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+QString texto_tabela_widget(QTableWidget* tabela, int row, int column) {
+    if (tabela == nullptr || row < 0 || column < 0 || row >= tabela->rowCount() ||
+        column >= tabela->columnCount()) {
+        return {};
+    }
+    const QTableWidgetItem* item = tabela->item(row, column);
+    return item != nullptr ? item->text() : QString();
+}
+
+QVariantMap evento_da_tabela_widget(source::gui::InterfaceMonitor* self, QTableWidget* tabela, int row) {
+    QVariantMap evento;
+    if (self == nullptr || tabela == nullptr || row < 0 || row >= tabela->rowCount()) {
+        return evento;
+    }
+
+    auto* gc = self->gerenciador_colunas;
+    const QStringList chaves = {
+        QStringLiteral("nome"),
+        QStringLiteral("dir_atual"),
+        QStringLiteral("dir_anterior")
+    };
+    for (const QString& chave : chaves) {
+        const int column = indice_coluna_por_chave(gc, chave);
+        if (column >= 0) {
+            evento.insert(chave, texto_tabela_widget(tabela, row, column));
+        }
+    }
+    return evento;
+}
+
+void conectar_abertura_tabela(source::gui::InterfaceMonitor* self, QAbstractItemView* tabela_view) {
+    if (self == nullptr || tabela_view == nullptr ||
+        tabela_view->property(kOpenReportedFileConnectedProperty).toBool()) {
+        return;
+    }
+
+    QObject::connect(tabela_view,
+                     &QAbstractItemView::doubleClicked,
+                     self,
+                     &source::gui::InterfaceMonitor::abrir_arquivo_reportado);
+    tabela_view->setProperty(kOpenReportedFileConnectedProperty, true);
 }
 
 QString format_with_one_arg(QString pattern, const QString& arg) {
@@ -979,7 +1133,57 @@ void InterfaceMonitor::abrir_janela_filtros() { Atualizador::abrir_janela_filtro
 
 void InterfaceMonitor::atualizar_status() { Atualizador::atualizar_status(this); }
 
-void InterfaceMonitor::configurar_tabela() { ManipuladorTabela::configurar_tabela(this); }
+void InterfaceMonitor::abrir_arquivo_reportado(const QModelIndex& index) {
+    try {
+        if (!index.isValid()) {
+            return;
+        }
+
+        QVariantMap evento = index.data(
+            source::services::GerenciamentoTabela::EventTableModel::EventDataRole).toMap();
+        if (evento.isEmpty()) {
+            if (auto* tabela = qobject_cast<QTableWidget*>(sender())) {
+                evento = evento_da_tabela_widget(this, tabela, index.row());
+            }
+        }
+
+        const QString caminho = caminho_existente_do_evento(evento);
+        if (caminho.isEmpty()) {
+            QMessageBox::warning(
+                this,
+                get_text(loc, QStringLiteral("unavailable_file"), QStringLiteral("Arquivo indisponível")),
+                get_text(loc,
+                         QStringLiteral("selected_file_unavailable"),
+                         QStringLiteral("O arquivo selecionado não existe mais no caminho listado.")));
+            return;
+        }
+
+        const QVector<source::utils::AssociatedApp> apps =
+            source::utils::AssociatedApps::appsForFile(caminho);
+        source::ui::AppChooserDialog dialog(caminho, apps, this);
+        dialog.setWindowIcon(windowIcon());
+
+        if (dialog.exec() != QDialog::Accepted) {
+            return;
+        }
+
+        const source::utils::AssociatedApp app = dialog.selectedApp();
+        QString erro;
+        if (!source::utils::AssociatedApps::openWith(app, caminho, &erro)) {
+            QMessageBox::critical(
+                this,
+                get_text(loc, QStringLiteral("open_failed"), QStringLiteral("Falha ao abrir")),
+                erro);
+        }
+    } catch (...) {
+        source::utils::LogManager::get_logger().error("Erro ao abrir arquivo reportado na tabela", true);
+    }
+}
+
+void InterfaceMonitor::configurar_tabela() {
+    ManipuladorTabela::configurar_tabela(this);
+    conectar_abertura_tabela(this, qobject_cast<QAbstractItemView*>(tabela_dados));
+}
 
 void InterfaceMonitor::ativar_model_view_streaming() {
     try {
@@ -1028,6 +1232,7 @@ void InterfaceMonitor::ativar_model_view_streaming() {
             view->setModel(modelo);
 
             configurar_view_modelo(view, modelo, gerenciador_colunas);
+            conectar_abertura_tabela(this, view);
             if (!snapshot_existente.isEmpty()) {
                 modelo->replace_events(snapshot_existente);
             }
@@ -1291,6 +1496,7 @@ void InterfaceMonitor::alternar_tabela_idioma(const QString& idioma) {
         event_table_model = modelo;
         setProperty("tabela_dados", QVariant::fromValue(static_cast<QObject*>(tabela_view)));
         setProperty(kTableLanguageActiveProperty, idioma_alvo);
+        conectar_abertura_tabela(this, tabela_view);
 
         reaplicar_filtros_tabela_ativa(this);
 

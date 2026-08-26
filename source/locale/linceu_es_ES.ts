@@ -228,6 +228,214 @@
         <translation>Tipo</translation>
     </message>
     <message>
+        <source>mime</source>
+        <translation>MIME</translation>
+    </message>
+    <message>
+        <source>mime_primary_application</source>
+        <translation>Aplicación</translation>
+    </message>
+    <message>
+        <source>mime_primary_audio</source>
+        <translation>Audio</translation>
+    </message>
+    <message>
+        <source>mime_primary_font</source>
+        <translation>Fuente</translation>
+    </message>
+    <message>
+        <source>mime_primary_image</source>
+        <translation>Imagen</translation>
+    </message>
+    <message>
+        <source>mime_primary_inode</source>
+        <translation>Sistema de archivos</translation>
+    </message>
+    <message>
+        <source>mime_primary_message</source>
+        <translation>Mensaje</translation>
+    </message>
+    <message>
+        <source>mime_primary_model</source>
+        <translation>Modelo</translation>
+    </message>
+    <message>
+        <source>mime_primary_multipart</source>
+        <translation>Multiparte</translation>
+    </message>
+    <message>
+        <source>mime_primary_text</source>
+        <translation>Texto</translation>
+    </message>
+    <message>
+        <source>mime_primary_video</source>
+        <translation>Vídeo</translation>
+    </message>
+    <message>
+        <source>mime_primary_other</source>
+        <translation>Otro</translation>
+    </message>
+    <message>
+        <source>mime_subtype_plain</source>
+        <translation>Texto sin formato</translation>
+    </message>
+    <message>
+        <source>mime_subtype_directory</source>
+        <translation>Directorio</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_directory</source>
+        <translation>Directorio</translation>
+    </message>
+    <message>
+        <source>mime_subtype_pdf</source>
+        <translation>PDF</translation>
+    </message>
+    <message>
+        <source>mime_subtype_json</source>
+        <translation>JSON</translation>
+    </message>
+    <message>
+        <source>mime_subtype_xml</source>
+        <translation>XML</translation>
+    </message>
+    <message>
+        <source>mime_subtype_csv</source>
+        <translation>CSV</translation>
+    </message>
+    <message>
+        <source>mime_subtype_html</source>
+        <translation>HTML</translation>
+    </message>
+    <message>
+        <source>mime_subtype_xhtml_xml</source>
+        <translation>XHTML</translation>
+    </message>
+    <message>
+        <source>mime_subtype_octet_stream</source>
+        <translation>Flujo binario</translation>
+    </message>
+    <message>
+        <source>mime_subtype_zip</source>
+        <translation>ZIP</translation>
+    </message>
+    <message>
+        <source>mime_subtype_gzip</source>
+        <translation>GZIP</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_7z_compressed</source>
+        <translation>7-Zip</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_rar_compressed</source>
+        <translation>RAR</translation>
+    </message>
+    <message>
+        <source>mime_subtype_msword</source>
+        <translation>Documento Word</translation>
+    </message>
+    <message>
+        <source>mime_subtype_vnd_openxmlformats_officedocument_wordprocessingml_document</source>
+        <translation>Documento Word</translation>
+    </message>
+    <message>
+        <source>mime_subtype_vnd_ms_excel</source>
+        <translation>Hoja de cálculo Excel</translation>
+    </message>
+    <message>
+        <source>mime_subtype_vnd_openxmlformats_officedocument_spreadsheetml_sheet</source>
+        <translation>Hoja de cálculo Excel</translation>
+    </message>
+    <message>
+        <source>mime_subtype_vnd_ms_powerpoint</source>
+        <translation>Presentación PowerPoint</translation>
+    </message>
+    <message>
+        <source>mime_subtype_vnd_openxmlformats_officedocument_presentationml_presentation</source>
+        <translation>Presentación PowerPoint</translation>
+    </message>
+    <message>
+        <source>mime_subtype_jpeg</source>
+        <translation>JPEG</translation>
+    </message>
+    <message>
+        <source>mime_subtype_png</source>
+        <translation>PNG</translation>
+    </message>
+    <message>
+        <source>mime_subtype_gif</source>
+        <translation>GIF</translation>
+    </message>
+    <message>
+        <source>mime_subtype_bmp</source>
+        <translation>BMP</translation>
+    </message>
+    <message>
+        <source>mime_subtype_svg_xml</source>
+        <translation>SVG</translation>
+    </message>
+    <message>
+        <source>mime_subtype_webp</source>
+        <translation>WebP</translation>
+    </message>
+    <message>
+        <source>mime_subtype_tiff</source>
+        <translation>TIFF</translation>
+    </message>
+    <message>
+        <source>mime_subtype_mpeg</source>
+        <translation>MPEG</translation>
+    </message>
+    <message>
+        <source>mime_subtype_mp4</source>
+        <translation>MP4</translation>
+    </message>
+    <message>
+        <source>mime_subtype_quicktime</source>
+        <translation>QuickTime</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_msvideo</source>
+        <translation>AVI</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_matroska</source>
+        <translation>Matroska</translation>
+    </message>
+    <message>
+        <source>mime_subtype_webm</source>
+        <translation>WebM</translation>
+    </message>
+    <message>
+        <source>mime_subtype_ogg</source>
+        <translation>Ogg</translation>
+    </message>
+    <message>
+        <source>mime_subtype_wav</source>
+        <translation>WAV</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_wav</source>
+        <translation>WAV</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_msdownload</source>
+        <translation>Ejecutable de Windows</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_dosexec</source>
+        <translation>Ejecutable DOS/Windows</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_executable</source>
+        <translation>Ejecutable</translation>
+    </message>
+    <message>
+        <source>mime_subtype_x_shellscript</source>
+        <translation>Script de shell</translation>
+    </message>
+    <message>
         <source>op_moved</source>
         <translation>Movido</translation>
     </message>
@@ -785,7 +993,7 @@
     </message>
     <message>
         <source>description_text</source>
-        <translation>Linceu Lighthouse es una herramienta de monitoreo que aplica los principios de Monitoreo de Integridad de Archivos (File Integrity Monitoring - FIM) para proporcionar un registro detallado y transparente de todas las actividades en sus directorios más importantes. En lugar de interpretar la intención detrás de un cambio, su enfoque es registrar objetivamente cada operación—creación, modificación, eliminación y renombrado—, dándole control y conocimiento total sobre lo que sucede con sus datos. Es la herramienta ideal para quien necesita un historial claro y auditable de las actividades en carpetas de proyectos, servidores o archivos personales.</translation>
+        <translation>Linceu Lighthouse es una herramienta de monitoreo que aplica los principios de Monitoreo de Integridad de Archivos (File Integrity Monitoring - FIM) para proporcionar un registro detallado y transparente de todas las actividades en sus directorios más importantes. En lugar de interpretar la intención detrás de un cambio, su enfoque es registrar objetivamente cada operación — creación, modificación, eliminación y renombrado —, dándole control y conocimiento total sobre lo que sucede con sus datos. Es la herramienta ideal para quien necesita un historial claro y auditable de las actividades en carpetas de proyectos, servidores o archivos personales.</translation>
     </message>
     <message>
         <source>manual</source>
@@ -6503,6 +6711,115 @@ Los nuevos eventos podrán volver a registrarse de inmediato si el monitoreo sig
     <message>
         <source>security_popup_batch_count</source>
         <translation>Total acumulado: %1</translation>
+    </message>
+    <message>
+        <source>search_label</source>
+        <translation>Buscar:</translation>
+    </message>
+    <message>
+        <source>about_search_placeholder</source>
+        <translation>Buscar texto en la ventana Acerca de...</translation>
+    </message>
+    <message>
+        <source>manual_search_placeholder</source>
+        <translation>Buscar texto en el manual...</translation>
+    </message>
+    <message>
+        <source>unavailable_file</source>
+        <translation>Archivo no disponible</translation>
+    </message>
+    <message>
+        <source>selected_file_unavailable</source>
+        <translation>El archivo seleccionado ya no existe en la ruta listada.</translation>
+    </message>
+    <message>
+        <source>open_failed</source>
+        <translation>Error al abrir</translation>
+    </message>
+    <message>
+        <source>app_chooser_title</source>
+        <translation>Elegir aplicación</translation>
+    </message>
+    <message>
+        <source>app_chooser_prompt</source>
+        <translation>Elija la aplicación para abrir:
+%1</translation>
+    </message>
+    <message>
+        <source>app_chooser_column_app</source>
+        <translation>Aplicación</translation>
+    </message>
+    <message>
+        <source>app_chooser_column_source</source>
+        <translation>Origen</translation>
+    </message>
+    <message>
+        <source>app_chooser_column_executable</source>
+        <translation>Ejecutable</translation>
+    </message>
+    <message>
+        <source>app_chooser_choose_other</source>
+        <translation>Elegir otro ejecutable...</translation>
+    </message>
+    <message>
+        <source>app_chooser_choose_executable</source>
+        <translation>Elegir aplicación</translation>
+    </message>
+    <message>
+        <source>app_chooser_executable_filter</source>
+        <translation>Ejecutables (*.exe);;Todos los archivos (*)</translation>
+    </message>
+    <message>
+        <source>app_chooser_all_files_filter</source>
+        <translation>Todos los archivos (*)</translation>
+    </message>
+    <message>
+        <source>app_chooser_manual_source</source>
+        <translation>Seleccionado manualmente por el usuario</translation>
+    </message>
+    <message>
+        <source>app_chooser_no_app_title</source>
+        <translation>Ninguna aplicación seleccionada</translation>
+    </message>
+    <message>
+        <source>app_chooser_no_app_message</source>
+        <translation>Seleccione una aplicación para abrir el archivo.</translation>
+    </message>
+    <message>
+        <source>associated_app_system_default</source>
+        <translation>Aplicación predeterminada del sistema</translation>
+    </message>
+    <message>
+        <source>associated_app_system_default_source</source>
+        <translation>Asociación predeterminada del sistema operativo</translation>
+    </message>
+    <message>
+        <source>associated_app_windows_default_source</source>
+        <translation>Aplicación predeterminada registrada en Windows</translation>
+    </message>
+    <message>
+        <source>associated_app_registered_progid_source</source>
+        <translation>ProgID registrado: %1</translation>
+    </message>
+    <message>
+        <source>associated_app_open_with_list_source</source>
+        <translation>Lista Abrir con de Windows</translation>
+    </message>
+    <message>
+        <source>associated_app_error_system_default</source>
+        <translation>No se pudo abrir el archivo con la aplicación predeterminada del sistema.</translation>
+    </message>
+    <message>
+        <source>associated_app_error_no_executable</source>
+        <translation>No se definió ningún ejecutable para abrir el archivo.</translation>
+    </message>
+    <message>
+        <source>associated_app_error_windows_refused</source>
+        <translation>Windows rechazó abrir el archivo con el ejecutable seleccionado.</translation>
+    </message>
+    <message>
+        <source>associated_app_error_start_failed</source>
+        <translation>No se pudo iniciar la aplicación seleccionada.</translation>
     </message>
 </context>
 </TS>

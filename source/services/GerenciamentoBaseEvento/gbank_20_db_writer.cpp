@@ -82,7 +82,13 @@ std::shared_ptr<DatabaseWriter> DatabaseWriter::get_instance(const QString& db_p
 }
 
 DatabaseWriter::DatabaseWriter(const QString& db_path, int batch_size, int batch_timeout_ms)
-    : db_path_(db_path), batch_size_(batch_size), batch_timeout_ms_(batch_timeout_ms), stop_event_(false), started_(false), persisting_(false) {}
+    : db_path_(db_path),
+      batch_size_(batch_size),
+      batch_timeout_ms_(batch_timeout_ms),
+      stop_event_(false),
+      started_(false),
+      suspended_(false),
+      persisting_(false) {}
 
 DatabaseWriter::~DatabaseWriter() { stop(); }
 
@@ -109,9 +115,31 @@ void DatabaseWriter::stop() {
 void DatabaseWriter::enqueue_event(const QString& tabela, const QVariantMap& evento) {
     {
         std::lock_guard<std::mutex> lock(mutex_);
+        if (suspended_.load()) {
+            return;
+        }
         queue_.push_back({tabela, evento});
     }
     cv_.notify_one();
+}
+
+void DatabaseWriter::discard_pending() {
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        queue_.clear();
+    }
+    cv_.notify_all();
+}
+
+bool DatabaseWriter::suspend_processing(int timeout_ms) {
+    suspended_.store(true);
+    cv_.notify_all();
+    return wait_until_idle(timeout_ms);
+}
+
+void DatabaseWriter::resume_processing() {
+    suspended_.store(false);
+    cv_.notify_all();
 }
 
 bool DatabaseWriter::wait_until_idle(int timeout_ms) {
@@ -150,10 +178,13 @@ void DatabaseWriter::worker() {
             {
                 std::unique_lock<std::mutex> lock(mutex_);
                 cv_.wait_for(lock, std::chrono::milliseconds(batch_timeout_ms_), [this]() {
-                    return stop_event_ || !queue_.empty();
+                    return stop_event_ || (!suspended_.load() && !queue_.empty());
                 });
-                if (queue_.empty() && stop_event_) {
+                if (stop_event_ && queue_.empty()) {
                     break;
+                }
+                if (suspended_.load()) {
+                    continue;
                 }
                 while (!queue_.empty() && static_cast<int>(batch.size()) < batch_size_) {
                     batch.push_back(queue_.front());

@@ -17,6 +17,7 @@
 
 #include "source/security/secore_02_SecurityManager.h"
 #include "source/security/secui_00_helpers.h"
+#include "source/services/GerenciamentoEventoMovido/gevmov_10_PendenciasMovimentacao.h"
 #include "source/services/ob_01_Observador.h"
 #include "source/services/ob_08_EventoMovido.h"
 #include "source/ui/ui_01_GerenciadorBotoes.h"
@@ -79,7 +80,7 @@ void drenar_exclusoes_pendentes(QObject* interface_obj) {
         source::services::_processar_exclusoes_pendentes(interface_obj);
     } catch (...) {
     }
-    interface_obj->setProperty("excluidos_recentemente", QVariantMap());
+    source::services::GerenciamentoEventoMovido::limpar_pendencias_movimentacao(interface_obj);
 }
 
 using ObservadorMap = std::unordered_map<QObject*, std::unique_ptr<source::services::Observador>>;

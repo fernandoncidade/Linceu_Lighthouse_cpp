@@ -1,6 +1,8 @@
 #include "gevmod_04_limpar_cache_metadados.h"
 
+#include <QDir>
 #include <QMutexLocker>
+#include <QStringList>
 #include <QVariant>
 #include <QVariantMap>
 
@@ -11,10 +13,32 @@
 
 namespace {
 
+QStringList chaves_cache_metadados(const QString& caminho_completo) {
+    QStringList chaves;
+    const auto adicionar = [&chaves](const QString& chave) {
+        const QString trimmed = chave.trimmed();
+        if (!trimmed.isEmpty() && !chaves.contains(trimmed, Qt::CaseInsensitive)) {
+            chaves.append(trimmed);
+        }
+    };
+
+    adicionar(caminho_completo);
+    if (!caminho_completo.trimmed().isEmpty()) {
+        QString normalizado = QDir::toNativeSeparators(QDir::cleanPath(caminho_completo));
+        adicionar(normalizado);
+#ifdef Q_OS_WIN
+        adicionar(normalizado.toLower());
+#endif
+    }
+    return chaves;
+}
+
 void remover_cache_metadados(source::services::GerenciadorColunas* gc, const QString& caminho_completo) {
     if (!gc) return;
     QMutexLocker locker(&gc->lock_cache);
-    gc->cache_metadados.remove(caminho_completo);
+    for (const QString& chave : chaves_cache_metadados(caminho_completo)) {
+        gc->cache_metadados.remove(chave);
+    }
 }
 
 void remover_metadados_cache_dinamico(source::services::GerenciadorColunas* gc, const QString& caminho_completo) {
@@ -22,8 +46,11 @@ void remover_metadados_cache_dinamico(source::services::GerenciadorColunas* gc, 
     const QVariant cache_var = gc->property("metadados_cache");
     if (!cache_var.isValid() || !cache_var.canConvert<QVariantMap>()) return;
     QVariantMap cache = cache_var.toMap();
-    if (!cache.contains(caminho_completo)) return;
-    cache.remove(caminho_completo);
+    bool removeu = false;
+    for (const QString& chave : chaves_cache_metadados(caminho_completo)) {
+        removeu = cache.remove(chave) > 0 || removeu;
+    }
+    if (!removeu) return;
     gc->setProperty("metadados_cache", cache);
 }
 

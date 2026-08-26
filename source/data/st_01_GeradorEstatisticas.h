@@ -9,6 +9,7 @@
 #include <QString>
 #include <QStringList>
 #include <QVariant>
+#include <QVariantMap>
 
 namespace source::data {
 
@@ -59,10 +60,14 @@ private:
     QObject* loc_;
     QObject* interface_;
     QHash<QString, std::shared_ptr<BaseGerador>> geradores_;
+    QVariantMap boxplot_preagregado_cache_;
+    QString boxplot_preagregado_cache_assinatura_;
+    bool boxplot_preagregado_cache_valido_ = false;
 
     void inicializar_geradores();
     QVariant gerar_por_chave(const QString& chave, const QString& erro_contexto);
     QString texto(const QString& key, const QString& fallback = QString()) const;
+    QVariantMap grafico_boxplot_distribuicao_preagregado();
     QVariant grafico_boxplot_distribuicao_individual(const QString& title_key,
                                                      const QString& title_fallback,
                                                      const QString& source_key,

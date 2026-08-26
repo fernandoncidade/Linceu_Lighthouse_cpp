@@ -32,6 +32,7 @@ QVariantMap build_evento(source::services::DiretorioScanner* self, const QString
         {"nome", nome}, {"dir_anterior", ""}, {"dir_atual", caminho},
         {"data_criacao", m.value("data_criacao", "")}, {"data_modificacao", m.value("data_modificacao", "")}, {"data_acesso", m.value("data_acesso", "")},
         {"tipo", tipo},
+        {"mime", m.value("mime", "")},
         {"size_b", m.value("size_b", "")}, {"size_kb", m.value("size_kb", "")}, {"size_mb", m.value("size_mb", "")}, {"size_gb", m.value("size_gb", "")}, {"size_tb", m.value("size_tb", "")},
         {"atributos", m.value("atributos", "")}, {"autor", m.value("autor", "")}, {"dimensoes", m.value("dimensoes", "")}, {"duracao", m.value("duracao", "")},
         {"taxa_bits", m.value("taxa_bits", "")}, {"protegido", m.value("protegido", "")},
@@ -74,7 +75,7 @@ void _processar_item(source::services::DiretorioScanner* self, const QString& no
             QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
             db.setDatabaseName(self->db_path);
             if (db.open()) {
-                const QStringList colunas = {"tipo_operacao","nome","dir_anterior","dir_atual","data_criacao","data_modificacao","data_acesso","tipo","size_b","size_kb","size_mb","size_gb","size_tb","atributos","autor","dimensoes","duracao","taxa_bits","protegido","paginas","linhas","palavras","paginas_estimadas","linhas_codigo","total_linhas","slides_estimados","arquivos","unzipped_b","unzipped_kb","unzipped_mb","unzipped_gb","unzipped_tb","slides","binary_file_b","binary_file_kb","binary_file_mb","binary_file_gb","binary_file_tb","planilhas","colunas","registros","tabelas","timestamp"};
+                const QStringList colunas = {"tipo_operacao","nome","dir_anterior","dir_atual","data_criacao","data_modificacao","data_acesso","tipo","mime","size_b","size_kb","size_mb","size_gb","size_tb","atributos","autor","dimensoes","duracao","taxa_bits","protegido","paginas","linhas","palavras","paginas_estimadas","linhas_codigo","total_linhas","slides_estimados","arquivos","unzipped_b","unzipped_kb","unzipped_mb","unzipped_gb","unzipped_tb","slides","binary_file_b","binary_file_kb","binary_file_mb","binary_file_gb","binary_file_tb","planilhas","colunas","registros","tabelas","timestamp"};
                 QString ph;
                 for (int i = 0; i < colunas.size(); ++i) ph += (i ? ",?" : "?");
                 QSqlQuery q(db);

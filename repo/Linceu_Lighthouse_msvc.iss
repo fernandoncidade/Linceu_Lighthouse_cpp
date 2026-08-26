@@ -1,10 +1,10 @@
 #define MyAppName "Linceu Lighthouse"
-#define MyAppVersion "2026.4.27.0"
+#define MyAppVersion "2026.8.25.0"
 #define MyAppPublisher "Fernando Nillsson Cidade"
 #define MyAppURL "https://github.com/fernandoncidade"
 #define MyAppExeName "Linceu_Lighthouse.exe"
 #define DeploySourceDir "D:\MISCELANEAS\VSCode\LinceuLighthouse\Linceu_Lighthouse_msvc"
-#define InstallerOutputDir "D:\MISCELANEAS\VSCode\LinceuLighthouse\InnoSetupOutput_msvc"
+#define InstallerOutputDir "D:\MISCELANEAS\VSCode\LinceuLighthouse\InnoSetupOutput"
 
 [Setup]
 AppId={{227D1353-DC68-4292-8685-8BC8A4DC67A4}}
@@ -23,7 +23,7 @@ DisableProgramGroupPage=yes
 InfoBeforeFile={#DeploySourceDir}\assets\ABOUT\ABOUT_en_US.txt
 LicenseFile={#DeploySourceDir}\assets\EULA\EULA_en_US - Linceu Lighthouse.txt
 OutputDir={#InstallerOutputDir}
-OutputBaseFilename=Linceu_Lighthouse_msvc_v2026.4.27.0
+OutputBaseFilename=Linceu_Lighthouse_msvc_v2026.8.25.0
 SetupIconFile={#DeploySourceDir}\assets\images\icons\linceu_sem_fundo.ico
 SolidCompression=yes
 WizardStyle=modern

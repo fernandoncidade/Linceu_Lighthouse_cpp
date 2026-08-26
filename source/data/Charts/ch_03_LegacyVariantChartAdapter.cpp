@@ -193,6 +193,9 @@ QString translate_size_category_label(const QString& value) {
         {"very_large", "Muito Grande", {"muito grande", "very large", "muy grande", "tres grand", "molto grande", "sehr gross"}}};
 
     for (const auto& category : categories) {
+        if (value == QString::fromUtf8(category.key)) {
+            return tr_chart(category.key, QString::fromUtf8(category.fallback));
+        }
         for (const char* alias : category.aliases) {
             if (normalized == QString::fromUtf8(alias)) {
                 return tr_chart(category.key, QString::fromUtf8(category.fallback));
@@ -688,6 +691,8 @@ ChartDataSet adapt_timeline_like(const QString& title, const QVariantMap& fig, C
         out.yLabel = (kind == ChartKind::Timeline) ? tr_chart("operation_type", QStringLiteral("Tipo de Operação"))
                                                    : tr_chart("quantity", QStringLiteral("Quantidade"));
     }
+    out.meta.insert(QStringLiteral("gridOverlay"), fig.value(QStringLiteral("grid_overlay"), false).toBool());
+    out.meta.insert(QStringLiteral("fastPointCloud"), fig.value(QStringLiteral("fast_point_cloud"), false).toBool());
 
     const QVariantList points = fig.value(QStringLiteral("points")).toList();
     const QVariantMap colors = fig.value(QStringLiteral("op_colors")).toMap();
@@ -722,34 +727,36 @@ ChartDataSet adapt_timeline_like(const QString& title, const QVariantMap& fig, C
             point.x = to_double(map.value(QStringLiteral("x")));
             point.y = qMax(0.0, to_double(map.value(QStringLiteral("y"))));
             point.label = map.value(QStringLiteral("timestamp_label")).toString().trimmed();
-            point.tooltip =
-                QStringLiteral("%1\nArquivo: %2\nTipo: %3\nInstante: %4\nFaixa pico: %5 - %6\nConcentracao do grupo: %7")
-                    .arg(seriesName)
-                    .arg(map.value(QStringLiteral("arquivo")).toString().trimmed().isEmpty()
-                             ? QStringLiteral("-")
-                             : map.value(QStringLiteral("arquivo")).toString().trimmed())
-                    .arg(map.value(QStringLiteral("tipo")).toString().trimmed().isEmpty()
-                             ? QStringLiteral("-")
-                             : map.value(QStringLiteral("tipo")).toString().trimmed())
-                    .arg(point.label.isEmpty() ? QStringLiteral("-") : point.label)
-                    .arg(map.value(QStringLiteral("bucket_label")).toString().trimmed())
-                    .arg(map.value(QStringLiteral("bucket_end_label")).toString().trimmed())
-                    .arg(QString::number(static_cast<int>(to_double(map.value(QStringLiteral("group_count"))))));
+            point.tooltip = tr_chart(
+                                "temporal_scatter_tooltip",
+                                QStringLiteral("%1\nArquivo: %2\nTipo: %3\nInstante: %4\nFaixa pico: %5 - %6\nConcentração do grupo: %7"))
+                                .arg(seriesName)
+                                .arg(map.value(QStringLiteral("arquivo")).toString().trimmed().isEmpty()
+                                         ? QStringLiteral("-")
+                                         : map.value(QStringLiteral("arquivo")).toString().trimmed())
+                                .arg(map.value(QStringLiteral("tipo")).toString().trimmed().isEmpty()
+                                         ? QStringLiteral("-")
+                                         : map.value(QStringLiteral("tipo")).toString().trimmed())
+                                .arg(point.label.isEmpty() ? QStringLiteral("-") : point.label)
+                                .arg(map.value(QStringLiteral("bucket_label")).toString().trimmed())
+                                .arg(map.value(QStringLiteral("bucket_end_label")).toString().trimmed())
+                                .arg(QString::number(static_cast<int>(to_double(map.value(QStringLiteral("group_count"))))));
         } else {
             point.x = to_double(map.value(QStringLiteral("x")));
             point.y = qMax(0.0, to_double(map.value(QStringLiteral("y_mb"))));
             point.label = map.value(QStringLiteral("arquivo")).toString().trimmed();
-            point.tooltip =
-                QStringLiteral("%1\nArquivo: %2\nTipo: %3\nTempo: %4%5\nTimestamp: %6\nTamanho: %7 MB")
-                    .arg(seriesName)
-                    .arg(point.label.isEmpty() ? QStringLiteral("-") : point.label)
-                    .arg(map.value(QStringLiteral("tipo")).toString().trimmed().isEmpty()
-                             ? QStringLiteral("-")
-                             : map.value(QStringLiteral("tipo")).toString().trimmed())
-                    .arg(QString::number(point.x, 'f', 2))
-                    .arg(fig.value(QStringLiteral("x_tick_suffix")).toString())
-                    .arg(map.value(QStringLiteral("timestamp")).toString().trimmed())
-                    .arg(QString::number(point.y, 'f', 4));
+            point.tooltip = tr_chart(
+                                "scatter_full_tooltip",
+                                QStringLiteral("Conjunto: %1\nArquivo: %2\nTipo: %3\nTempo: %4%5\nTimestamp: %6\nTamanho: %7 MB"))
+                                .arg(seriesName)
+                                .arg(point.label.isEmpty() ? QStringLiteral("-") : point.label)
+                                .arg(map.value(QStringLiteral("tipo")).toString().trimmed().isEmpty()
+                                         ? QStringLiteral("-")
+                                         : map.value(QStringLiteral("tipo")).toString().trimmed())
+                                .arg(QString::number(point.x, 'f', 2))
+                                .arg(fig.value(QStringLiteral("x_tick_suffix")).toString())
+                                .arg(map.value(QStringLiteral("timestamp")).toString().trimmed())
+                                .arg(QString::number(point.y, 'f', 4));
         }
 
         bySeries[seriesName].append(point);
@@ -828,6 +835,7 @@ ChartDataSet adapt_dotplot(const QString& title, const QVariantMap& fig) {
     out.meta.insert(QStringLiteral("yLogScale"), fig.value(QStringLiteral("y_log_scale")).toBool());
     out.meta.insert(QStringLiteral("yMin"), fig.value(QStringLiteral("y_min")));
     out.meta.insert(QStringLiteral("yMax"), fig.value(QStringLiteral("y_max")));
+    out.meta.insert(QStringLiteral("fastPointCloud"), fig.value(QStringLiteral("fast_point_cloud"), false).toBool());
 
     const QVariantList types = fig.value(QStringLiteral("types")).toList();
     for (const QVariant& type : types) {
@@ -857,8 +865,11 @@ ChartDataSet adapt_dotplot(const QString& title, const QVariantMap& fig) {
         point.label = type;
         point.color = color_or(typeColors.value(type), QColor(QStringLiteral("#1f77b4")));
         point.tooltip =
-            QStringLiteral("%1\nTamanho: %2 MB")
+            tr_chart("dotplot_point_tooltip",
+                     QStringLiteral("Tipo de arquivo: %1\nQuantidade no conjunto: %2\nMédia: %3 MB\nPonto: %4 MB"))
                 .arg(type)
+                .arg(QString::number(count))
+                .arg(QString::number(to_double(means.value(type)), 'f', 3))
                 .arg(QString::number(point.y, 'f', 4));
         pointsByType[type].append(point);
     }
@@ -887,7 +898,8 @@ ChartDataSet adapt_dotplot(const QString& title, const QVariantMap& fig) {
         ChartPoint right = left;
         right.x = static_cast<double>(xIndex) + 0.34;
         left.tooltip =
-            QStringLiteral("%1\nMedia: %2 MB\nAmostras: %3")
+            tr_chart("dotplot_mean_tooltip",
+                     QStringLiteral("Tipo de arquivo: %1\nLinha de média: %2 MB\nQuantidade: %3"))
                 .arg(type)
                 .arg(QString::number(mean, 'f', 3))
                 .arg(QString::number(static_cast<int>(to_double(counts.value(type)))));
@@ -906,6 +918,12 @@ ChartDataSet adapt_radar(const QString& title, const QVariantMap& fig) {
     out.meta.insert(QStringLiteral("smoothCurve"), fig.value(QStringLiteral("smooth_curve"), true).toBool());
     out.meta.insert(QStringLiteral("maskGridUnderSeries"),
                     fig.value(QStringLiteral("mask_grid_under_series"), false).toBool());
+    out.meta.insert(QStringLiteral("radarGridOverlay"),
+                    fig.value(QStringLiteral("radar_grid_overlay"), false).toBool());
+    out.meta.insert(QStringLiteral("radarPointsForeground"),
+                    fig.value(QStringLiteral("radar_points_foreground"), false).toBool());
+    out.meta.insert(QStringLiteral("radarSurfaceAlpha"),
+                    fig.value(QStringLiteral("radar_surface_alpha"), 90).toInt());
     const QVariantList shortTypes = fig.value(QStringLiteral("types_short")).toList();
     const QVariantList longTypes = fig.value(QStringLiteral("types")).toList();
     const QVariantList labels = shortTypes.isEmpty() ? longTypes : shortTypes;
@@ -919,8 +937,6 @@ ChartDataSet adapt_radar(const QString& title, const QVariantMap& fig) {
         series.name = seriesMap.value(QStringLiteral("operacao")).toString().trimmed();
         series.role = QStringLiteral("radar");
         series.color = color_or(seriesMap.value(QStringLiteral("color")), QColor(QStringLiteral("#333333")));
-        const QString quantityLabel = tr_chart("quantity", QStringLiteral("Quantidade"));
-        const QString participationLabel = tr_chart("participation", QStringLiteral("Participação"));
         const QLocale locale;
 
         const QVariantList counts = seriesMap.value(QStringLiteral("values_count")).toList();
@@ -933,12 +949,9 @@ ChartDataSet adapt_radar(const QString& title, const QVariantMap& fig) {
             point.label = out.categories.at(i);
             point.color = series.color;
             point.tooltip =
-                QStringLiteral("%1\n%2\n%3: %4\n%5: %6%")
-                    .arg(series.name)
-                    .arg(point.label)
-                    .arg(quantityLabel)
+                tr_chart("pie_slice_tooltip", QStringLiteral("%1\nQuantidade: %2\nParticipação: %3%"))
+                    .arg(QStringLiteral("%1\n%2").arg(series.name, point.label))
                     .arg(locale.toString(std::round(point.y)))
-                    .arg(participationLabel)
                     .arg(locale.toString(point.y2, 'f', 1));
             series.points.append(point);
         }
@@ -960,12 +973,10 @@ ChartDataSet adapt_boxplot_single(const QString& title, const QVariantMap& fig) 
         out.meta.insert(QStringLiteral("boxplotLayout"), fig.value(QStringLiteral("boxplot_layout")).toString());
     }
 
-    const QVariantMap sourceMap = normalized_chart_value_lists(fig.value(QStringLiteral("source_map")).toMap());
+    const QVariantMap statsMap = normalized_chart_key_map(fig.value(QStringLiteral("box_stats")).toMap());
     const QVariantMap colorMap = normalized_chart_key_map(fig.value(QStringLiteral("color_map")).toMap());
     const QVariantList orderHint = normalized_chart_key_list(fig.value(QStringLiteral("order_hint")).toList());
     const int maxItems = fig.value(QStringLiteral("max_items"), -1).toInt();
-    const QStringList ordered = ordered_keys(sourceMap, orderHint, maxItems);
-
     const QList<QColor> fallbackPalette = {
         QColor(QStringLiteral("#2d6cdf")),
         QColor(QStringLiteral("#8a8a8a")),
@@ -976,6 +987,58 @@ ChartDataSet adapt_boxplot_single(const QString& title, const QVariantMap& fig) 
         QColor(QStringLiteral("#ffd166")),
         QColor(QStringLiteral("#6dd3ce"))
     };
+
+    if (!statsMap.isEmpty()) {
+        const QStringList ordered = ordered_keys(statsMap, orderHint, maxItems);
+        const QLocale locale;
+        for (int i = 0; i < ordered.size(); ++i) {
+            const QString key = ordered.at(i);
+            const QVariantMap stats = statsMap.value(key).toMap();
+            const int sampleCount = stats.value(QStringLiteral("sample_count")).toInt();
+            if (sampleCount <= 0) {
+                continue;
+            }
+
+            BoxEntry box;
+            box.label = translate_size_category_label(key);
+            box.color = color_or(colorMap.value(key), fallbackPalette.at(i % fallbackPalette.size()));
+            box.sampleCount = sampleCount;
+            box.minimum = to_double(stats.value(QStringLiteral("minimum")));
+            box.q1 = to_double(stats.value(QStringLiteral("q1")));
+            box.median = to_double(stats.value(QStringLiteral("median")));
+            box.q3 = to_double(stats.value(QStringLiteral("q3")));
+            box.maximum = to_double(stats.value(QStringLiteral("maximum")));
+            box.meta.insert(QStringLiteral("outlierCount"), stats.value(QStringLiteral("outlier_count")).toInt());
+
+            const QVariantList outliers = stats.value(QStringLiteral("outliers")).toList();
+            box.outliers.reserve(outliers.size());
+            for (const QVariant& outlier : outliers) {
+                box.outliers.append(to_double(outlier));
+            }
+
+            box.tooltip =
+                QStringLiteral("%1\n%2: %3\n%4: %5\n%6: %7\n%8: %9\n%10: %11\n%12: %13")
+                    .arg(box.label)
+                    .arg(tr_chart("boxplot_samples_label", QStringLiteral("Samples")))
+                    .arg(locale.toString(box.sampleCount))
+                    .arg(tr_chart("boxplot_min_label", QStringLiteral("Min")))
+                    .arg(locale.toString(box.minimum, 'g', 5))
+                    .arg(tr_chart("boxplot_q1_label", QStringLiteral("Q1")))
+                    .arg(locale.toString(box.q1, 'g', 5))
+                    .arg(tr_chart("boxplot_median_label", QStringLiteral("Median")))
+                    .arg(locale.toString(box.median, 'g', 5))
+                    .arg(tr_chart("boxplot_q3_label", QStringLiteral("Q3")))
+                    .arg(locale.toString(box.q3, 'g', 5))
+                    .arg(tr_chart("boxplot_max_label", QStringLiteral("Max")))
+                    .arg(locale.toString(box.maximum, 'g', 5));
+            out.boxes.append(box);
+            out.categories.append(box.label);
+        }
+        return out;
+    }
+
+    const QVariantMap sourceMap = normalized_chart_value_lists(fig.value(QStringLiteral("source_map")).toMap());
+    const QStringList ordered = ordered_keys(sourceMap, orderHint, maxItems);
 
     for (int i = 0; i < ordered.size(); ++i) {
         const QString key = ordered.at(i);

@@ -25,7 +25,7 @@ void registrar_evento_especifico(source::services::BaseEvento* self, const QStri
             return;
         }
 
-        const QStringList cols = {"nome","dir_anterior","dir_atual","data_criacao","data_modificacao","data_acesso","tipo","size_b","size_kb","size_mb","size_gb","size_tb","atributos","autor","dimensoes","duracao","taxa_bits","protegido","paginas","linhas","palavras","paginas_estimadas","linhas_codigo","total_linhas","slides_estimados","arquivos","unzipped_b","unzipped_kb","unzipped_mb","unzipped_gb","unzipped_tb","slides","binary_file_b","binary_file_kb","binary_file_mb","binary_file_gb","binary_file_tb","planilhas","colunas","registros","tabelas","timestamp"};
+        const QStringList cols = {"nome","dir_anterior","dir_atual","data_criacao","data_modificacao","data_acesso","tipo","mime","size_b","size_kb","size_mb","size_gb","size_tb","atributos","autor","dimensoes","duracao","taxa_bits","protegido","paginas","linhas","palavras","paginas_estimadas","linhas_codigo","total_linhas","slides_estimados","arquivos","unzipped_b","unzipped_kb","unzipped_mb","unzipped_gb","unzipped_tb","slides","binary_file_b","binary_file_kb","binary_file_mb","binary_file_gb","binary_file_tb","planilhas","colunas","registros","tabelas","timestamp"};
         QString placeholders;
         for (int i = 0; i < cols.size(); ++i) placeholders += (i ? ",?" : "?");
 

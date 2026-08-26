@@ -2,6 +2,8 @@
 
 #include <QFileInfo>
 #include <QMetaObject>
+#include <QMimeDatabase>
+#include <QMimeType>
 #include <QThread>
 
 #include "gmet_38_GetMetadados.h"
@@ -11,6 +13,21 @@
 #include "source/utils/LogManager.h"
 
 namespace source::services::GerenciamentoMetadados {
+namespace {
+QString detectar_mime_por_extensao(const QString& caminho, const QString& nome) {
+    QString candidato = caminho.trimmed();
+    if (candidato.isEmpty()) {
+        candidato = nome.trimmed();
+    }
+    if (candidato.isEmpty()) {
+        return {};
+    }
+
+    QMimeDatabase mime_db;
+    const QMimeType mime = mime_db.mimeTypeForFile(candidato, QMimeDatabase::MatchExtension);
+    return mime.isValid() ? mime.name() : QString();
+}
+}
 
 void processar_fila_metadados(source::services::GerenciadorColunas* gc) {
     try {
@@ -26,6 +43,7 @@ void processar_fila_metadados(source::services::GerenciadorColunas* gc) {
             if (!QFileInfo::exists(caminho)) {
                 auto* loc = qobject_cast<source::ui::LocalizadorQt*>(gc->loc);
                 metadados.insert("tipo", identificar_tipo_arquivo(caminho, loc, item.value("nome").toString()));
+                metadados.insert("mime", detectar_mime_por_extensao(caminho, item.value("nome").toString()));
             } else {
                 metadados = get_metadados_gc(gc, item);
             }

@@ -118,6 +118,7 @@ QVariantMap build_evento_scan(source::services::DiretorioScanner* self, const QS
         {"data_modificacao", m.value("data_modificacao", "")},
         {"data_acesso", m.value("data_acesso", "")},
         {"tipo", tipo},
+        {"mime", m.value("mime", "")},
         {"size_b", m.value("size_b", "")},
         {"size_kb", m.value("size_kb", "")},
         {"size_mb", m.value("size_mb", "")},

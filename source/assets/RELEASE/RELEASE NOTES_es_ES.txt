@@ -1,3 +1,117 @@
+NOTAS DE LANZAMIENTO: Versión 2026.8.25.0
+
+DESTACADOS DE ESTA VERSIÓN
+
+Esta versión consolidada de Linceu Lighthouse reúne un conjunto integral de avances en rendimiento, precisión de monitoreo, fidelidad estadística, usabilidad, documentación internacionalizada, seguridad y privacidad estrictamente local.
+
+El motor de monitoreo en tiempo real ha sido mejorado para procesar grandes volúmenes de datos y modificaciones masivas (adiciones, modificaciones, eliminaciones individuales continuas, cambios de nombre y movimientos sin eventos duplicados), garantizando la extracción instantánea de más de 30 categorías de metadatos para cada elemento registrado.
+
+Las rutinas de limpieza de datos han sido completamente renovadas: al solicitar el vaciado de la tabla o de la base de datos, la aplicación detiene las tareas en segundo plano, elimina archivos residuales y recrea los archivos de almacenamiento en su estado inicial compacto, liberando físicamente el 100% del espacio libre en disco en tiempo de ejecución.
+
+Los 17 gráficos estadísticos cuentan con renderizado acelerado para grandes masas de datos, animaciones preservadas, capas visuales calibradas con ejes legibles e interactividad total para destacar puntos individuales incluso en áreas densas. La aplicación permite abrir archivos directamente con los programas predeterminados de Windows mediante un selector visual de aplicaciones y descripciones claras de tipos MIME.
+
+El Manual de Usuario y toda la documentación se han modernizado con barra de navegación superior y secciones desplegables ("Manual Resumido" y "Manual Completo") en seis idiomas (portugués, inglés, español, francés, italiano y alemán). La seguridad y la privacidad están totalmente consolidadas en el modelo 100% local ("Local-First"), sin telemetría, sin conexiones externas y con políticas de privacidad completamente actualizadas y sincronizadas. Por último, la plataforma base y las herramientas de compilación han sido actualizadas a sus versiones más modernas.
+
+
+NUEVAS FUNCIONALIDADES Y MEJORAS
+
+1. Monitoreo de Alto Rendimiento y Extracción de Metadatos
+- Monitoreo en tiempo real altamente fluido y resistente a modificaciones intensas en un mismo directorio.
+- Procesamiento optimizado de eliminaciones masivas, mostrando cada archivo eliminado de forma individual y continua sin retrasos por lotes.
+- Rendimiento en operaciones de movimiento y renombramiento equiparado a la velocidad del escaneo inicial.
+- Extracción de metadados completos para todas las operaciones, asociándolos al evento en el momento exacto en que aparece en la tabla.
+- Auditoría temporal completa de carpetas y subdirectorios, capturando fechas de creación, modificación y último acceso.
+- Reconocimiento y tratamiento mejorado de archivos auxiliares de bases de datos (".db-shm", ".db-wal") y accesos directos (".lnk"), evitando duplicidades y eventos falsos.
+- Comportamiento estable de la tabla de eventos al procesar miles de registros en breves intervalos.
+
+2. Limpieza y Restauración Dinámica del Almacenamiento
+- Mecanismo integral de reinicio de datos: al limpiar la tabla o base de datos, las tareas en segundo plano se descartan y los archivos se recrean desde cero en su estado original limpio.
+- Liberación física e instantánea de todo el espacio en disco ocupado por eventos anteriores, devolviéndolo directamente al sistema operativo.
+- Eliminación definitiva de archivos auxiliares y temporales de registro ("-wal" y "-shm"), asegurando un entorno limpio desde el primer uso.
+- Protección contra concurrencia que impide el registro de nuevos eventos mientras se procesa el reinicio de almacenamiento.
+
+3. Visualizaciones Gráficas y Estadísticas Avanzadas
+- Aceleración notable en el renderizado de gráficos estadísticos con grandes volúmenes de datos (distribución por operación, tipo de archivo, hora, categoría de tamaño, línea de tiempo y dispersión).
+- Preservación total de efectos de animación y transiciones visuales en gráficos optimizados.
+- Interactividad completa en gráficos de dispersión: todos los puntos pueden destacarse e inspeccionarse incluso en zonas de alta densidad.
+- Calibración de capas visuales: superficies de datos translúcidas permiten visualizar ejes y líneas de escala por debajo, manteniendo puntos resaltados y nítidos.
+- Mayor legibilidad de las reglas de escala y ejes de coordenadas sin comprometer la estética de los gráficos.
+
+4. Integración con Windows y Apertura de Archivos
+- Apertura directa de cualquier archivo de la tabla mediante la aplicación correspondiente de Windows, sin restricciones a visores de texto.
+- Diálogo visual de selección de aplicación cuando existen múltiples programas asociados en el sistema.
+- Columna MIME mejorada: descripción clara del contenido en el idioma activo de la interfaz junto con el identificador técnico entre paréntesis.
+
+5. Privacidad Estricta y Seguridad 100% Local (Cero Telemetría)
+- Consolidación definitiva de la arquitectura local ("Local-First"): la aplicación nunca utiliza telemetría, no rastrea el comportamiento del usuario y no envía informes a servidores remotos.
+- Diagnósticos, informes forenses, alertas y registros de sesiones operan y residen exclusivamente en el equipo local del usuario.
+- Actualización y sincronización completa de las Políticas de Privacidad y Términos de Licencia en los 6 idiomas oficiales a la versión 2026.8.25.0.
+- Eliminación de dependencias externas y requisitos de red para el módulo de seguridad y protección.
+
+6. Manual de Usuario y Documentación Multilingüe Completa
+- Documentación y manuales completamente traducidos y sincronizados en 6 idiomas: portugués brasileño, inglés, español, francés, italiano y alemán.
+- Barra de navegación rápida superior con enlaces directos para cambiar de idioma y localizar temas.
+- Sistema de lectura interactivo con bloques desplegables, permitiendo alternar entre el "Manual Resumido" para consultas rápidas y el "Manual Completo" para instrucciones exhaustivas.
+- Estandarización de terminología y descripciones de herramientas en todos los idiomas.
+
+7. Interfaz, Búsqueda y Herramientas del Sistema
+- Búsqueda integrada en las ventanas "Acerca de" y "Manual", permitiendo navegar entre resultados con la tecla Enter sin cerrar la ventana.
+- Barra de búsqueda localizada automáticamente según el idioma de la interfaz.
+- Estabilidad visual mejorada y ajuste de espaciado en la ventana "Acerca de" al redimensionar.
+- Nueva utilidad visual de gestión de versiones organizada en pestañas temáticas, con sincronización de versiones/fechas en un clic y validación de archivos.
+- Instaladores oficiales para Windows actualizados con selección de idioma inicial, términos correspondientes y accesos directos organizados.
+- Sincronización instantánea de la tabla principal, indicadores de estado, paneles de filtros y contadores tras confirmar la limpieza de datos.
+
+8. Modernización Estructural y Plataforma de Construcción
+- Plataforma base actualizada a Qt 6.11.1 junto con sus componentes de desarrollo integrados.
+- Herramientas de compilación y kits de desarrollo de Windows actualizados a versiones recientes.
+- Optimización de la compilación de traducciones y empaquetado, generando ejecutables más compactos, rápidos y predecibles.
+
+
+CORRECCIONES EFECTUADAS
+
+- Corregida la retención innecesaria del tamaño de los archivos de datos en disco tras pulsar "Limpiar Tabla, Base de Seguridad y Datos" o "Limpiar base de datos".
+- Corregido el cierre seguro de los servicios en segundo plano antes de la redefinición de los archivos de almacenamiento.
+- Corregida la sincronización de contadores y estados de la interfaz tras el primer monitoreo realizado en el sistema.
+- Corregidas discrepancias de fechas y versiones en los documentos de política de privacidad en múltiples idiomas.
+- Corregidas inconsistencias de términos entre los manuales y la interfaz en diferentes idiomas.
+- Corregida la formateación de fechas y números en documentos informativos conforme al estándar regional.
+- Corregida la visualización de la versión del aplicativo en las ventanas informativas y manuales internos.
+- Corregidos fallos en la localización de paquetes de traducción durante la generación del ejecutable.
+- Corregida la organización de carpetas temporales para evitar mezcla entre archivos de compilaciones anteriores y nuevas entregas.
+- Corregida la extracción de fechas de creación, modificación y acceso para carpetas y subdirectorios.
+- Corregida la apertura de archivos con extensiones no de texto o no asociadas.
+- Corregidas inconsistencias en la traducción de tipos MIME en idiomas secundarios.
+- Corregido el problema en que presionar Enter en el campo de búsqueda de "Acerca de" o "Manual" cerraba la ventana activa.
+- Corregido el espaciado excesivo entre el texto de descripción y la barra de búsqueda en la ventana "Acerca de".
+- Corregido el artefacto visual blanco en la esquina superior izquierda de la interfaz.
+- Corregida la carga de textos de apoyo en la ventana "Acerca de" al ejecutar la aplicación distribuida.
+- Corregidos textos sin traducir en los paquetes de instalación finales.
+- Corregidos eventos "Agregado" incorrectos para archivos ".db-shm" y ".db-wal" al mover o renombrar archivos ".db".
+- Corregidos eventos duplicados generados por archivos auxiliares de bases de datos.
+- Corregida la identificación errónea de accesos directos ".lnk" como "Ejecutable".
+- Corregida la identificación de tipos ".db-shm" y ".db-wal" marcados como "Desconocido".
+- Corregida la lentitud y el agrupamiento retardado en eliminaciones masivas durante el monitoreo.
+- Corregidos problemas de superposición de capas en gráficos estadísticos y lentitud con grandes volúmenes de datos.
+- Corregida la interacción al pasar el cursor o seleccionar puntos en gráficos de dispersión densos.
+
+
+RESULTADO PARA EL USUARIO
+
+- Monitoreo en tiempo real más rápido, fluido, estable y sin duplicidad de eventos.
+- Metadados completos y auditoría temporal exacta para archivos y carpetas.
+- Liberación real e instantánea de espacio en disco al limpiar los datos.
+- Gráficos estadísticos interactivos, claros, ágiles y fáciles de interpretar.
+- Apertura directa de cualquier archivo con el programa adecuado del sistema operativo.
+- Manual de usuario y documentación completos y modernos en 6 idiomas.
+- Máxima garantía de privacidad y seguridad con procesamiento 100% local y cero telemetría.
+- Interfaz rápida, intuitiva y perfectamente alineada con el estado del sistema.
+- Instaladores y ejecutables más ligeros, confiables y sencillos de utilizar.
+
+
+_________________________________________________
+
+
 NOTAS DE LANZAMIENTO: Versión 2026.4.27.0
 
 DESTACADOS DE ESTA VERSIÓN

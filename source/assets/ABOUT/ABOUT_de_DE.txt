@@ -1,153 +1,85 @@
 Projekt: LINCEU LIGHTHOUSE
-Version: 2026.4.27.0
+Version: 2026.8.25.0
 Autoren: Fernando Nillsson Cidade
 
-Beschreibung: Sichtbarkeit und Kontrolle über Ihre Dateien
+Beschreibung: Lokale Plattform für Datei-Intelligenz, Verlauf und Audit
+„Erfahren Sie genau, was mit Ihren Dateien geschehen ist — lokal, visuell und mit durchsuchbarem Verlauf.“
 
-Linceu Lighthouse ist ein Überwachungstool, das die Prinzipien der Dateiintegritätsüberwachung (File Integrity Monitoring - FIM) anwendet, um ein detailliertes und transparentes Protokoll aller Aktivitäten in Ihren wichtigsten Verzeichnissen bereitzustellen.
+Linceu Lighthouse ist eine native C++17-Desktopanwendung mit Qt6, die entwickelt wurde, um vollständige Transparenz, einen strukturierten Verlauf und deterministische Audits für das Windows-Dateisystem bereitzustellen. Anstatt als einfacher flüchtiger Monitor oder als eingeschränktes Sicherheitswerkzeug zu agieren, vereint Linceu Lighthouse drei wesentliche Ebenen in einem einzigen, nahtlosen und modernen Benutzererlebnis:
 
-Anstatt die Absicht hinter einer Änderung zu interpretieren, liegt der Fokus darauf, jeden Vorgang—Erstellung, Änderung, Löschung und Umbenennung—faktisch zu protokollieren, was Ihnen die volle Kontrolle und Kenntnis darüber gibt, was mit Ihren Daten geschieht. Es ist das ideale Werkzeug für jeden, der eine klare und prüfbare Historie von Aktivitäten in Projektordnern, auf Servern oder in persönlichen Dateien benötigt.
+1. Kontinuierliche Dateiaktivitätsüberwachung: Echtzeit-Erfassung von Dateisystemereignissen (Erstellung, Bearbeitung, Löschung, Umbenennung, Verschiebung und Initialscan) mit präziser semantischer Korrelation komplexer Ereignisse (wie der tatsächlichen Erkennung von RENAMED und MOVED ohne fälschliche Löscheinträge).
+2. Durchsuchbarer Verlauf und Datei-Intelligenz ohne KI: Automatischer Aufbau einer lokalen historischen SQLite-Datenbank, angereichert mit über 30 Metadatenkategorien vor und nach jeder Änderung, begleitet von 17 nativen Diagrammvisualisierungen und detaillierten Statistiken.
+3. Sicherheit, Audit und Beweissicherung: Kryptografische Baseline, deterministische Risikobewertungsberechnung, lokale Regel-Engine, Quarantäne, Wiederherstellung und Export forensischer Beweispakete sowie Managementberichte (XLSX, CSV, JSON, XML, TXT und SQLite).
 
-Hauptanwendungsfälle
+Absolutes Bekenntnis zum Datenschutz (Local-First):
+Ihre Daten verlassen niemals Ihren Computer. Linceu Lighthouse arbeitet zu 100% offline, ohne Cloud-Abhängigkeit, ohne Erfassung von Telemetriedaten, ohne Erstellung von Benutzerkonten und ohne Modelle für künstliche Intelligenz oder Sprachverarbeitung (LLM/RAG). Die gesamte analytische Intelligenz basiert auf deterministischen statistischen und rechnerischen Algorithmen, die direkt auf Ihrem Prozessor ausgeführt werden.
 
-Linceu Lighthouse bietet die notwendige Sichtbarkeit für verschiedene praktische Szenarien:
 
-- Überprüfung von Ordneraktivitäten: Ideal für Umgebungen, in denen mehrere Benutzer oder Prozesse auf dieselben Verzeichnisse zugreifen. Wissen Sie genau, wann eine Datei geändert wurde, wer sie umbenannt hat oder warum ein Dokument gelöscht wurde.
-- Versions- und Projektkontrolle: Überwachen Sie Projektordner, um den Arbeitsablauf zu verstehen. Sehen Sie die Änderungshistorie von Quellcodes, Designdokumenten oder anderen Materialien ein, um versehentliche Verluste zu vermeiden und die Entwicklung der Arbeit nachzuvollziehen.
-- Dateiorganisation und -bereinigung: Identifizieren Sie temporäre, doppelte oder lange nicht geänderte Dateien. Nutzen Sie die Berichte, um fundierte Entscheidungen darüber zu treffen, was archiviert, verschoben oder gelöscht werden soll, und halten Sie Ihre Verzeichnisse organisiert.
-- Untersuchung spezifischer Ereignisse: Wenn eine wichtige Datei verschwindet oder ein Projekt nicht mehr funktioniert, bietet Linceu Lighthouse eine chronologische Ereignishistorie, um Ihnen bei der Ermittlung der Ursache des Problems zu helfen.
+Die 5 Betriebsmodi von Linceu Lighthouse
 
-Wie Linceu Lighthouse funktioniert
+* Überwachungsmodus: Visuelle Echtzeit-Verfolgung von Arbeitsordnern, Quellcode oder kritischen Verzeichnissen mit sofortiger farblicher Signalisierung.
+* Verlaufsmodus (File History / What Changed?): Zeitliche Abfrage zur Beantwortung der Frage „Was ist mit meiner Datei geschehen?“, welche den gesamten Stammbaum von Bearbeitungen, Umbenennungen und Verschiebungen nachzeichnet.
+* Intelligenz- & Analytics-Modus: Erkennung betrieblicher Muster, von Spitzenzeiten der Aktivität, der am häufigsten geänderten Dateitypen und zeitlicher Heatmaps.
+* Sicherheits- & Integritätsmodus: Deterministische Anomalieerkennung, Prüfung kryptografischer Hashes, Integritätswahrung und Sitzungsverwaltung.
+* Beweissicherungsmodus: Erstellung konsolidierter Berichte und exportierter Datenbanken für Compliance-Zwecke, interne Audits oder Vorfallanalysen.
 
-Der Prozess ist unkompliziert und darauf ausgerichtet, klare Daten für Ihre Analyse bereitzustellen:
 
-1.  Festlegung der Basislinie (Baseline): Beim Start der Überwachung eines Verzeichnisses führt Linceu Lighthouse einen vollständigen Scan durch, um einen anfänglichen „Schnappschuss“ oder eine Basislinie des Zustands aller Dateien und Ordner zu erstellen.
-2.  Kontinuierliche Überwachung: Ausgehend von der Basislinie überwacht das Tool in Echtzeit und protokolliert jedes Erstellungs-, Änderungs-, Lösch-, Verschiebungs- oder Umbenennungsereignis, das im Verzeichnis auftritt.
-3.  Analyse und Berichterstattung: Jede Abweichung von der Basislinie wird sofort in der grafischen Benutzeroberfläche aufgelistet. Von dort aus haben Sie die volle Macht zu analysieren, was passiert ist, indem Sie die vom Software angebotenen Werkzeuge nutzen.
+Wichtigste Anwendungsfälle und Zielgruppen
 
-Analysewerkzeuge zu Ihrer Verfügung
+- Softwareentwickler und Ingenieure: Genau nachvollziehen, welche Dateien durch Kompilierungsprozesse, Automatisierungsskripte, IDEs oder Versionskontrollsysteme erstellt, geändert oder gelöscht wurden.
+- Systemadministratoren und Technischer Support: Verschwundene Dateien und unbefugte Änderungen in freigegebenen Ordnern diagnostizieren sowie Fehlerursachen in der lokalen Umgebung isolieren.
+- Fachleute mit sensiblen Daten (Recht, Gesundheit, Finanzen, Ingenieurwesen): Vertrauliche Dateibewegungen auditieren, ohne Daten an externe Server oder Drittanbieter-Dienste zu übertragen.
+- Content Creator (Designer, Video-Editoren, Fotografen): Eine strikte Kontrolle über große Medienvolumina, rechenintensive Projekte und Rendering-Pipelines aufrechterhalten.
+- Allgemeine Benutzer: Vorbeugende Kontrolle gegen versehentlichen Dateiverlust in Download-Ordnern, Dokumenten oder Backup-Laufwerken.
 
-Um die große Menge an Überwachungsdaten in nützliche Informationen umzuwandeln, bietet Linceu Lighthouse:
 
-- Erweiterte Filter: Verlieren Sie sich nicht in Tausenden von Ereignissen. Isolieren Sie schnell das Wesentliche, indem Sie nach Vorgangstyp (z. B. nur gelöschte Dateien anzeigen), nach Datum, nach Erweiterung (.docx, .jpg) oder nach einem bestimmten Dateinamen suchen.
-- Visualisierung von Statistiken: Verwandeln Sie Rohdaten in visuelle Einblicke. Mit intuitiven Diagrammen können Sie Aktivitätsmuster verstehen, wie z. B. Spitzenzeiten für Änderungen, die am häufigsten geänderten Dateitypen und die Häufigkeit jedes Vorgangs, was zur Optimierung Ihres Arbeitsablaufs beiträgt.
-- Flexibler Datenexport: Erstellen Sie ein dauerhaftes und prüfbares Protokoll. Exportieren Sie Überwachungsprotokolle in verschiedene Formate (Excel, CSV, JSON, XML), sei es zur Archivierung, zum Teilen mit Ihrem Team oder zum Import in andere Analysetools.
+Wie Linceu Lighthouse Funktioniert
+
+1. Erstellung der Baseline (Snapshot): Bei der Auswahl eines Ordners führt der Scanner einen rekursiven Scan durch und erstellt einen anfänglichen Snapshot mit detaillierten Metadaten für jedes Element.
+2. Asynchrone Überwachung mit Nativen APIs: Die ReadDirectoryChangesW-Engine erfasst Windows-Benachrichtigungen im Hintergrund und bewältigt Lastspitzen über threadsichere Puffer und parallele Worker.
+3. Normalisierung und Ereigniskorrelation: Rohereignisse werden korreliert, um Umbenennungen und Verschiebungen von isolierten Erstellungen/Löschungen präzise zu unterscheiden.
+4. Metadaten-Anreicherung: Spezifische Attribute werden extrahiert (echter MIME-Typ, Dimensionen, Dauer, Autoren, Bitraten, Signaturen und Hashes).
+5. Batch-Persistenz in SQLite: Asynchrones Schreiben stellt eine kontinuierliche Speicherung sicher, ohne die grafische Benutzeroberfläche einzufrieren.
+6. Präsentation, Filterung und Visualisierung: Die Qt6-Oberfläche ermöglicht Sofortsuche, kombinierte Filterung, Generierung von 17 nativen Diagrammen und vollständigen Export.
+
+
+Analysewerkzeuge und Verfügbare Funktionen
+
+- Schnelle und Erweiterte Filter: Filtern Sie nach Ereignistyp, Datumsbereich, Text, Dateiendung oder Direktauswahl in der Tabelle.
+- Native Visuelle Statistiken (17 Diagramme): Kreis-, Balken-, Zeitachsen- (Timeline), Baumkarten- (Treemap), Histogramm-, Pareto-Kurven-, Linien-, Boxplot-, Radar-, Zeit-Heatmap-, Streu- (Scatter), Sankey-Diagramme, Punktdiagramme (Dotplot) und Verzeichnisbaum-Visualisierung.
+- Vollständiger Beweisexport: Exportieren Sie Berichte nach Excel (.xlsx), CSV (.csv), Text (.txt), JSON (.json), XML (.xml) und SQLite-Datenbank (.db).
+- Vollständige Mehrsprachigkeit: Benutzeroberfläche und Handbücher nativ verfügbar auf Portugiesisch (pt_BR), Englisch (en_US), Spanisch (es_ES), Französisch (fr_FR), Italienisch (it_IT) und Deutsch (de_DE).
 
 ---
 
-SCHNELLSTART-ANLEITUNG:
+SCHNELLSTARTANLEITUNG:
 
-Wie zu verwenden:
-1. Führen Sie die Anwendung aus, um die grafische Benutzeroberfläche zu starten.
-2. Wählen Sie ein Verzeichnis zur Überwachung aus.
-3. Verwenden Sie die Schaltflächen und Menüs, um die Überwachung zu starten/stoppen, Filter anzuwenden, Daten zu exportieren und Statistiken anzuzeigen.
+1. Starten Sie die Anwendung über die Verknüpfung oder die ausführbare Datei.
+2. Klicken Sie auf „Verzeichnis auswählen“ und wählen Sie den Ordner, den Sie auditieren möchten.
+3. Klicken Sie auf „Starten/Stoppen“, um den Initialscan durchzuführen und die kontinuierliche Überwachung zu starten.
+4. Nutzen Sie die Schaltflächen der Seitenleiste und die oberen Menüs, um Ereignisse zu filtern, Statistikdiagramme anzuzeigen und Sicherheitsfunktionen zu verwalten.
+5. Doppelklicken Sie auf ein beliebiges Element in der Tabelle, um es mit der Standardanwendung zu öffnen oder ein benutzerdefiniertes Werkzeug auszuwählen.
+6. Öffnen Sie „Speichern unter“, um Beweise und Berichte im Format Ihrer Wahl zu exportieren.
 
-DETAILLIERTE BEDIENUNGSANLEITUNG:
+DETAILLIERTES BENUTZERHANDBUCH:
 
 Systemanforderungen:
-    - Betriebssystem: Windows 10 oder höher.
+- Betriebssystem: Windows 10 (64-Bit) oder höher (Windows 11).
+- Leseberechtigung für die überwachten Verzeichnisse.
+- Schreibberechtigung in %LOCALAPPDATA%\LinceuLighthouse.
 
-Installation:
-    - Installieren Sie die ausführbare Datei des Programms, folgen Sie den Anweisungen des Installationsprogramms und führen Sie das Programm aus.
-
-Ersteinrichtung:
-    - Die Benutzeroberfläche wird mit einer leeren Überwachungstabelle angezeigt.
-    - Die Standardsprache wird entsprechend den Systemeinstellungen ausgewählt.
-    - Beachten Sie die linke Seitenleiste, um auf die Hauptfunktionen zuzugreifen.
-
-Verzeichnisüberwachung:
-    1. Verzeichnis auswählen:
-       - Klicken Sie auf die Schaltfläche "Verzeichnis auswählen" oder wählen Sie "Datei → Verzeichnis auswählen"
-       - Der Pfad des ausgewählten Verzeichnisses wird über der Tabelle angezeigt
-
-    2. Überwachung starten/stoppen:
-       - Klicken Sie auf die Schaltfläche "Start/Stopp" oder wählen Sie "Datei → Start/Stopp"
-       - Ein anfänglicher Scan des Verzeichnisses wird mit einem Fortschrittsbalken durchgeführt
-       - Um die Überwachung zu stoppen, klicken Sie erneut auf dieselbe Schaltfläche
-
-Hauptoberfläche:
-    - Menüleiste: Zugriff auf alle Programmfunktionen
-    - Seitenleiste: Schnellzugriffsschaltflächen
-    - Verzeichnisbezeichnung: Zeigt das überwachte Verzeichnis an
-    - Ergebnisbezeichnung: Zeigt den aktuellen Status des Vorgangs an
-    - Datentabelle: Zeigt alle Überwachungsereignisse an
-    - Fortschrittsbalken: Sichtbar bei lang andauernden Vorgängen
-
-    Standard-Tabellenfelder:
-    - Vorgangstyp: Hinzugefügt, Gelöscht, Geändert, Umbenannt oder Verschoben
-    - Name: Dateiname
-    - Vorheriges Verzeichnis: Ursprünglicher Speicherort der Datei (falls zutreffend)
-    - Aktuelles Verzeichnis: Aktueller Speicherort der Datei
-    - Erstellungsdatum: Datum der Dateierstellung
-    - Änderungsdatum: Datum der letzten Änderung
-    - Typ: Dateityp/Erweiterung
-
-Filter und Suche:
-    1. Schnellfilter:
-       - Im Menü "Einstellungen → Filter", aktivieren/deaktivieren Sie Vorgangstypen
-         (Verschoben, Umbenannt, Hinzugefügt, Gelöscht, Geändert)
-
-    2. Erweiterte Filter:
-       - Greifen Sie auf "Einstellungen → Filter → Erweiterte Filter" zu
-       - Vorgangsfilter: Wählen Sie anzuzeigende Vorgangstypen aus
-       - Suche: Suchen Sie nach Text in Namen und Verzeichnissen
-       - Erweiterungsfilter: Filtern Sie nach bestimmten Dateitypen
-       - Datumsfilter: Definieren Sie den Zeitraum für Ereignisse
-       - Verwenden Sie die Kalenderschaltfläche zur Datumsauswahl
-       - "Filter löschen" setzt alle Einstellungen zurück
-
-Visualisierung von Statistiken:
-    - Greifen Sie über die Schaltfläche "Statistiken" oder "Datei → Statistiken" zu
-    - Verfügbare Diagramme:
-      * Vorgangsverteilung: Anteil jedes Vorgangstyps
-      * Top 10 Dateitypen: Häufigste Dateitypen
-      * Vorgangszeitachse: Zeitachse der Ereignisse
-      * Baumkarte: Größenvisualisierung nach Typen
-      * Verteilung nach Stunde: Stunden mit den meisten Vorgängen
-      * Pareto-Analyse: Häufigkeit und kumulierter Prozentsatz
-      * Vorgänge pro Tag: Nach Datum gruppierte Vorgänge
-    - Diagramme speichern: Klicken Sie auf "Alle speichern" und wählen Sie ein Ziel aus
-
-Datenexport:
-    - Klicken Sie auf "Speichern unter" oder "Datei → Speichern unter"
-    - Verfügbare Formate:
-      * Excel (.xlsx)
-      * CSV (.csv)
-      * Text (.txt)
-      * JSON (.json)
-      * XML (.xml)
-      * Datenbank (.db)
-    - Für zukünftige Exporte desselben Satzes verwenden Sie "Datei → Speichern"
-
-Spaltenkonfiguration:
-    - Greifen Sie auf "Einstellungen → Spalten konfigurieren" zu
-    - Aktivieren/deaktivieren Sie die gewünschten Spalten in der Tabelle:
-      (Vorgangstyp, Name, Vorheriges Verzeichnis, Aktuelles Verzeichnis, etc.)
-    - Änderungen werden sofort angewendet
-    - Standardwiederherstellung: "Einstellungen → Spalten konfigurieren → Spalten zurücksetzen"
-
-Sprachwechsel:
-    - Greifen Sie auf "Optionen → Sprache" zu und wählen Sie die gewünschte Sprache aus
-    - Das Programm wird nach Bestätigung mit der neuen Sprache neu gestartet
-
-Fehlerbehebung:
-    1. Überwachung startet nicht:
-       - Überprüfen Sie die Zugriffsberechtigungen für das Verzeichnis
-       - Stellen Sie sicher, dass kein anderes Programm dasselbe Verzeichnis überwacht
-       - Starten Sie die Anwendung neu
-
-    2. Ereignisse werden nicht angezeigt:
-       - Überprüfen Sie, ob die Überwachung aktiv ist
-       - Überprüfen Sie, ob die Filter keine Ereignisse ausblenden
-       - Testen Sie, indem Sie eine Datei manuell ändern
-
-    3. Hoher Ressourcenverbrauch:
-       - Vermeiden Sie die Überwachung von Systemverzeichnissen oder solchen mit Tausenden von Dateien
-       - Überwachen Sie spezifische Unterverzeichnisse anstelle von Stammverzeichnissen
-
-    4. Fehler in den Statistiken:
-       - Stellen Sie sicher, dass genügend Ereignisse vorhanden sind, um Diagramme zu erstellen
-       - Überprüfen Sie, ob alle Bibliotheken korrekt installiert sind
-
-Autoren:
-- Fernando Nillsson Cidade
+Konfiguration und Bedienung:
+1. Überwachtes Verzeichnis: Der ausgewählte Pfad wird rekursiv überwacht (einschließlich aller Unterordner).
+2. Daten- und Metadatentabelle:
+   - Operation: Visuell hervorgehoben mit anpassbarem Farbcode.
+   - Name und Pfade: Vorheriger und aktueller Pfad für Verschiebe-/Umbenennungsereignisse eindeutig dargestellt.
+   - Datumsangaben: Erstellungs-, Änderungs- und Zugriffsdaten bleiben auch für Ordner und Unterordner erhalten.
+   - Typ und MIME: Präzise Inhaltsklassifizierung basierend auf echten Dateisignaturen.
+3. Erweiterte Filter:
+   - Einstellungen → Filter → Erweiterte Filter aufrufen, um mehrere Kriterien mit Unterstützung eines visuellen Kalenders zu kombinieren.
+4. Statistiken und Diagramme:
+   - Über das Menü Datei → Statistiken aufrufen, um eine der 17 verfügbaren grafischen Analysen zu generieren und hochauflösend zu speichern.
+5. Export und Archivierung:
+   - Gefilterte Daten oder die gesamte Datenbank können jederzeit in marktüblichen Standardformaten exportiert werden.
+6. Sprache:
+   - Sprache unter Optionen → Sprache mit sofortigem dynamischem Neuladen ändern.

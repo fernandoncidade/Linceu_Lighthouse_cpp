@@ -89,6 +89,9 @@ QString traduzir_categoria_tamanho(source::ui::LocalizadorQt* loc, const QString
         {"very_large", "Muito Grande", {"muito grande", "very large", "muy grande", "tres grand", "molto grande", "sehr gross"}}};
 
     for (const auto& categoria : categorias) {
+        if (valor == QString::fromUtf8(categoria.key)) {
+            return get_text(loc, QString::fromUtf8(categoria.key), QString::fromUtf8(categoria.fallback));
+        }
         for (const char* alias : categoria.aliases) {
             if (normalizado == QString::fromUtf8(alias)) {
                 return get_text(loc, QString::fromUtf8(categoria.key), QString::fromUtf8(categoria.fallback));
@@ -140,6 +143,18 @@ QVariantMap traduzir_mapa_chaves(const QVariantMap& origem,
         destino.insert(tradutor(it.key()), it.value());
     }
     return destino;
+}
+
+QVariantList traduzir_lista_preferindo_raw(const QVariantList& raw,
+                                           const QVariantList& origem,
+                                           const std::function<QString(const QString&)>& tradutor) {
+    return traduzir_lista_strings(raw.isEmpty() ? origem : raw, tradutor);
+}
+
+QVariantMap traduzir_mapa_chaves_preferindo_raw(const QVariantMap& raw,
+                                                const QVariantMap& origem,
+                                                const std::function<QString(const QString&)>& tradutor) {
+    return traduzir_mapa_chaves(raw.isEmpty() ? origem : raw, tradutor);
 }
 
 QVariantMap traduzir_resumo(const QVariantMap& resumo,
@@ -211,12 +226,14 @@ QVariantList traduzir_pontos(const QVariantList& origem,
     for (const QVariant& item : origem) {
         QVariantMap ponto = item.toMap();
         if (ponto.contains(QStringLiteral("tipo_operacao"))) {
+            const QString raw = ponto.value(QStringLiteral("tipo_operacao_raw")).toString().trimmed();
             ponto.insert(QStringLiteral("tipo_operacao"),
-                         traduzir_op(ponto.value(QStringLiteral("tipo_operacao")).toString()));
+                         traduzir_op(raw.isEmpty() ? ponto.value(QStringLiteral("tipo_operacao")).toString() : raw));
         }
         if (ponto.contains(QStringLiteral("tipo"))) {
+            const QString raw = ponto.value(QStringLiteral("tipo_raw")).toString().trimmed();
             ponto.insert(QStringLiteral("tipo"),
-                         traduzir_tipo(ponto.value(QStringLiteral("tipo")).toString()));
+                         traduzir_tipo(raw.isEmpty() ? ponto.value(QStringLiteral("tipo")).toString() : raw));
         }
         destino.append(ponto);
     }
@@ -364,12 +381,17 @@ QVariantMap retraduzir_figura(source::ui::LocalizadorQt* loc,
     }
 
     if (func == QStringLiteral("grafico_boxplot_distribuicao_por_tipo_operacao")) {
+        fig.insert(QStringLiteral("box_stats"),
+                   traduzir_mapa_chaves_preferindo_raw(fig.value(QStringLiteral("box_stats_raw")).toMap(),
+                                                       fig.value(QStringLiteral("box_stats")).toMap(), traduzir_op));
         fig.insert(QStringLiteral("source_map"),
                    traduzir_cache_por_tipo(fig.value(QStringLiteral("source_map")).toMap(), traduzir_op));
         fig.insert(QStringLiteral("order_hint"),
-                   traduzir_lista_strings(fig.value(QStringLiteral("order_hint")).toList(), traduzir_op));
+                   traduzir_lista_preferindo_raw(fig.value(QStringLiteral("order_hint_raw")).toList(),
+                                                 fig.value(QStringLiteral("order_hint")).toList(), traduzir_op));
         fig.insert(QStringLiteral("color_map"),
-                   traduzir_mapa_chaves(fig.value(QStringLiteral("color_map")).toMap(), traduzir_op));
+                   traduzir_mapa_chaves_preferindo_raw(fig.value(QStringLiteral("color_map_raw")).toMap(),
+                                                       fig.value(QStringLiteral("color_map")).toMap(), traduzir_op));
         fig.insert(QStringLiteral("x_label"),
                    get_text(loc, QStringLiteral("operation_type"), QStringLiteral("Tipo de Operação")));
         fig.insert(QStringLiteral("y_label"),
@@ -378,10 +400,14 @@ QVariantMap retraduzir_figura(source::ui::LocalizadorQt* loc,
     }
 
     if (func == QStringLiteral("grafico_boxplot_distribuicao_por_tipo")) {
+        fig.insert(QStringLiteral("box_stats"),
+                   traduzir_mapa_chaves_preferindo_raw(fig.value(QStringLiteral("box_stats_raw")).toMap(),
+                                                       fig.value(QStringLiteral("box_stats")).toMap(), traduzir_tipo));
         fig.insert(QStringLiteral("source_map"),
                    traduzir_cache_por_tipo(fig.value(QStringLiteral("source_map")).toMap(), traduzir_tipo));
         fig.insert(QStringLiteral("order_hint"),
-                   traduzir_lista_strings(fig.value(QStringLiteral("order_hint")).toList(), traduzir_tipo));
+                   traduzir_lista_preferindo_raw(fig.value(QStringLiteral("order_hint_raw")).toList(),
+                                                 fig.value(QStringLiteral("order_hint")).toList(), traduzir_tipo));
         fig.insert(QStringLiteral("x_label"),
                    get_text(loc, QStringLiteral("type"), QStringLiteral("Tipo")));
         fig.insert(QStringLiteral("y_label"),
@@ -390,10 +416,14 @@ QVariantMap retraduzir_figura(source::ui::LocalizadorQt* loc,
     }
 
     if (func == QStringLiteral("grafico_boxplot_distribuicao_por_hora_dia")) {
+        fig.insert(QStringLiteral("box_stats"),
+                   traduzir_mapa_chaves_preferindo_raw(fig.value(QStringLiteral("box_stats_raw")).toMap(),
+                                                       fig.value(QStringLiteral("box_stats")).toMap(), traduzir_hora));
         fig.insert(QStringLiteral("source_map"),
                    traduzir_cache_por_tipo(fig.value(QStringLiteral("source_map")).toMap(), traduzir_hora));
         fig.insert(QStringLiteral("order_hint"),
-                   traduzir_lista_strings(fig.value(QStringLiteral("order_hint")).toList(), traduzir_hora));
+                   traduzir_lista_preferindo_raw(fig.value(QStringLiteral("order_hint_raw")).toList(),
+                                                 fig.value(QStringLiteral("order_hint")).toList(), traduzir_hora));
         fig.insert(QStringLiteral("x_label"),
                    get_text(loc, QStringLiteral("hour_of_day"), QStringLiteral("Hora do Dia")));
         fig.insert(QStringLiteral("y_label"),
@@ -402,10 +432,14 @@ QVariantMap retraduzir_figura(source::ui::LocalizadorQt* loc,
     }
 
     if (func == QStringLiteral("grafico_boxplot_distribuicao_por_categoria_tamanho")) {
+        fig.insert(QStringLiteral("box_stats"),
+                   traduzir_mapa_chaves_preferindo_raw(fig.value(QStringLiteral("box_stats_raw")).toMap(),
+                                                       fig.value(QStringLiteral("box_stats")).toMap(), traduzir_tipo));
         fig.insert(QStringLiteral("source_map"),
                    traduzir_cache_por_tipo(fig.value(QStringLiteral("source_map")).toMap(), traduzir_tipo));
         fig.insert(QStringLiteral("order_hint"),
-                   traduzir_lista_strings(fig.value(QStringLiteral("order_hint")).toList(), traduzir_tipo));
+                   traduzir_lista_preferindo_raw(fig.value(QStringLiteral("order_hint_raw")).toList(),
+                                                 fig.value(QStringLiteral("order_hint")).toList(), traduzir_tipo));
         fig.insert(QStringLiteral("x_label"),
                    get_text(loc, QStringLiteral("category"), QStringLiteral("Categoria")));
         fig.insert(QStringLiteral("y_label"),
@@ -539,13 +573,17 @@ QVariantMap retraduzir_figura(source::ui::LocalizadorQt* loc,
                    traduzir_pontos(fig.value(QStringLiteral("points")).toList(),
                                    [](const QString& valor) { return valor; }, traduzir_tipo));
         fig.insert(QStringLiteral("types"),
-                   traduzir_lista_strings(fig.value(QStringLiteral("types")).toList(), traduzir_tipo));
+                   traduzir_lista_preferindo_raw(fig.value(QStringLiteral("types_raw")).toList(),
+                                                 fig.value(QStringLiteral("types")).toList(), traduzir_tipo));
         fig.insert(QStringLiteral("means_by_type"),
-                   traduzir_cache_por_tipo(fig.value(QStringLiteral("means_by_type")).toMap(), traduzir_tipo));
+                   traduzir_mapa_chaves_preferindo_raw(fig.value(QStringLiteral("means_by_type_raw")).toMap(),
+                                                       fig.value(QStringLiteral("means_by_type")).toMap(), traduzir_tipo));
         fig.insert(QStringLiteral("counts_by_type"),
-                   traduzir_cache_por_tipo(fig.value(QStringLiteral("counts_by_type")).toMap(), traduzir_tipo));
+                   traduzir_mapa_chaves_preferindo_raw(fig.value(QStringLiteral("counts_by_type_raw")).toMap(),
+                                                       fig.value(QStringLiteral("counts_by_type")).toMap(), traduzir_tipo));
         fig.insert(QStringLiteral("type_colors"),
-                   traduzir_mapa_chaves(fig.value(QStringLiteral("type_colors")).toMap(), traduzir_tipo));
+                   traduzir_mapa_chaves_preferindo_raw(fig.value(QStringLiteral("type_colors_raw")).toMap(),
+                                                       fig.value(QStringLiteral("type_colors")).toMap(), traduzir_tipo));
         fig.insert(QStringLiteral("x_label"),
                    get_text(loc, QStringLiteral("file_types"), QStringLiteral("Tipos de Arquivo")));
         fig.insert(QStringLiteral("y_label"),

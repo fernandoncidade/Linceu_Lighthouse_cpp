@@ -1,6 +1,6 @@
 Política de Privacidade do Linceu Lighthouse
-Última atualização: 27 de abril de 2026
-Versão: 2026.4.27.0
+Última atualização: 25 de agosto de 2026
+Versão: 2026.8.25.0
 
 A sua privacidade é fundamental para nós. Esta Política de Privacidade explica quais informações o Linceu Lighthouse ("Software") utiliza e, mais importante, como elas permanecem sob seu controle.
 
@@ -46,11 +46,9 @@ Você tem controle absoluto sobre seus dados. A qualquer momento, você pode:
  - Limpar todo o histórico de monitoramento diretamente na interface do Software.
  - Desinstalar o Software, o que removerá o aplicativo e seus componentes do seu sistema. Os arquivos de banco de dados e logs podem ser excluídos manualmente por você para garantir a remoção completa.
 
-6. Dados de Relatórios de Erro da Microsoft
+6. Ausência de Telemetria e Diagnósticos Locais
 
-Para melhorar a estabilidade e a qualidade do Linceu Lighthouse, podemos usar o serviço de Relatórios de Erro da Microsoft. Se o aplicativo encontrar um erro crítico, informações de diagnóstico anônimas podem ser enviadas à Microsoft e, posteriormente, compartilhadas conosco.
-
-Essa prática é regida pelo App Developer Agreement da Microsoft. Os dados de erro que recebemos são usados exclusivamente para corrigir bugs e melhorar o software. Esses relatórios não incluem seus arquivos pessoais ou qualquer informação que o identifique diretamente.
+O Linceu Lighthouse opera sob a premissa de Privacidade Local e Zero Telemetria da aplicação. O Software não implementa mecanismos próprios de telemetria, analytics remoto, rastreamento de uso ou envio automatizado de relatórios de falhas para a internet. Quaisquer logs de erro ou diagnósticos são estritamente gerados e mantidos em arquivos locais na máquina do usuário para fins de depuração pessoal, sem qualquer transmissão para servidores remotos.
 
 7. Privacidade de Crianças
 

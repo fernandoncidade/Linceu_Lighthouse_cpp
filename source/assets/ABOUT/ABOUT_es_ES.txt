@@ -1,153 +1,85 @@
 Proyecto: LINCEU LIGHTHOUSE
-Versión: 2026.4.27.0
+Versión: 2026.8.25.0
 Autores: Fernando Nillsson Cidade
 
-Descripción: Visibilidad y Control sobre Sus Archivos
+Descripción: Plataforma Local de Inteligencia, Historial y Auditoría de Archivos
+"Sepa exactamente qué ocurrió con sus archivos — localmente, visualmente y con historial consultable."
 
-Linceu Lighthouse es una herramienta de monitoreo que aplica los principios de Monitoreo de Integridad de Archivos (File Integrity Monitoring - FIM) para proporcionar un registro detallado y transparente de todas las actividades en sus directorios más importantes.
+Linceu Lighthouse es una aplicación de escritorio nativa en C++17 con Qt6 diseñada para proporcionar visibilidad total, historial estructurado y auditoría determinista sobre el sistema de archivos de Windows. En lugar de operar como un simple monitor efímero o una herramienta restringida de seguridad, Linceu Lighthouse integra tres capas esenciales en una única experiencia fluida y moderna:
 
-En lugar de interpretar la intención detrás de un cambio, su enfoque es registrar objetivamente cada operación—creación, modificación, eliminación y renombrado—, dándole control y conocimiento total sobre lo que sucede con sus datos. Es la herramienta ideal para quien necesita un historial claro y auditable de las actividades en carpetas de proyectos, servidores o archivos personales.
+1. Monitorización Continua de Actividades: Seguimiento en tiempo real de eventos en el sistema de archivos (creación, modificación, eliminación, renombre, movimiento y escaneo inicial), con correlación semántica precisa de eventos complejos (como identificación real de RENAMED y MOVED sin falsos registros de eliminación).
+2. Historial Consultable e Inteligencia de Archivos sin IA: Construcción automática de una base de datos histórica local en SQLite, enriquecida con más de 30 categorías de metadatos antes y después de cada cambio, acompañada por 17 tipos de visualizaciones gráficas y estadísticas detalladas.
+3. Seguridad, Auditoría y Generación de Evidencias: Línea de base criptográfica (baseline), cálculo determinista de puntuación de riesgo, motor de reglas locales, cuarentena, restauración y exportación de paquetes de evidencia forense e informes ejecutivos (XLSX, CSV, JSON, XML, TXT y SQLite).
 
-Principales Casos de Uso
+Compromiso Absoluto con la Privacidad (Local-First):
+Sus datos nunca salen de su ordenador. Linceu Lighthouse opera 100% offline, sin dependencia de la nube, sin recopilación de telemetría, sin creación de cuentas y sin modelos de inteligencia artificial o lenguaje (LLM/RAG). Toda la inteligencia analítica se deriva de algoritmos estadísticos y computacionales deterministas ejecutados directamente en su procesador.
 
-Linceu Lighthouse ofrece la visibilidad necesaria para diversos escenarios prácticos:
 
-- Auditoría de Actividades en Carpetas: Ideal para entornos donde múltiples usuarios o procesos acceden a los mismos directorios. Sepa exactamente cuándo se modificó un archivo, quién lo renombró o por qué se eliminó un documento.
-- Control de Versiones y Proyectos: Monitoree carpetas de proyectos para entender el flujo de trabajo. Vea el historial de cambios en códigos fuente, documentos de diseño u otros materiales, ayudando a evitar pérdidas accidentales y a comprender la evolución del trabajo.
-- Organización y Limpieza de Archivos: Identifique archivos temporales, duplicados o que no se han modificado en mucho tiempo. Utilice los informes para tomar decisiones informadas sobre qué archivar, mover o eliminar, manteniendo sus directorios organizados.
-- Investigación de Eventos Específicos: Si un archivo importante desaparece o un proyecto deja de funcionar, Linceu Lighthouse proporciona el historial cronológico de eventos para ayudarle a rastrear la causa raíz del problema.
+Los 5 Modos de Utilización de Linceu Lighthouse
 
-¿Cómo Funciona Linceu Lighthouse?
+* Modo Monitorización: Seguimiento visual en tiempo real de carpetas de trabajo, código fuente o directorios críticos con señalización cromática instantánea.
+* Modo Historial (File History / What Changed?): Consulta temporal para responder "¿Qué ocurrió con mi archivo?", rastreando su árbol genealógico de ediciones, renombres y movimientos.
+* Modo Inteligencia & Analytics: Comprensión de patrones operacionales, horarios de mayor actividad, tipos de archivos más modificados y mapas de calor temporales.
+* Modo Seguridad & Integridad: Detección determinista de anomalías, auditoría de hashes criptográficos, preservación de integridad y gestión de sesiones.
+* Modo Evidencia: Generación de informes consolidados y bases exportadas para fines de conformidad, auditoría interna o resolución de incidentes.
 
-El proceso es directo y se centra en proporcionar datos claros para su análisis:
 
-1.  Establecimiento de la Línea Base (Baseline): Al iniciar el monitoreo de un directorio, Linceu Lighthouse realiza un escaneo completo para crear una "instantánea" inicial, o línea base, del estado de todos los archivos y carpetas.
-2.  Monitoreo Continuo: A partir de la línea base, la herramienta monitorea en tiempo real y registra cada evento de creación, modificación, eliminación, movimiento o renombrado que ocurre en el directorio.
-3.  Análisis e Informe: Cualquier desviación de la línea base se lista inmediatamente en la interfaz gráfica. A partir de ahí, usted tiene todo el poder para analizar lo que sucedió, utilizando las herramientas que ofrece el software.
+Principales Casos de Uso y Públicos Objetivo
 
-Herramientas de Análisis a su Disposición
+- Desarrolladores e Ingenieros de Software: Rastrear exactamente qué archivos fueron creados, modificados o eliminados por procesos de compilación, scripts de automatización, IDEs o herramientas de control de versiones.
+- Administradores de Sistemas y Soporte Técnico: Diagnosticar archivos desaparecidos, alteraciones indebidas en carpetas compartidas y rastrear causas de fallos en el entorno local.
+- Profesionales con Datos Sensibles (Jurídico, Salud, Finanzas, Ingeniería): Auditar movimientos de archivos confidenciales sin exponer datos a servidores externos o servicios de terceros.
+- Creadores de Contenido (Diseñadores, Editores de Vídeo, Fotógrafos): Mantener un control estricto sobre grandes volúmenes de medios, proyectos pesados y pipelines de renderizado.
+- Usuarios en General: Control preventivo contra pérdidas accidentales de archivos en carpetas de descargas, documentos o unidades de copia de seguridad.
 
-Para transformar el gran volumen de datos de monitoreo en información útil, Linceu Lighthouse ofrece:
 
-- Filtros Avanzados: No se pierda entre miles de eventos. Aísle rápidamente lo que importa filtrando por tipo de operación (ej: ver solo archivos eliminados), por fecha, por extensión (.docx, .jpg) o buscando un nombre de archivo específico.
-- Visualización de Estadísticas: Convierta datos brutos en insights visuales. Con gráficos intuitivos, puede comprender patrones de actividad, como las horas pico de modificaciones, los tipos de archivo más alterados y la frecuencia de cada operación, ayudando a optimizar su flujo de trabajo.
-- Exportación Flexible de Datos: Cree un registro permanente y auditable. Exporte los registros de monitoreo a diversos formatos (Excel, CSV, JSON, XML), ya sea para archivar, compartir con su equipo o importar en otras herramientas de análisis.
+Cómo Funciona Linceu Lighthouse
+
+1. Establecimiento de la Línea de Base (Baseline / Snapshot): Al seleccionar una carpeta, el escáner realiza un escaneo recursivo creando un snapshot inicial con metadados detallados de cada elemento.
+2. Monitorización Asíncrona con APIs Nativas: El motor ReadDirectoryChangesW captura notificaciones de Windows en segundo plano, gestionando picos a través de búferes seguros para hilos y workers paralelos.
+3. Normalización y Correlación de Eventos: Los eventos brutos se correlacionan para diferenciar renombres y movimientos de creaciones/eliminaciones aisladas.
+4. Enriquecimiento con Metadados: Se extraen atributos específicos (MIME real, dimensiones, duración, autores, tasas de bits, firmas y hashes).
+5. Persistencia por Lotes en SQLite: La escritura asíncrona garantiza persistencia continua sin congelar la interfaz gráfica.
+6. Presentación, Filtrado y Visualización: La interfaz Qt6 permite búsqueda instantánea, filtrado combinado, generación de 17 diagramas nativos y exportación completa.
+
+
+Herramientas de Análisis y Recursos Disponibles
+
+- Filtros Rápidos y Avanzados: Filtre por tipo de evento, rango de fechas, texto, extensión de archivo o selección directa en la tabla.
+- Estadísticas Visuales Nativas (17 Gráficos): Gráficos de Tarta, Barras, Línea de Tiempo (Timeline), Mapa de Árbol (Treemap), Histograma, Curva de Pareto, Líneas, Boxplot, Radar, Heatmap Temporal, Dispersión (Scatter), Diagramas de Sankey, Dotplot y visualización en Árbol de Directorios.
+- Exportación Completa de Evidencias: Exporte informes a Excel (.xlsx), CSV (.csv), Texto (.txt), JSON (.json), XML (.xml) y Base de Datos SQLite (.db).
+- Internacionalización Completa: Interfaz y manuales disponibles nativamente en Portugués (pt_BR), Inglés (en_US), Español (es_ES), Francés (fr_FR), Italiano (it_IT) y Alemán (de_DE).
 
 ---
 
-MANUAL DE USO RÁPIDO:
+MANUAL DE UTILIZACIÓN RÁPIDO:
 
-Cómo usar:
-1. Ejecute la aplicación para iniciar la interfaz gráfica.
-2. Seleccione un directorio para monitorear.
-3. Utilice los botones y menús para iniciar/detener el monitoreo, aplicar filtros, exportar datos y ver estadísticas.
+1. Ejecute la aplicación mediante el acceso directo o ejecutable.
+2. Haga clic en "Seleccionar Directorio" y elija la carpeta que desea auditar.
+3. Haga clic en "Iniciar/Parar" para realizar el escaneo inicial e iniciar la observación continua.
+4. Utilice los botones de la barra lateral y los menús superiores para filtrar eventos, visualizar gráficos estadísticos y gestionar la seguridad.
+5. Haga doble clic en cualquier elemento de la tabla para abrirlo con la aplicación predeterminada o elija una herramienta personalizada.
+6. Acceda a "Guardar Como" para exportar evidencias e informes en el formato de su elección.
 
-MANUAL DE USO DETALLADO:
+MANUAL DE UTILIZACIÓN DETALLADO:
 
 Requisitos del Sistema:
-    - Sistema Operativo: Windows 10 o superior.
+- Sistema Operativo: Windows 10 (64-bit) o superior (Windows 11).
+- Permiso de lectura en los directorios monitorizados.
+- Permiso de escritura en %LOCALAPPDATA%\LinceuLighthouse.
 
-Instalación:
-    - Instale el archivo ejecutable del programa, siga las instrucciones del instalador y ejecute el programa.
-
-Configuración Inicial:
-    - La interfaz se mostrará con la tabla de monitoreo vacía.
-    - El idioma predeterminado se seleccionará según la configuración del sistema.
-    - Observe la barra lateral izquierda para acceder a las funciones principales.
-
-Monitoreo de Directorios:
-    1. Seleccionar un Directorio:
-       - Haga clic en el botón "Seleccionar Directorio" o seleccione "Archivo → Seleccionar Directorio"
-       - La ruta del directorio seleccionado se mostrará encima de la tabla
-
-    2. Iniciar/Detener Monitoreo:
-       - Haga clic en el botón "Iniciar/Detener" o seleccione "Archivo → Iniciar/Detener"
-       - Se realizará un escaneo inicial del directorio con una barra de progreso
-       - Para detener el monitoreo, haga clic nuevamente en el mismo botón
-
-Interfaz Principal:
-    - Barra de Menú: Acceso a todas las funciones del programa
-    - Barra Lateral: Botones de acción rápida
-    - Etiqueta de Directorio: Muestra el directorio monitoreado
-    - Etiqueta de Resultado: Muestra el estado actual de la operación
-    - Tabla de Datos: Muestra todos los eventos de monitoreo
-    - Barra de Progreso: Visible durante operaciones de larga duración
-
-    Campos predeterminados de la tabla:
-    - Tipo de Operación: Agregado, Eliminado, Modificado, Renombrado o Movido
-    - Nombre: Nombre del archivo
-    - Directorio Anterior: Ubicación original del archivo (cuando corresponda)
-    - Directorio Actual: Ubicación actual del archivo
-    - Fecha de Creación: Fecha en que se creó el archivo
-    - Fecha de Modificación: Fecha de la última modificación
-    - Tipo: Tipo/extensión del archivo
-
-Filtros y Búsqueda:
-    1. Filtros Rápidos:
-       - En el menú "Configuración → Filtros", marque/desmarque tipos de operaciones
-         (Movido, Renombrado, Agregado, Eliminado, Modificado)
-
-    2. Filtros Avanzados:
-       - Acceda a "Configuración → Filtros → Filtros Avanzados"
-       - Filtro de Operación: Seleccione tipos de operaciones a visualizar
-       - Búsqueda: Busca texto en nombres y directorios
-       - Filtro por Extensión: Filtre por tipos de archivo específicos
-       - Filtro de Fecha: Defina el período para los eventos
-       - Use el botón de calendario para la selección de fechas
-       - "Limpiar Filtros" restablece todas las configuraciones
-
-Visualización de Estadísticas:
-    - Acceda mediante el botón "Estadísticas" o "Archivo → Estadísticas"
-    - Gráficos disponibles:
-      * Distribución de Operaciones: Proporción de cada tipo de operación
-      * Top 10 Tipos de Archivo: Tipos de archivo más comunes
-      * Línea de Tiempo de Operaciones: Cronología de eventos
-      * Mapa de Árbol: Visualización de tamaño por tipos
-      * Distribución por Hora: Horas con más operaciones
-      * Análisis de Pareto: Frecuencia y porcentaje acumulado
-      * Operaciones por Día: Operaciones agrupadas por fecha
-    - Guardar gráficos: Haga clic en "Guardar Todos" y seleccione un destino
-
-Exportación de Datos:
-    - Haga clic en "Guardar Como" o "Archivo → Guardar Como"
-    - Formatos disponibles:
-      * Excel (.xlsx)
-      * CSV (.csv)
-      * Texto (.txt)
-      * JSON (.json)
-      * XML (.xml)
-      * Base de Datos (.db)
-    - Para futuras exportaciones del mismo conjunto, use "Archivo → Guardar"
-
-Configuración de Columnas:
-    - Acceda a "Configuración → Configurar Columnas"
-    - Marque/desmarque las columnas deseadas en la tabla:
-      (Tipo de Operación, Nombre, Directorio Anterior, Directorio Actual, etc.)
-    - Los cambios se aplican de inmediato
-    - Restauración predeterminada: "Configuración → Configurar Columnas → Restablecer Columnas"
-
-Cambio de Idioma:
-    - Acceda a "Opciones → Idioma" y seleccione el idioma deseado
-    - El programa se reiniciará con el nuevo idioma después de la confirmación
-
-Solución de Problemas:
-    1. El monitoreo no se inicia:
-       - Verifique los permisos de acceso al directorio
-       - Asegúrese de que ningún otro programa esté monitoreando el mismo directorio
-       - Reinicie la aplicación
-
-    2. Los eventos no aparecen:
-       - Verifique si el monitoreo está activo
-       - Verifique si los filtros no están ocultando eventos
-       - Pruebe modificando un archivo manualmente
-
-    3. Alto consumo de recursos:
-       - Evite monitorear directorios del sistema o con miles de archivos
-       - Monitoree subdirectorios específicos en lugar de directorios raíz
-
-    4. Errores en las estadísticas:
-       - Asegúrese de que haya suficientes eventos para generar gráficos
-       - Verifique si todas las bibliotecas están instaladas correctamente
-
-Autores:
-- Fernando Nillsson Cidade
+Configuración y Operación:
+1. Directorio Monitorizado: La ruta seleccionada se monitoriza recursivamente (incluyendo todas las subcarpetas).
+2. Tabla de Datos y Metadados:
+   - Operación: Indicada visualmente con código de colores personalizable.
+   - Nombre y Rutas: Ruta anterior y ruta actual claramente indicadas para eventos de mover/renombrar.
+   - Fechas: Creación, modificación y último acceso preservadas incluso para carpetas y subcarpetas.
+   - Tipo y MIME: Clasificación precisa del contenido basada en firmas reales de archivo.
+3. Filtros Avanzados:
+   - Acceda a Configuración → Filtros → Filtros Avanzados para combinar múltiples criterios con soporte de calendario visual.
+4. Estadísticas y Gráficos:
+   - Acceda mediante el menú Archivo → Estadísticas para generar cualquiera de los 17 análisis gráficos disponibles y guardarlos en alta resolución.
+5. Exportación y Archivo:
+   - Los datos filtrados o la totalidad de la base pueden exportarse en cualquier momento en formatos estándar del mercado.
+6. Idioma:
+   - Cambie el idioma en Opciones → Idioma con recarga dinámica instantánea.

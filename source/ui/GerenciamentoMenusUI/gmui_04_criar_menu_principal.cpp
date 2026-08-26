@@ -43,6 +43,7 @@ void criar_menu_principal(source::ui::GerenciadorMenusUI* self) {
         }
 
         QMenuBar* menu_bar = mw->menuBar();
+        menu_bar->setContentsMargins(0, 0, 0, 0);
         menu_bar->clear();
 
         auto* menu_arquivo = new MenuPersistente(get_text(self->loc_obj(), "file_menu", "Arquivo"), mw);

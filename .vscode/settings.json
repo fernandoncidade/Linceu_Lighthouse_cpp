@@ -1,16 +1,16 @@
 {
     "cmake.useCMakePresets": "always",
-    "cmake.configurePreset": "qt6-mingw-debug",
-    "cmake.buildPreset": "linceu-qt6-mingw-debug",
+    "cmake.configurePreset": "qt6-mingw-release",
+    "cmake.buildPreset": "linceu-qt6-mingw-release",
     "cmake.configureOnOpen": true,
     "qt-core.qtInstallationRoot": "C:/Qt",
     "qt-core.additionalQtPaths": [
-        "C:/Qt/6.11.0/mingw_64/bin/qtpaths.exe",
-        "C:/Qt/6.11.0/msvc2022_64/bin/qtpaths.exe"
+        "C:/Qt/6.11.1/mingw_64/bin/qtpaths.exe",
+        "C:/Qt/6.11.1/msvc2022_64/bin/qtpaths.exe"
     ],
-    "qt-qml.qmlls.customExePath": "C:/Qt/6.11.0/mingw_64/bin/qmlls.exe",
+    "qt-qml.qmlls.customExePath": "C:/Qt/6.11.1/mingw_64/bin/qmlls.exe",
     "qt-qml.qmlls.additionalImportPaths": [
-        "C:/Qt/6.11.0/mingw_64/qml"
+        "C:/Qt/6.11.1/mingw_64/qml"
     ],
     "qt-qml.qmlls.useNoCMakeCalls": true,
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",

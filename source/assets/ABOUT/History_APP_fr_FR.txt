@@ -1,29 +1,47 @@
-Justification du Nom : Linceu Lighthouse
+Histoire et Justification du Nom : Linceu Lighthouse
 
-Le nom Linceu Lighthouse (Phare de Lyncée) n'a pas été choisi au hasard. Il incarne la fusion de deux puissants concepts de surveillance et d'orientation, reflétant avec précision l'essence et la fonctionnalité de notre logiciel de surveillance de l'intégrité des fichiers.
+1. La Fusion Mythologique et Conceptuelle : Vision et Orientation
 
-La Vision de Lyncée : Voir l'Imperceptible
+Le nom Linceu Lighthouse (Phare de Lyncée) n'a pas été choisi par hasard. Il synthétise l'union de deux piliers fondamentaux de la surveillance et de la navigabilité numérique : la perception de l'imperceptible et la clarté de l'orientation stratégique.
 
-Dans la mythologie grecque, Lyncée était le veilleur des Argonautes, un héros doté d'une vision surhumaine. Sa capacité légendaire ne se limitait pas à voir à de grandes distances ; il pouvait voir à travers des barrières comme les murs, les arbres et même le sol. Rien n'échappait à son regard. Il était la première ligne de défense, détectant les dangers et les mouvements cachés pour assurer la sécurité de son équipage.
+La Vision de Lyncée : Voir l'Invisible et l'Imperceptible
+Dans la mythologie grecque, Lyncée était le veilleur légendaire du navire des Argonautes, doté d'une acuité visuelle surhumaine. Sa vision ne se limitait pas à observer à des distances infinies : il possédait le don singulier de scruter à travers les obstacles solides, les murailles, les forêts denses et jusque dans les entrailles de la terre. Rien n'échappait à son regard attentif ; il était la sentinelle pionnière identifiant les mouvements occultes et les périls imminents avant que tout autre membre de l'équipage ne pût les remarquer.
 
-Tel le héros mythologique, Linceu Lighthouse possède une « vision » numérique inégalée. Il opère au cœur de votre système, surveillant un répertoire et ses sous-répertoires avec une acuité qui perçoit chaque changement, aussi subtil soit-il. Les opérations qui seraient invisibles ou fugaces pour un utilisateur ordinaire — ajouts, suppressions, renommages, modifications et même le simple acte de numérisation — sont instantanément détectées et enregistrées. Notre logiciel est le Lyncée de votre système de fichiers : il voit ce qui est caché et garantit qu'aucune action ne passe inaperçue.
+Linceu Lighthouse reproduit cette acuité dans le système de fichiers de l'ordinateur. Agissant directement au cœur du système d'exploitation (Windows), il surveille les répertoires, sous-dossiers et lecteurs avec une précision microscopique. Les événements qui seraient éphémères, imperceptibles ou silencieux — modifications rapides par des processus en arrière-plan, renommages en cascade, déplacements entre répertoires, suppressions involontaires ou créations de fichiers temporaires — sont capturés instantanément. Notre moteur est le Lyncée de votre disque : il voit ce qui est caché et garantit qu'aucune altération ne passe inaperçue.
 
-La Lumière du Phare (Lighthouse) : Transformer les Données en Clarté
+La Lumière du Phare (Lighthouse) : Éclairer le Chaos en Intelligence Actionnable
+Cependant, voir l'événement ne suffit pas ; il est impératif de comprendre la route et d'agir en toute sécurité. C'est de cette nécessité que naît le concept du « Phare » (Lighthouse). Au cœur de l'obscurité de la tempête et de l'incertitude des mers, le phare projette un faisceau de lumière puissant et reconnaissable entre mille, dissipant la brume et servant de boussole inébranlable aux navigateurs.
 
-Voir ne suffit pas ; il faut comprendre et naviguer en toute sécurité. C'est là qu'intervient le « Lighthouse » (Phare). Un phare ne se contente pas de voir l'obscurité ; il projette un puissant faisceau de lumière avec une signature unique, servant de guide fiable pour les navigateurs. Il transforme l'incertitude de la nuit en un chemin clair, avertissant des dangers et confirmant la route sûre vers le port.
+Linceu Lighthouse accomplit exactement ce rôle face au tourbillon de données du système de fichiers :
+* Signalisation Visuelle et Sémantique : Chaque opération reçoit une distinction chromatique immédiate et une catégorisation précise, agissant comme la signature lumineuse d'un phare maritime.
+* Focalisation et Filtrage Ciblé : Des outils avancés de filtrage permettent de diriger le faisceau lumineux exactement sur la plage de dates, l'extension, le processus ou le dossier souhaité, éliminant ainsi le bruit opérationnel.
+* Intelligence Visuelle et Statistique : Avec 17 types de visualisations graphiques et une analyse approfondie de plus de 30 catégories de métadonnées, l'application transforme les journaux bruts en intelligence visuelle et déterministe.
+* Universalité et Accessibilité : Tout comme la lumière d'un phare guide tout marin, le support natif en 6 langues assure une accessibilité mondiale immédiate.
 
-Linceu Lighthouse fait exactement cela avec les données qu'il collecte. Il ne se contente pas de rapporter une avalanche d'informations brutes. Il les illumine :
 
-* Signalisation Claire : Chaque type d'opération est identifié par des couleurs distinctes, agissant comme la signature lumineuse d'un phare, permettant une identification immédiate de ce qui s'est passé.
+2. L'Origine et la Motivation du Projet
 
-* Focalisation et Orientation : Le système de filtrage avancé par type d'événement, date ou extension de fichier permet à l'utilisateur de focaliser le « faisceau lumineux » exactement là où il en a besoin, en ignorant le bruit et en se concentrant sur ce qui est important.
+Linceu Lighthouse est né de l'identification d'une lacune critique dans l'écosystème des logiciels de bureau. Historiquement, les utilisateurs et les professionnels se heurtaient à deux extrêmes insatisfaisants :
 
-* Vue Panoramique et Analyse : La capacité de générer des graphiques et des diagrammes statistiques et d'analyser plus de trente types de métadonnées transforme les données brutes en intelligence exploitable, offrant une vue claire du « terrain » numérique.
+D'un côté, des utilitaires gratuits simplistes et éphémères qui affichent des changements passagers sans persistance historique, sans contexte de métadonnées, sans corrélation des renommages/déplacements et dotés d'interfaces vieillissantes.
+De l'autre côté, de gigantesques logiciels d'entreprise (FIM/SIEM de serveurs) et des outils de diagnostic de bas niveau (tels que Process Monitor), excessivement complexes, coûteux (licences à plusieurs centaines de dollars) ou imposant l'envoi de données vers des serveurs cloud.
 
-* Accessibilité Universelle : Tout comme la lumière d'un phare est un guide universel, notre système de traduction en six langues garantit que cette clarté et cette sécurité sont accessibles aux utilisateurs du monde entier.
+Il manquait une plateforme de bureau locale, moderne, visuelle et accessible, dédiée à répondre à la question la plus élémentaire et récurrente de toute personne devant son ordinateur :
+« Que s'est-il passé avec mes fichiers ? »
 
-En résumé :
 
-Linceu Lighthouse est la fusion parfaite de ces deux concepts. Il combine la vision pénétrante de Lyncée pour détecter chaque changement dans vos fichiers avec la lumière directrice d'un Phare pour interpréter, analyser et agir sur la base de ces informations.
+3. L'Évolution Technologique : De l'Idée au Moteur Natif C++17/Qt6
 
-C'est votre gardien numérique, qui voit tout et illumine tout, offrant une surveillance continue, une intelligence des données et la clarté nécessaire pour maintenir l'intégrité et la sécurité de votre environnement numérique.
+Le projet a débuté sa trajectoire conceptuelle sous la forme d'un prototype axé sur l'audit d'intégrité. Toutefois, la nécessité de traiter des centaines de milliers d'événements en temps réel, sans figer l'interface graphique et en garantissant un enregistrement instantané et fiable, a exigé une évolution radicale de l'ingénierie logicielle.
+
+Linceu Lighthouse a été intégralement réécrit en tant qu'application de bureau native en C++17 avec Qt6, intégrant les API natives asynchrones de Windows (ReadDirectoryChangesW), des files d'attente et tampons protégés par mutex, des threads de traitement parallèle avec QtConcurrent, un stockage persistant en SQLite local et un sous-système dédié de rendu graphique accéléré matériellement (OpenGL / Qt Quick).
+
+
+4. L'Engagement envers la Confidentialité Souveraine (Local-First)
+
+À une époque dominée par la dépendance au cloud, la télémétrie invasive et l'envoi aveugle de données vers des serveurs distants, Linceu Lighthouse assume un positionnement éthique absolu :
+* 100% Hors Ligne et Local : Toutes les bases de données, métadonnées, analyses et preuves résident exclusivement sur l'ordinateur de l'utilisateur (%LOCALAPPDATA%\LinceuLighthouse).
+* Zéro Cloud, Zéro Compte, Zéro Télémétrie : Aucune collecte de données analytiques, ni authentification distante forcée.
+* Intelligence Déterministe sans IA : Toutes les classifications, analyses de modèles et scores d'intégrité découlent d'algorithmes mathématiques et statistiques déterministes, sans modèles de langage (LLM) ni inférences externes.
+
+Linceu Lighthouse est la fusion parfaite entre la vision pénétrante de Lyncée et la lumière directrice du Phare — le gardien numérique souverain qui voit tout, éclaire tout et protège l'intégrité de votre environnement de travail.
