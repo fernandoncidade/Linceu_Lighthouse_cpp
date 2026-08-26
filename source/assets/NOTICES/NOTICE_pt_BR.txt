@@ -1,0 +1,85 @@
+Aviso de Dependências de Terceiros e Licenças
+
+Este aviso aplica-se à edição C++/Qt6 do projeto Linceu Lighthouse.
+Ele substitui os avisos herdados da implementação anterior em Python/PySide6. A base atual não depende mais, para a execução principal da aplicação, da cadeia de bibliotecas Python anteriormente listada.
+
+Dependências efetivamente identificadas na base atual
+
+1. Qt 6
+Módulos usados pelo projeto:
+- Qt::Core
+- Qt::Gui
+- Qt::Widgets
+- Qt::Sql
+- Qt::Xml
+- Qt::Concurrent
+- Qt::OpenGL
+- Qt::OpenGLWidgets
+- Qt::Quick
+- Qt::Qml
+
+Finalidade no projeto:
+- interface gráfica, internacionalização, concorrência, renderização de gráficos/diagramas, XML e acesso a banco de dados.
+
+Licenciamento:
+- o framework Qt é disponibilizado pela The Qt Company sob licenciamento comercial e, nas distribuições open source, sob termos como LGPL v3, conforme o pacote Qt efetivamente redistribuído;
+- este projeto foi preparado para operar com bibliotecas Qt fornecidas como binários separados e substituíveis no cenário padrão de distribuição com bibliotecas compartilhadas.
+
+Obrigações relevantes em distribuições baseadas em LGPL:
+- manter os avisos de copyright e os textos de licença do Qt;
+- permitir a substituição das bibliotecas Qt redistribuídas por versões compatíveis;
+- disponibilizar, quando exigido pela licença aplicável, as informações necessárias para relink/substituição dinâmica e o acesso ao código-fonte correspondente do componente licenciado.
+
+Referências oficiais do Qt:
+- https://www.qt.io/licensing
+- https://www.qt.io/licensing/open-source-lgpl-obligations
+
+Observações legais específicas por módulo Qt utilizado
+- `Qt6::Core`: para a redistribuição open source considerada neste projeto, este módulo é tratado sob GNU LGPL v3. O texto correspondente está incluído em `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt`.
+- `Qt6::Gui`: para a redistribuição open source considerada neste projeto, este módulo é tratado sob GNU LGPL v3. O texto correspondente está incluído em `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt`.
+- `Qt6::Widgets`: para a redistribuição open source considerada neste projeto, este módulo é tratado sob GNU LGPL v3. O texto correspondente está incluído em `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt`.
+- `Qt6::Sql`: para a redistribuição open source considerada neste projeto, este módulo é tratado sob GNU LGPL v3. O texto correspondente está incluído em `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt`.
+- `Qt6::Xml`: para a redistribuição open source considerada neste projeto, este módulo é tratado sob GNU LGPL v3. O texto correspondente está incluído em `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt`.
+- `Qt6::Concurrent`: para a redistribuição open source considerada neste projeto, este módulo é tratado sob GNU LGPL v3. O texto correspondente está incluído em `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt`.
+- `Qt6::OpenGL`: para a redistribuição open source considerada neste projeto, este módulo é tratado sob GNU LGPL v3. O texto correspondente está incluído em `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt`.
+- `Qt6::OpenGLWidgets`: para a redistribuição open source considerada neste projeto, este módulo é tratado sob GNU LGPL v3. O texto correspondente está incluído em `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt`.
+- `Qt6::Quick`: para a redistribuição open source considerada neste projeto, este módulo é tratado sob GNU LGPL v3. O texto correspondente está incluído em `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt`.
+- `Qt6::Qml`: para a redistribuição open source considerada neste projeto, este módulo é tratado sob GNU LGPL v3. O texto correspondente está incluído em `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt`.
+- na hipótese de distribuição com os módulos sob LGPL v3 em bibliotecas compartilhadas, devem ser preservados os avisos e textos de licença aplicáveis, bem como a possibilidade de substituição das bibliotecas Qt por versões compatíveis;
+- referência oficial da LGPL:
+- https://www.gnu.org/licenses/lgpl-3.0.html
+
+2. SQLite / driver QSQLite
+Uso no projeto:
+- persistência local do monitoramento, consultas e exportação para `.db` via `QSqlDatabase`, `QSqlQuery` e driver `QSQLITE`.
+
+Licenciamento:
+- SQLite é software em domínio público;
+- quando o plugin/driver QSQLite é redistribuído como parte da instalação Qt, a camada Qt do plugin segue as condições da distribuição Qt utilizada, enquanto o núcleo SQLite permanece em domínio público.
+
+Referência oficial do SQLite:
+- https://www.sqlite.org/copyright.html
+
+3. APIs nativas do Windows
+Uso no projeto:
+- monitoramento de diretórios e arquivos;
+- leitura de versão e assinatura digital de executáveis;
+- integração de shell e recursos específicos da plataforma.
+
+Componentes identificados no build/código:
+- `wintrust`
+- `version`
+- `crypt32`
+- APIs do Windows/Windows SDK como `ReadDirectoryChangesW`, `CreateFileW`, `WinVerifyTrust`, `GetFileVersionInfoW` e `VerQueryValueW`.
+
+Observação de licenciamento:
+- esses componentes fazem parte do sistema operacional Windows e/ou do SDK da Microsoft;
+- eles não são redistribuídos por este projeto como bibliotecas open source independentes de terceiros.
+
+4. Ferramentas de build e manutenção
+- a compilação de traduções pode utilizar `lrelease`, distribuído no ecossistema Qt;
+- essa ferramenta é de build/manutenção e não constitui, por si só, dependência de runtime da aplicação final.
+
+Observação final
+- os avisos antigos sobre PySide6, pandas, NumPy, matplotlib, openpyxl, pyOpenSSL, pywin32 e bibliotecas Python correlatas não descrevem mais a implementação atual em C++/Qt6;
+- os textos de licença incluídos em `source/assets/LICENSES` devem ser interpretados em conjunto com os componentes efetivamente redistribuídos no pacote final do aplicativo.

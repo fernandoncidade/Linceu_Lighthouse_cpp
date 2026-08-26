@@ -1,0 +1,85 @@
+Hinweis zu Drittanbieter-Abhängigkeiten und Lizenzen
+
+Dieser Hinweis gilt für die C++/Qt6-Edition des Projekts Linceu Lighthouse.
+Er ersetzt die Hinweise aus der früheren Python/PySide6-Implementierung. Die aktuelle Codebasis hängt für die Hauptausführung der Anwendung nicht mehr von der zuvor aufgeführten Python-Bibliothekskette ab.
+
+Tatsächlich in der aktuellen Codebasis identifizierte Abhängigkeiten
+
+1. Qt 6
+Vom Projekt verwendete Module:
+- Qt::Core
+- Qt::Gui
+- Qt::Widgets
+- Qt::Sql
+- Qt::Xml
+- Qt::Concurrent
+- Qt::OpenGL
+- Qt::OpenGLWidgets
+- Qt::Quick
+- Qt::Qml
+
+Zweck im Projekt:
+- grafische Oberfläche, Internationalisierung, Parallelität, Rendering von Grafiken/Diagrammen, XML und Datenbankzugriff.
+
+Lizenzierung:
+- das Qt-Framework wird von The Qt Company unter kommerzieller Lizenz und, in Open-Source-Distributionen, unter Bedingungen wie LGPL v3 bereitgestellt, abhängig vom tatsächlich weiterverteilten Qt-Paket;
+- dieses Projekt wurde dafür vorbereitet, mit Qt-Bibliotheken zu arbeiten, die im Standardszenario mit Shared Libraries als getrennte und austauschbare Binärdateien bereitgestellt werden.
+
+Relevante Pflichten bei LGPL-basierter Weiterverteilung:
+- Urheberrechts- und Lizenzhinweise von Qt beibehalten;
+- den Austausch weiterverteilter Qt-Bibliotheken durch kompatible Versionen ermöglichen;
+- sofern von der anwendbaren Lizenz verlangt, die für Relinking/dynamischen Austausch notwendigen Informationen sowie den Zugang zum entsprechenden Quellcode der lizenzierten Komponente bereitstellen.
+
+Offizielle Qt-Referenzen:
+- https://www.qt.io/licensing
+- https://www.qt.io/licensing/open-source-lgpl-obligations
+
+Spezifische rechtliche Hinweise zu jedem verwendeten Qt-Modul
+- `Qt6::Core`: für das von diesem Projekt zugrunde gelegte Open-Source-Weiterverteilungsszenario wird dieses Modul unter GNU LGPL v3 eingeordnet. Der entsprechende Lizenztext ist in `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt` enthalten.
+- `Qt6::Gui`: für das von diesem Projekt zugrunde gelegte Open-Source-Weiterverteilungsszenario wird dieses Modul unter GNU LGPL v3 eingeordnet. Der entsprechende Lizenztext ist in `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt` enthalten.
+- `Qt6::Widgets`: für das von diesem Projekt zugrunde gelegte Open-Source-Weiterverteilungsszenario wird dieses Modul unter GNU LGPL v3 eingeordnet. Der entsprechende Lizenztext ist in `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt` enthalten.
+- `Qt6::Sql`: für das von diesem Projekt zugrunde gelegte Open-Source-Weiterverteilungsszenario wird dieses Modul unter GNU LGPL v3 eingeordnet. Der entsprechende Lizenztext ist in `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt` enthalten.
+- `Qt6::Xml`: für das von diesem Projekt zugrunde gelegte Open-Source-Weiterverteilungsszenario wird dieses Modul unter GNU LGPL v3 eingeordnet. Der entsprechende Lizenztext ist in `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt` enthalten.
+- `Qt6::Concurrent`: für das von diesem Projekt zugrunde gelegte Open-Source-Weiterverteilungsszenario wird dieses Modul unter GNU LGPL v3 eingeordnet. Der entsprechende Lizenztext ist in `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt` enthalten.
+- `Qt6::OpenGL`: für das von diesem Projekt zugrunde gelegte Open-Source-Weiterverteilungsszenario wird dieses Modul unter GNU LGPL v3 eingeordnet. Der entsprechende Lizenztext ist in `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt` enthalten.
+- `Qt6::OpenGLWidgets`: für das von diesem Projekt zugrunde gelegte Open-Source-Weiterverteilungsszenario wird dieses Modul unter GNU LGPL v3 eingeordnet. Der entsprechende Lizenztext ist in `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt` enthalten.
+- `Qt6::Quick`: für das von diesem Projekt zugrunde gelegte Open-Source-Weiterverteilungsszenario wird dieses Modul unter GNU LGPL v3 eingeordnet. Der entsprechende Lizenztext ist in `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt` enthalten.
+- `Qt6::Qml`: für das von diesem Projekt zugrunde gelegte Open-Source-Weiterverteilungsszenario wird dieses Modul unter GNU LGPL v3 eingeordnet. Der entsprechende Lizenztext ist in `source/assets/LICENSES/GNU LESSER GENERAL PUBLIC LICENSE Version 3.txt` enthalten.
+- wenn die unter LGPL v3 stehenden Module als Shared Libraries verteilt werden, müssen die einschlägigen Hinweise und Lizenztexte erhalten bleiben, und der Austausch der Qt-Bibliotheken durch kompatible Versionen muss möglich sein;
+- offizielle LGPL-Referenz:
+- https://www.gnu.org/licenses/lgpl-3.0.html
+
+2. SQLite / QSQLite-Treiber
+Verwendung im Projekt:
+- lokale Persistenz des Monitorings, Abfragen und Export nach `.db` über `QSqlDatabase`, `QSqlQuery` und den Treiber `QSQLITE`.
+
+Lizenzierung:
+- SQLite ist Software der Public Domain;
+- wenn das QSQLite-Plugin bzw. der QSQLite-Treiber als Teil einer Qt-Installation weiterverteilt wird, folgt die Qt-Schicht des Plugins den Bedingungen der verwendeten Qt-Distribution, während der SQLite-Kern Public Domain bleibt.
+
+Offizielle SQLite-Referenz:
+- https://www.sqlite.org/copyright.html
+
+3. Native Windows-APIs
+Verwendung im Projekt:
+- Datei- und Verzeichnisüberwachung;
+- Auslesen von Version und digitaler Signatur ausführbarer Dateien;
+- Shell-Integration und plattformspezifische Ressourcen.
+
+Im Build/Code identifizierte Komponenten:
+- `wintrust`
+- `version`
+- `crypt32`
+- Windows-/Windows-SDK-APIs wie `ReadDirectoryChangesW`, `CreateFileW`, `WinVerifyTrust`, `GetFileVersionInfoW` und `VerQueryValueW`.
+
+Hinweis zur Lizenzierung:
+- diese Komponenten sind Teil des Betriebssystems Windows und/oder des Microsoft SDK;
+- sie werden von diesem Projekt nicht als eigenständige Open-Source-Drittbibliotheken weiterverteilt.
+
+4. Build- und Wartungswerkzeuge
+- für die Kompilierung von Übersetzungen kann `lrelease` aus dem Qt-Ökosystem verwendet werden;
+- dieses Werkzeug gehört zum Build-/Wartungsablauf und ist für sich genommen keine Runtime-Abhängigkeit der finalen Anwendung.
+
+Abschließender Hinweis
+- frühere Hinweise zu PySide6, pandas, NumPy, matplotlib, openpyxl, pyOpenSSL, pywin32 und verwandten Python-Bibliotheken beschreiben die aktuelle C++/Qt6-Implementierung nicht mehr;
+- die in `source/assets/LICENSES` enthaltenen Lizenztexte sind gemeinsam mit den tatsächlich im finalen Anwendungspaket weiterverteilten Komponenten zu interpretieren.

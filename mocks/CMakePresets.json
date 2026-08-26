@@ -1,0 +1,39 @@
+{
+  "version": 5,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 24,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "mock-qt6-mingw-debug",
+      "displayName": "Linceu Mocks Qt6 MinGW Debug",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/output",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/g++.exe",
+        "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/mingw1310_64/bin/mingw32-make.exe",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "LINCEU_MOCK_QT_ROOT": "C:/Qt/6.11.0/mingw_64"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "mock-qt6-mingw-debug",
+      "configurePreset": "mock-qt6-mingw-debug",
+      "targets": [
+        "find_VersionEditor"
+      ]
+    },
+    {
+      "name": "mock-compile-translations-qt6-mingw-debug",
+      "configurePreset": "mock-qt6-mingw-debug",
+      "targets": [
+        "compile_translations"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,855 @@
+RELEASE NOTES: Version 2026.4.27.0
+
+HIGHLIGHTS OF THIS VERSION
+
+This update brings together recent improvements to Linceu Lighthouse, making the “Statistics” window more reliable, especially in dual-monitor setups. It also improves window organization, revises application texts, and keeps charts sharper.
+Additionally, there are improvements in real-time monitoring, providing a more stable and fluid interface, particularly in scenarios with large volumes of files and rapid changes.
+The visualization of statistical flowcharts has also been enhanced, resulting in cleaner, more readable, and more stable diagrams, even with large amounts of data.
+Finally, adjustments were made to the behavior of auxiliary windows in relation to the main screen, making navigation more predictable, organized, and comfortable in daily use.
+It consolidates the build, packaging, and environment preparation infrastructure of Linceu Lighthouse. The project is now better organized for Qt6 builds with MinGW and MSVC, with generation of deployable executables, versioned installers, and more straightforward development tasks in VS Code.
+Focuses on real-time monitoring stability, consistency of renamed and moved events, database write performance, and usability improvements in menus, security, and statistics. It also adds configuration of security pop-ups by threshold, summary size, and cooldown, along with graphical initialization adjustments for different OpenGL environments.
+
+MAIN CHANGES
+
+- The "Statistics:" window opens more predictably on the monitor in use.
+- The main screen returns to the foreground more naturally when activated.
+- The "Statistics:" window better respects the order of other windows when it is no longer the active window.
+- Charts and diagrams have been adjusted to keep lines, curves, circles, and text smoother.
+- Help texts, documentation, warnings, release notes, and the "About" window have been revised.
+- The information displayed to the user is more consistent with the current version of the application.
+- Monitoring of file addition, deletion, renaming, and movement is more accurate, with a lower chance of repeated records in sequence.
+- Pausing, resuming, and stopping analyses is more reliable, with clearer status updates during the process.
+- Main table with faster updates in large lists, maintaining better consistency in sorting, colors, and displayed information.
+- Language switching is more consistent across menus, table, manual, help, and statistics, without interrupting usage.
+- The chart "File Type Flow by Directory" now reuses the same directory when multiple types/extensions point to the same absolute path.
+- This same chart now automatically limits representation to the 10 most recent types/extensions and the 10 most recent directories.
+- The plotting area of Sankey diagrams has been adjusted to better adapt to the volume of legends and allow scrolling when necessary.
+- The About, User Manual, and Help windows now better respect the active window and no longer remain in front when the main screen regains focus.
+- Navigation between the main screen, the color selection window, and the advanced selector is more natural, keeping the window chosen by the user in the foreground.
+- The visual order of open windows is clearer, facilitating work with multiple screens at the same time.
+- Application and installer version updated to 2026.4.22.0.
+- CMake configured for C++17, Qt6, and Qt modules Core, Gui, Widgets, Sql, Xml, Concurrent, OpenGL, OpenGLWidgets, Quick, and Qml.
+- Detection and selection of Qt6 installation on Windows improved, including cleanup of old Qt cache variables before configuring the project.
+- Separate deployment directories for MinGW and MSVC variants.
+- Post-build step with `windeployqt` to copy Qt dependencies, assets, application translations, and Qt translations to the deployable directory.
+- CMake Presets added to configure and build Qt6 MinGW Debug, Qt6 MSVC Debug, and Qt6 MSVC Release.
+- VS Code settings adjusted to use CMake Presets, CMake Tools, and C/C++ IntelliSense compatible with MinGW and MSVC.
+- VS Code tasks added to build, run, and build+run the MinGW and MSVC variants.
+- Additional tasks included to build and run the `VersionEditor` mock.
+- Inno Setup scripts updated to generate MinGW and MSVC installers with versioned output names.
+- Unified Inno Setup script capable of building both variants or only a specific variant provided via `BuildVariant`.
+- Installer configured with application language selection, About/EULA files per language, desktop shortcut option, and post-install execution.
+- Creation of `language_config.json` during installation to record the initially selected language.
+- Removal of local application data during uninstallation.
+- Cleanup script added to remove regenerable build artifacts and generated project outputs.
+- Cleanup was protected to act only on allowed directories `build_qt6_mingw` and `build_qt6_msvc`, with simulation support via `-WhatIf`.
+- Initialization and rendering: bootstrap flow with splash fallback, automatic adjustment of working directory, definition of AppUserModelID on Windows, registration of QML types, and OpenGL mode selection via LINCEU_OPENGL_MODE (auto, desktop, angle, and software).
+- Visual robustness: default OpenGL format with double buffer and minimal antialiasing for greater rendering predictability.
+- Icons and assets: icon resolution with multiple fallback paths for build and deploy scenarios.
+- File monitoring: native reading with ReadDirectoryChangesW using a 16 MB buffer and batch queuing.
+- Event processing: buffer consumption in limited cycles (512 events), with safe reinsertion when there is pause or interruption.
+- Renaming and movement: improved heuristics to match old and new records by directory and base name, with more reliable classification between op_renamed and op_moved.
+- Notification pipeline: delayed and safe initialization of the interface event system to reduce losses during state transitions.
+- Persistence: asynchronous writer with a dedicated thread, batch writing, and orderly shutdown.
+- SQLite adjustments: use of WAL, synchronous NORMAL, temp_store in memory, mmap, wal_autocheckpoint, and busy_timeout to reduce contention.
+- Interface update: sending events to the UI in batches (up to 512 per flush), with fallback to single insertion when necessary.
+- Table and language: fixed per-language localizer with cache for more consistent translation of operations, metadata, and security fields.
+- Security: new flow to configure pop-ups by threshold, maximum number of lines, and cooldown, with persistence in security/security_ui.ini.
+- Menus and navigation: persistent menus with more predictable hover and closing behavior, and menu reconstruction after translation reload.
+- Statistics: persistence of chart selection, database validation in read mode, waiting for the writer before reading, and dialog positioning on the active screen.
+- Main layout: collapse and expand the side control panel with automatic adjustment of splitter and table.
+
+IMPLEMENTED IMPROVEMENTS
+
+- Lower chance of event loss or duplication during activity peaks.
+- Reduced impact of database writing on interface responsiveness.
+- More useful and less noisy security notifications through aggregation and cooldown.
+- More stable menu and panel navigation during continuous use.
+- More consistent language switching in the table and menus.
+
+FIXED ISSUES
+
+- Fixed an issue where the "Statistics:" window could turn white, freeze, or close the application when opened on a second monitor.
+- Fixed behaviors where auxiliary windows could appear in an unexpected visual order.
+- Fixed outdated references in documents, warnings, and informational screens.
+- Fixed inconsistencies in texts displayed in the "About" window and in application notes.
+- Fixed a scenario where recent events could take time to appear in the table.
+- Fixed visual inconsistencies in auxiliary windows during simultaneous actions.
+- Fixed occasional freezes when finishing extensive scans.
+- Fixed an issue where the chart "File Type Flow by Directory" could become excessively large and difficult to interpret.
+- Fixed an issue where last-level labels in the "Directory Tree" chart could be cut off at the right edge.
+- Fixed an issue where auxiliary windows could remain in front of the main screen even after focus change.
+- Fixed an issue where color selection windows were not closed along with the main application.
+- Fixed a behavior where more than one window could return to the foreground simultaneously during color selection.
+- Fixed scenarios where renames and movements could be incorrectly classified.
+- Fixed scenarios with delayed visual updates of the table under high load.
+- Fixed icon inconsistencies in contexts with different execution directories.
+- Fixed rendering instabilities in heterogeneous OpenGL environments through explicit mode selection.
+- Fixed security notifications without configurable limits for frequency and summary.
+
+NOTES
+
+- This version focuses on the reliability of the build, deploy, and packaging flow on Windows.
+- The adjustments make it easier to switch between MinGW and MSVC without mixing generated artifacts.
+- The build cleanup was designed to remove only regenerable items and preserve source files.
+- This version prioritizes operational stability, interface predictability, and the quality of monitored data.
+- The codebase maintains compatibility with current Qt6 (MinGW and MSVC) build and deploy workflows.
+
+
+_________________________________________________
+
+
+Release type: complete structural refactoring of the Python/PySide6 codebase to C++14/Qt6
+Functional source project: Linceu Lighthouse (original implementation in Python)
+
+PURPOSE OF THIS RELEASE
+
+This release consolidates the migration of Linceu Lighthouse to a native C++/Qt6 codebase, preserving the functional organization of the original Python project and reimplementing the application as a compiled desktop binary, with no dependency on a Python interpreter, virtual environment, or runtime distributed through Python packages.
+
+The focus of this delivery was not just to "port" screens and flows. The work involved:
+- rewriting the application bootstrap layer;
+- recompiling the interface on top of Qt Widgets, native graphics engine (`source::charts_lgpl`) with Qt OpenGL/Qt Quick/QML and Qt SQL;
+- migrating the monitoring and persistence pipeline;
+- reimplementing metadata extraction in native code;
+- rewriting the export, internationalization, filter, statistics, and persisted settings flows;
+- stabilizing threads, queues, caches, and integration with native Windows APIs.
+
+CONSOLIDATED TECHNICAL SCOPE
+
+Reference Python codebase:
+- 407 `.py` modules in the `source/` tree.
+- 234 non-empty entries in `requirements.txt`.
+
+C++ codebase in this release:
+- 380 `.cpp` files and 380 `.h` files in the `source/` tree.
+- layer distribution:
+  - `source/services`: 162 `.cpp` + 162 `.h`
+  - `source/ui`: 126 `.cpp` + 126 `.h`
+  - `source/gui`: 42 `.cpp` + 42 `.h`
+  - `source/tools`: 23 `.cpp` + 23 `.h`
+  - `source/data`: 19 `.cpp` + 19 `.h`
+  - `source/utils`: 5 `.cpp` + 5 `.h`
+  - `source/locale`: 1 `.cpp` + 1 `.h`
+
+Correspondence between the two codebases:
+- 379 module names match between Python and C++ when normalized by case and underscores.
+- The identified residual divergence is intentional:
+  - new adaptation module `gtab_43_AtualizarCabecalhosBridge`;
+  - legacy Python module `gtab_43_atualizar_cabecalhos`;
+  - `__init__.py` files, which do not exist in the C++ architecture.
+
+In practical terms, the refactoring preserved almost the entire functional decomposition of the original implementation, replacing the runtime and execution technology without dismantling the logical architecture of the system.
+
+MAJOR ARCHITECTURAL CHANGES
+
+1. Platform migration and build chain
+- The application stopped depending on Python/PySide6 and is now compiled as a C++14 executable.
+- The build was consolidated in `CMakeLists.txt`, with automatic resolution of Qt6 installations on Windows and explicit linking of the modules:
+  - `Qt::Core`
+  - `Qt::Gui`
+  - `Qt::Widgets`
+  - `Qt::Sql`
+  - `Qt::Xml`
+  - `Qt::Concurrent`
+  - `Qt::OpenGL`
+  - `Qt::OpenGLWidgets`
+  - `Qt::Quick`
+  - `Qt::Qml`
+- Native Windows integration now includes system libraries for digital signatures and executable metadata:
+  - `wintrust`
+  - `version`
+  - `crypt32`
+
+2. Native application bootstrap
+- `main.cpp` became a minimal entry point, delegating initialization to `source::iniciar_aplicacao`.
+- `src_01_InicializadorMain.cpp` introduced a robust bootstrap with:
+  - automatic adjustment of the working directory (`QDir::setCurrent`);
+  - definition of `AppUserModelID` on Windows;
+  - optional initialization via `SplashAppStarter`;
+  - safe fallback to direct initialization of `QApplication`;
+  - icon loading with diagnostics and fallback;
+  - eager initialization of `DatabaseWriter` when the database path is already available.
+
+3. Preservation of the original project segmentation
+- The refactoring maintained the domain-based separation:
+  - `gui` for the main interface and structural widgets;
+  - `services` for monitoring, database, metadata, and table;
+  - `ui` for menus, buttons, events, dialogs, and internationalization;
+  - `tools` for filters;
+  - `data` for statistics and charts;
+  - `utils` for paths, logs, icons, and licensing.
+- This reduces the cognitive cost of maintenance and makes it easier to track the structural correspondence between the Python codebase and the C++ codebase.
+
+FILE MONITORING AND EVENT PIPELINE
+
+4. Native file system monitoring
+- The watcher was reimplemented in C++ using native Windows APIs, with emphasis on:
+  - `CreateFileW`
+  - `ReadDirectoryChangesW`
+  - notification flags for name, directory, attributes, size, last write, security, and creation.
+- The pipeline monitors:
+  - addition;
+  - deletion;
+  - modification;
+  - renaming;
+  - moving.
+
+5. Separation between initial scan and continuous monitoring
+- The monitoring startup flow was split between:
+  - `ScanWorker` in `QThread` for the initial scan;
+  - dedicated monitoring thread in `std::thread`;
+  - dedicated event buffer processing thread.
+- This separation reduces interference between the initial baseline, real-time capture, and interface updates.
+
+6. Specialized handling of complex events
+- The `GerenciamentoEventoMovido` layer introduces specific reconciliation for moves, including:
+  - move verification;
+  - removal of transient deletions;
+  - processing of pending deletions;
+  - controlled reinjection into the table.
+- The `GerenciamentoEventoModificado` layer applies heuristics and selective cache cleanup to avoid rework when large files or expensive-to-process formats are changed.
+
+PERSISTENCE, SQLITE, AND ASYNCHRONOUS WRITING
+
+7. Local database consolidated in `monitoramento.db`
+- The operational state of monitoring was centralized in the persistent SQLite database located in the application's configuration path.
+- The `BaseEvento` layer started operating with `QSqlDatabase` and `QSqlQuery`, with dedicated connections and unique connection names to reduce internal conflicts in Qt SQL.
+
+8. Asynchronous writing with `DatabaseWriter`
+- An asynchronous singleton writer was consolidated in `gbank_20_db_writer`.
+- The writer uses:
+  - internal event queue;
+  - its own `std::thread`;
+  - batch persistence;
+  - timeout-controlled waiting;
+  - orderly shutdown when the application closes.
+- This design reduces contention among event capture, persistence, and interface rendering.
+
+9. SQLite optimizations in the native runtime
+- The codebase now applies `PRAGMA journal_mode=WAL`.
+- The codebase now applies `PRAGMA synchronous=NORMAL`.
+- In specific reconciliation and bulk-operation flows, there are additional synchronization adjustments to minimize the cost of writing and reading.
+
+10. Fix for contention and consistency
+- The refactoring addressed an entire class of problems common in Python+SQLite applications under load:
+  - synchronous writes on the UI thread;
+  - blocking caused by excessive round-trips;
+  - instability under high loads;
+  - competition between reading for the table and writing new events.
+- The asynchronous writer, combined with isolated connections and busy timeout in read flows, improves operational predictability.
+
+TABLE, MODEL/VIEW, AND INTERFACE SCALABILITY
+
+11. Progressive migration to `QTableView` + `QAbstractTableModel`
+- The project introduced `EventTableModel` (`gtab_47_EventTableModel`) as a native data layer for streaming events.
+- The model implements:
+  - `rowCount`;
+  - `columnCount`;
+  - `headerData`;
+  - `data`;
+  - incremental insertion (`prepend_event`);
+  - batch append;
+  - full replace;
+  - label and brush caches.
+
+12. Transitional compatibility with `QTableWidget`
+- The migration was not destructive. Various flows still handle both `QTableWidget` and `QTableView`.
+- This was maintained to:
+  - reduce regressions during porting;
+  - preserve the legacy flow of some components;
+  - allow gradual transition of handlers, export, and visual updates.
+- In practice, the release unifies the new native model with compatibility bridges for still-legacy paths.
+
+13. Coloring, theme, and visual rendering
+- The table coloring pipeline was restructured with:
+  - invalidation of the color cache;
+  - per-column updates;
+  - background application when necessary;
+  - specific delegates to preserve the visual state;
+  - selection color adjustment;
+  - monitoring and application of the Windows theme.
+
+14. Retranslation and header updates
+- The refactoring includes a specific bridge for updating headers (`gtab_43_AtualizarCabecalhosBridge`) and propagating texts again after a language change.
+- This addresses the need to keep the table consistent during language switching, without losing column mapping and without destroying the saved visual state.
+
+METADATA EXTRACTION REWRITTEN IN C++
+
+15. Modular metadata pipeline
+- The `GerenciamentoMetadados` layer was ported into 47 specialized modules.
+- The extraction covers, among other families:
+  - source code;
+  - images;
+  - audio;
+  - video;
+  - documents;
+  - spreadsheets;
+  - presentations;
+  - databases;
+  - executables;
+  - temporary files;
+  - archives;
+  - backups;
+  - logs;
+  - configuration files;
+  - OLE formats;
+  - structured data.
+
+16. Replacement of Python libraries with native analysis
+- The Python codebase depended on a broad set of libraries for documents, spreadsheets, PDFs, multimedia, and packaged formats.
+- The C++ codebase replaces this dependency with native analysis via Qt, STL, and Windows APIs, reducing the dependency surface in external runtime.
+- The direct impact is the elimination of dynamic import overhead and the need to distribute dozens of Python libraries for each file category.
+
+17. Executable metadata with native Windows API
+- Executable extraction now uses:
+  - `WinVerifyTrust` for signature verification;
+  - `GetFileVersionInfoW`;
+  - `VerQueryValueW`.
+- This improves the fidelity of data such as version, description, company, product, and digital signature status.
+
+18. Database and structured format metadata
+- SQLite files and similar ones are identified by both extension and header.
+- When applicable, the system opens the file via `QSQLITE` to enumerate tables and extract structured information.
+- This replaces previous approaches that depended on Python libraries and reduces divergences between type classification and content reading.
+
+STATISTICS, CHARTS, AND VISUAL ANALYSIS
+
+19. Native chart generators
+- The `data/GeradorEstatisticas` layer was ported with 17 specialized generators derived from a common base.
+- The set covers, among others:
+  - pie;
+  - bar;
+  - timeline;
+  - treemap;
+  - histogram;
+  - Pareto;
+  - line;
+  - boxplot;
+  - heatmap;
+  - scatter;
+  - Sankey;
+  - radar;
+  - directory tree.
+
+20. Rendering with a native graphics engine (LGPL), OpenGL, and raster fallback
+- The C++ codebase renders charts with `source::charts_lgpl`, using `WidgetChartView` (`QOpenGLWidget` + shaders), `QuickChartItem` (`QQuickItem` + `QSGNode`) and `RasterChartView` (`QPainter`) as fallback.
+- The flows for generating and regenerating charts were separated, making it possible to:
+  - open the statistics panel;
+  - update titles after a language change;
+  - regenerate existing charts without restarting the entire application;
+  - save selected charts or save them in batches.
+
+21. Background processing for statistics
+- The project includes `GraficoWorker` in `QThread` for heavy steps in the statistics panel.
+- This design reduces UI freezing when generating multiple charts over large datasets.
+
+EXPORT AND INTEROPERABILITY
+
+22. Native export without pandas/openpyxl
+- Export was reimplemented in C++ for:
+  - `.xlsx`
+  - `.csv`
+  - `.txt`
+  - `.json`
+  - `.xml`
+  - `.db`
+- The `.xlsx` format is now emitted by manually assembling the OpenXML structure:
+  - `[Content_Types].xml`
+  - `workbook.xml`
+  - `sheet1.xml`
+  - internal package relationships
+- This eliminates the dependency on Python libraries such as pandas/openpyxl for tabular export.
+
+23. Export respecting the interface state
+- The export flow handles:
+  - widget-based table;
+  - model/view-based table;
+  - selected columns;
+  - selected rows;
+  - visible columns.
+- This behavior preserves functional adherence to the original flow, with less coupling to the concrete table type.
+
+INTERNATIONALIZATION AND ASSETS
+
+24. Native Qt internationalization maintained and strengthened
+- The system still has 6 languages:
+  - `pt_BR`
+  - `en_US`
+  - `es_ES`
+  - `fr_FR`
+  - `it_IT`
+  - `de_DE`
+- Loading of `.qm` files was redone in C++ with `QTranslator`.
+- Language preference is persisted in `language_config.json`.
+
+25. Native tool for compiling translations
+- `source/locale/compile_translations.cpp` searches for `lrelease` in:
+  - the `LRELEASE` variable;
+  - the `QT_LRELEASE` variable;
+  - executables in the `PATH`;
+  - default Qt installation paths on Windows.
+- The process validates the generation of `.qm` files and reports an error when the fallback is not safe.
+
+26. Centralized loading of legal texts and documentation
+- The application now loads the following text blocks per language from `source/assets`:
+  - About;
+  - History App;
+  - EULA;
+  - CLC;
+  - Privacy Policy;
+  - Notices;
+  - Release Notes.
+- This unifies distribution, localization, and display in the "About" dialog.
+
+INTERFACE, USER EXPERIENCE, AND COMPLEMENTARY TOOLS
+
+27. Splash screen and startup feedback
+- The bootstrap includes support for a splash screen with a progress bar and startup sequencing.
+- The application also records bootstrap diagnostics, helping identify failures involving resources, icons, translations, or the database.
+
+28. Native performance panel
+- The performance panel was rewritten on top of the native engine `source::data::Charts`, using `Qt::OpenGL`, `Qt::OpenGLWidgets`, `Qt::Quick` and `Qt::Qml`.
+- The panel monitors CPU, memory, and disk in real time.
+- The system supports detaching charts and rebuilding the mapping of tabs and series after context changes.
+
+29. Integrated directory structure
+- The directory tree widget was ported to C++ with a context menu and local operations:
+  - copy;
+  - cut;
+  - paste;
+  - delete;
+  - rename;
+  - create folder;
+  - create file;
+  - open item.
+
+30. Persisted settings for the user experience
+- The release centralizes user preferences in JSON files persisted in the application's path, including:
+  - `language_config.json`
+  - `colunas_config.json`
+  - `colunas_coloridas.json`
+  - `cores_config.json`
+- This keeps state between runs without depending on Python serialization.
+
+PERFORMANCE AND CONCURRENCY IMPROVEMENTS
+
+31. Combined use of `QThread`, `QtConcurrent`, `QThreadPool`, and `std::thread`
+- The C++ codebase does not depend on a single concurrency mechanism.
+- Each subsystem now uses the appropriate tool:
+  - `QThread` for workers integrated with the Qt event cycle;
+  - `QtConcurrent::run` for parallel processing of discrete tasks;
+  - `QThreadPool` for scenarios such as moves;
+  - `std::thread` for the writer and low-level monitoring.
+
+32. Reduced import and initialization cost
+- Removing the Python stack eliminates:
+  - interpreter initialization;
+  - package resolution in a virtual environment;
+  - import of 234 runtime dependencies.
+- The exact gain depends on the environment and the set of monitored files, but the current architecture substantially reduces bootstrap complexity.
+
+FIXES AND STABILIZATIONS INCORPORATED INTO THE REFACTORING
+
+33. More deterministic initialization
+- Fix for the risk of initialization in an incorrect working directory.
+- Fix for icon loading with fallback and diagnostics.
+- Fix for the moment when the database writer is initialized, to avoid delayed cost during event spikes.
+
+34. Safer shutdown
+- Fix for the risk of shutdown with workers still active.
+- Inclusion of an explicit stop for `DatabaseWriter`.
+- Inclusion of shutdown for executors, workers, and auxiliary threads at the application's shutdown points.
+
+35. Language change with fewer regressions
+- Inclusion of a guard against reentry in `set_idioma`.
+- Update of menus, dialogs, detail buttons, the statistics panel, and headers after a language change.
+- Persistence and reloading of the preference without depending on Python infrastructure.
+
+36. Fix for deletion and move flows
+- Temporary deletions and pending deletions now have dedicated cleanup and reconciliation.
+- This adjustment reduces false positives in scenarios where moving and deleting overlap in time.
+
+37. Fix for synchronization between table and database
+- Interface reads use separate connections and, when necessary, `QSQLITE_BUSY_TIMEOUT`.
+- This reduces read failures under concurrent writing and improves the consistency of events shown to the user.
+
+38. Fix for cache invalidation
+- Invalidation points were isolated for:
+  - metadata cache;
+  - color cache;
+  - operation translation cache;
+  - related directory cache.
+- This reduces the display of stale data after a change in language, color, metadata, or file.
+
+39. Fix for visual integration during the migration period
+- The simultaneous existence of `QTableWidget` and `QTableView` paths is intentional and works as a compatibility layer.
+- This avoids broad regression while the system completes the definitive transition to model/view.
+
+OPERATIONAL IMPACT FOR THE USER AND FOR MAINTENANCE
+
+40. What improves for the end user
+- simpler executable distribution;
+- less dependence on a Python environment;
+- more predictable startup;
+- more robust local persistence;
+- charts and monitoring running on a native stack;
+- data export without external spreadsheet libraries.
+
+41. What improves for technical maintenance
+- structural mirroring of the Python codebase, making parity audits easier;
+- strong modularity by responsibility;
+- reproducible build via CMake;
+- smaller third-party dependency surface in runtime;
+- better control over threads, assets, and persisted settings.
+
+RESTRICTIONS AND IMPORTANT OBSERVATIONS
+
+42. Platform restriction
+- This C++ codebase remains Windows-oriented at critical points of the product, especially:
+  - file monitoring;
+  - digital signatures of executables;
+  - visual integration and metadata for PE files.
+
+43. Scope of this note
+- This note documents the current technical milestone of the C++ refactoring based on the Python codebase.
+- The text was consolidated from the actual code tree and the current project structure, not merely from a single commit or a short incremental changelog.
+
+FINAL SUMMARY
+
+This release transforms Linceu Lighthouse from a Python/PySide6 application heavily dependent on external runtime into a native C++/Qt6 desktop application, preserving virtually all of the original functional decomposition and adding an important layer of robustness in:
+- build;
+- bootstrap;
+- monitoring;
+- persistence;
+- export;
+- internationalization;
+- metadata;
+- statistics;
+- shutdown;
+- interface compatibility during the transition.
+
+In technical terms, the result is an almost complete rewrite of the execution platform, with preservation of functional parity and strengthening of the product's historically most sensitive points: concurrency, database, retranslation, event table, reconciliation of file operations, and persistence of settings.
+
+
+_________________________________________________
+
+
+RELEASE NOTES before the refactoring: Python/PySide6 - C++/Qt6
+
+
+_________________________________________________
+
+
+RELEASE NOTES: Version 0.1.3.0:
+
+In this new release the following improvements and features were implemented:
+
+Improvements
+- Interface: updates to texts and translations for multiple languages, with adjustments to the manual title and consistency in displayed messages.
+- Integrated manual: navigable index, formatting fixes and better synchronization between the index and the displayed content.
+- Help and shortcuts: overhaul of the help panel with a shortcuts list, improved presentation and support for real-time language switching.
+- Startup: introduction of a loading screen with progress bar and a summarized log to follow the startup process.
+- Application icon: improved icon loading with robust fallback and diagnostic messages when invalid or missing.
+- Startup experience: reduced impact during heavy imports, with visual feedback about loaded modules.
+- Manual view: adjustable split panel (index + reader), better scaling and improved link/anchor behavior.
+- Shutdown robustness: safer termination of background tasks and workers to avoid dangling resources after closing the application.
+- Batch processing: greater resilience when extracting metadata in bulk, improved error handling and more reliable progress indicators.
+- Table interface: improvements to enabling model/view mode for streaming event display and reduced likelihood of visual inconsistency.
+
+Bug fixes
+- Fixed an issue that could cause failure or crash during startup in certain translation scenarios.
+- Fixed behavior where dialogs (manual, help, about) did not correctly update text when changing language.
+- Fixed thread leaks/continuations that could remain running after application shutdown.
+- Fixed failures in shortcut configuration that prevented quick actions on some platforms.
+- Fixed an issue loading the table model in certain scenarios, preventing loss of streaming events.
+- Fixed edge cases in icon loading that resulted in null icons or missing window icon.
+- Fixed inconsistency in applying column colors and in the reset-colors option, ensuring the expected state is restored.
+- Fixed cases where the splash progress did not correctly reflect the sequence of module imports.
+- Fixed situations where database writing/usage was not deterministically initialized when opening the application.
+
+Notes
+- Logs and diagnostic messages have been reinforced to ease investigation of issues in production.
+- It is recommended to upgrade to this version in production environments to benefit from stability fixes and startup improvements.
+
+
+_________________________________________________
+
+
+RELEASE NOTES: Version 0.1.2.0:
+
+This release introduces architecture optimizations and performance improvements focused on event streaming, asynchronous writing and UI scalability.
+
+Main improvements
+- Safe asynchronous writing:
+  - Introduced DatabaseWriter (singleton service) with internal queue, batching and dedicated thread.
+  - Enabled PRAGMA journal_mode=WAL and synchronous=NORMAL to reduce read/write contention.
+  - Batch writes to reduce per-item commits and improve I/O throughput.
+
+- Eager writer initialization:
+  - DatabaseWriter is started at application startup (iniciar_aplicacao), avoiding creation costs during event spikes.
+
+- Streaming and immediate GUI update:
+  - Events are now queued and the GUI is updated immediately using QMetaObject.invokeMethod for thread-safe calls to the main thread.
+  - "Deleted" events now follow the same streaming flow (no mandatory DB round-trips), eliminating unnecessary reads and reducing latency.
+
+- Migration to Model/View:
+  - Replaced QTableWidget with QTableView + QAbstractTableModel (EventTableModel) for scalability to millions of events.
+  - Model insertions (prepend/append) are efficient and the view is virtualized, allowing smooth scrolling and real-time observation without freezes.
+
+- Robustness and compatibility:
+  - Fallback mechanisms retained: direct DB write if writer fails; GUI update fallback compatible with the old API.
+  - Ordered shutdown of DatabaseWriter on application exit.
+
+Performance impact
+- Reduced SQLite contention under heavy load.
+- More responsive UI when presenting events (streaming effect with reduced latency).
+- Significant improvements for "Added", "Modified" and "Scanned" events.
+- Specific optimization for "Deleted" events: they now follow the streaming path, reducing prior penalties caused by extra reads/queries.
+
+Fixes and adjustments
+- Avoids heavy metadata extraction when file is absent (reduces processing cost for deletions).
+- Additional logs for diagnosing DatabaseWriter queueing and fallback.
+- Thread-safety and Qt call adjustments (invokeMethod with Qt.ConnectionType.QueuedConnection).
+
+Recommendations for operator/user
+- Tune DatabaseWriter.batch_size and batch_timeout to your load profile (e.g., batch_size=200, batch_timeout=0.2).
+- Prefer setting application language before starting high-load monitoring (see earlier notes).
+- Use SSD / fast I/O to best exploit batching.
+- For extreme visual latency needs, consider visual micro-batching (QTimer ~16 ms) — available as a future option.
+
+Final notes
+- Changes prioritize throughput and responsiveness without sacrificing data consistency.
+- If regressions or latency spikes are observed, submit DEBUG-level logs for analysis (Preferences → Logs).
+
+
+_________________________________________________
+
+
+RELEASE NOTES: Version 0.1.1.0:
+
+In this new version, the following improvements and features have been implemented:
+
+Main improvements
+- Improvements to the source code structure: several internal optimizations were made to improve the efficiency and maintainability of the code.
+- Dependency updates: libraries and frameworks used have been updated to their latest versions, ensuring better compatibility and security.
+
+
+_________________________________________________
+
+
+RELEASE NOTES: Version 0.1.0.0:
+
+In this release we implemented the following improvements and features:
+
+Main improvements
+- More reliable: internal improvements reduce crashes and make folder monitoring more stable.
+- Better file identification: the system now detects and displays more file properties (e.g., author, number of pages, lines, words, image/video dimensions, video duration, uncompressed size of compressed files).
+- Wider support: improved information extraction for many common formats — PDF, Word (doc/docx), Excel (xls/xlsx), PowerPoint, compressed files (zip/rar/7z), emails (.msg) and videos/images.
+- Faster and more responsive: background processing optimized so the interface does not freeze while file information is being collected.
+- Better handling of locked files: the app attempts to read files that are in use more safely and, when not possible, continues to operate normally without interrupting other operations.
+- Localization/language: interface texts and metadata are better translated, improving the experience for users in other languages.
+
+Bug fixes
+- Fewer failures when opening folders or corrupted files: the app now safely ignores invalid files or files with incomplete metadata, preventing errors that could close the program.
+- Improved display of compressed file contents: shows file count, estimated uncompressed size and a preview of the first files inside the archive.
+- More accurate document metadata: estimates for pages, lines and words have been improved for documents (including PDFs and DOCX).
+- Executable signing: the app now checks whether an executable file is signed and displays this information when available.
+- Column settings preserved: column view preferences (which columns to show/hide) are loaded and saved more reliably.
+- More media information: video/image dimensions and duration now appear with better consistency.
+
+User notes
+- No additional action required; the update improves stability and the quality of displayed information.
+- If the app cannot read a file (for example due to system permissions), it will continue working and show the information it can collect.
+- If you have questions or problems after the update, enable logs in settings and share them with support for investigation.
+
+
+_________________________________________________
+
+
+RELEASE NOTES: Version 0.0.9.0:
+
+In this new version, the following improvements and features have been implemented:
+
+New Statistical Charts:
+- Two new types of Sankey charts have been added:
+    - Sankey Event → Path: Allows you to visualize the flow of monitored events to file and folder paths.
+    - Sankey Type → Path: Enables analysis of the flow of file types (extensions) to monitored paths.
+    - It is now possible to view the directory structure through a new interactive chart, making it easier to analyze the paths of monitored files and folders.
+    - More comprehensive statistical charts have been included, with options for different types of data visualization.
+- The charts use the Plotly library for interactive visualization and high-resolution export.
+
+Internationalization Improvements:
+- Chart titles and texts are now automatically translated according to the language selected in the interface.
+- The list of available charts has been updated, allowing quick selection and viewing of the main types of analysis.
+- The statistics panel has been adjusted to automatically calculate the ideal width, ensuring better adaptation of texts and buttons in the interface.
+- Adjustments in the translation of headers and file/folder types in the directory tree.
+
+Directory Interface Improvements:
+- The directory structure widget has been enhanced to allow operations such as copy, cut, paste, rename, create, and delete files/folders directly from the context menu.
+- Dynamic translation of buttons and menus in the directory panel has been implemented.
+
+General Fixes:
+- Adjustments in the logic for switching between performance and directory structure views, ensuring that only one panel is active at a time.
+- Fixes for minor bugs related to updating translated texts and chart rendering.
+- Minor issues in chart generation have been corrected, making the process more stable and reliable.
+- Improvements in the translation of chart texts and titles, following the user's chosen language.
+
+These improvements provide a more complete and intuitive experience for the user, expanding the possibilities for statistical analysis and file and folder management.
+
+
+_________________________________________________
+
+
+RELEASE NOTES: Version 0.0.8.0:
+
+In this new release, the following improvements and features have been implemented:
+
+- A feature was added to the settings menu to monitor system performance in real time.
+    - Via interactive charts, the user can monitor CPU, RAM and disk usage, enabling a detailed analysis of the monitoring's impact on overall system performance.
+    - The performance panel is updated in real time, providing valuable insights for optimization and adjustments as needed.
+    - The performance panel can be detached into a separate window, allowing the user to customize their workspace and focus on the most relevant metrics during monitoring.
+
+
+_________________________________________________
+
+
+RELEASE NOTES: Version 0.0.7.0:
+
+In this new version, the following improvements and features have been implemented:
+
+- Translation system correction:
+    - When applying a new language, the system now automatically applies translation to all widgets in the charts and diagrams panel for statistical analysis of monitored data.
+        - Improvements in language change detection, ensuring a smoother transition without interruptions.
+        - During the application of the new language, the system redraws the plot while simultaneously updating the displayed data, ensuring all information is correct and up-to-date.
+
+
+_________________________________________________
+
+
+RELEASE NOTES: Version 0.0.6.0:
+
+In this new release, the following improvements and features have been implemented:
+
+- Implementation of a new diagram; it is now possible to analyze the monitored data using a flow chart - "Sankey".
+    - The bar chart allows a clear and intuitive visualization of the data distribution, facilitating the identification of patterns and trends.
+    - The chart interface is interactive, allowing the user to explore the data in a dynamic and personalized way.
+
+
+_________________________________________________
+
+
+RELEASE NOTES: Version 0.0.5.0:
+
+In this new version, the following improvements and features have been implemented:
+
+User Experience Enhancement:
+- It is now possible to pause any stage of monitoring.
+    - During the pause, the system temporarily stops data collection, allowing the user to make adjustments or changes without new data being processed.
+    - The pause functionality can be activated or deactivated at any time, providing greater control over monitoring.
+
+
+_________________________________________________
+
+
+RELEASE NOTES: Version 0.0.4.0
+
+In this new version, the following improvements and features have been implemented:
+
+Bug Fixes:
+- An error related to the start/stop analysis command has been fixed:
+    - The issue occurred when the process was stopped during scanning, the initial stage of monitoring. Now, the system correctly handles this situation, preventing unexpected failures.
+
+- Fixed an issue when opening the "Advanced Color Selector" in the settings menu. Clicking the corresponding button did not open the dialog window with the advanced color settings, which was an error.
+
+
+_________________________________________________
+
+
+RELEASE NOTES: Version 0.0.3.0:
+
+In this new release, the following improvements and features have been implemented:
+
+Improved Robustness and Stability:
+- Existence checks were added before accessing object methods and properties, making the system more robust and preventing unexpected errors during initialization.
+- The method _invalidar_cache_cores_ is now called only if it actually exists, preventing exceptions from invalid calls.
+- The attribute _cor_selecao_future_, which was undefined, was removed, eliminating unnecessary error messages and providing a smoother experience.
+
+Optimization of Processes and Interface:
+- The control of calls for retranslation of data was optimized: when changing the language, the system performs only the essential operations, avoiding unnecessary processing and increasing agility in language switching.
+- The methods for updating headers, data and column visibility were refactored with exception handling and clarity improvements, reflecting changes in the interface more accurately and quickly.
+- Column index management was adjusted to ensure consistency and avoid errors, allowing manipulation of columns without sorting or display issues.
+- Integration between data update, headers and visibility was improved, ensuring that all changes are correctly reflected in the interface.
+
+General Fixes and Improvements:
+- Several adjustments were made in processing methods, resulting in greater stability and performance, with fewer interruptions for the user.
+
+Summary:
+
+What's New in Version 0.0.3.0:
+
+- Robustness and Stability:
+    - Existence checks for attributes and methods to avoid unexpected errors.
+    - Removal of undefined attributes and invalid calls.
+
+- Interface and Process Optimization:
+    - Efficient control of retranslation when switching languages.
+    - Refactoring of interface update methods.
+    - Adjustment and integration in column management.
+
+- General Improvements:
+    - Minor fixes and enhancements in processing methods, increasing the system's stability and performance.
+
+
+_________________________________________________
+
+
+RELEASE NOTES: Version 0.0.2.0:
+
+In this new version, the following improvements and features have been implemented:
+
+Complete refactoring of the internationalization system:
+- The language and translation system has been entirely rewritten, now using the native resources of the PySide6 framework and the Qt library. This change has resulted in a significant increase in responsiveness and performance.
+- In preliminary tests, a substantial performance gain was observed when translating tables with up to 2,000 events. Above this volume, the interface repaint process impacts performance, which may cause temporary GUI freezes until the workload is completed.
+- Important recommendation: To avoid data loss or unexpected application closure, the language should be set BEFORE starting monitoring, especially in high data volume scenarios. Language switching should only be performed with monitoring paused. NEVER change the language during an active monitoring session.
+
+Warning window for language switching:
+- A bilingual dialog window has been implemented to notify the user whenever there is a switch between the supported languages.
+
+Expansion and granularity of data columns:
+- The columns "Size", "Uncompressed", and "Binary" have been split. Each has given rise to 5 new columns (totaling 15), allowing for more granular and precise filtering and analysis of file and directory sizes.
+
+Redesign of the statistical analysis module:
+- The statistical data analysis has been restructured to become compatible with the new metadata columns. This has resulted in higher quality analyses, with better-defined scales and more robust data handling.
+
+Improvement in file monitoring:
+- Monitoring accuracy has been enhanced, with greater detail in identifying file types based on their extensions.
+
+Menu interface redesign:
+- The menu system design has been improved to organize and display all monitored metadata more clearly and intuitively.
+
+Non-modal secondary windows:
+- Secondary interfaces (interactive dialogs) no longer block interaction with the application's main window, allowing for a smoother workflow.
+
+Internationalization of the date filter:
+- The period filtering system has been improved. The calendar component for date selection is now compatible with the translation system, displaying month and day names in the selected language.
+
+
+Summary:
+
+What's New in Version 0.0.2.0:
+
+- Native Translation System (Qt/PySide6): The language system has been completely rewritten to use Qt's native resources, resulting in greater performance and responsiveness.
+    - Warning: It is recommended to set the language before starting monitoring to avoid freezes or data loss in high-volume scenarios.
+
+- Interface Improvements (UI/UX):
+    - Added a confirmation dialog when switching languages.
+    - Secondary windows no longer block the main interface.
+    - Redesigned menus for better metadata organization.
+    - The date filter calendar is now translated to the selected language.
+
+- More Powerful Data Analysis:
+    - The file size columns ("Size", "Uncompressed", "Binary") have been expanded to 15 new columns, allowing for much more precise filters.
+    - The statistical analysis module has been updated to support the new columns, generating more detailed and accurate reports.
+
+- Enhanced Monitoring:
+    - Improved detection of file types by extension.

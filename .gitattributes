@@ -1,0 +1,41 @@
+# Default: normalize repository text files with LF.
+* text=auto eol=lf
+
+# Project source and configuration.
+*.cpp  text eol=lf
+*.h    text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+*.txt  text eol=lf
+*.ts   text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.gitignore      text eol=lf
+*.gitattributes  text eol=lf
+
+# Extensionless text files present in the repository.
+LICENSE text eol=lf
+
+# Windows-oriented scripts and resource definitions.
+*.ps1 text eol=crlf
+*.rc  text eol=crlf
+*.iss text eol=crlf
+
+# Qt compiled translations and binary assets.
+*.qm  binary
+*.png binary
+*.ico binary
+*.pdf binary
+
+# Common binary build/package outputs for this C++/Qt project.
+*.a    binary
+*.dll  binary
+*.dylib binary
+*.exe  binary
+*.lib  binary
+*.obj  binary
+*.o    binary
+*.pdb  binary
+*.so   binary
+*.zip  binary
+*.7z   binary

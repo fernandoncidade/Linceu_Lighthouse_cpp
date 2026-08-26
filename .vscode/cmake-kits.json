@@ -1,0 +1,663 @@
+[
+  {
+    "name": "Qt-6.11.0-win32-g++",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.0\\mingw_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake",
+    "environmentVariables": {
+      "VSCODE_QT_QTPATHS_EXE": "C:/Qt/6.11.0/mingw_64/bin/qtpaths.exe",
+      "PATH": "C:/Qt/6.11.0/mingw_64;C:/Qt/Docs/Qt-6.11.0;C:/Qt/6.11.0/mingw_64/include;C:/Qt/6.11.0/mingw_64/lib;C:/Qt/6.11.0/mingw_64/bin;C:/Qt/6.11.0/mingw_64/tests;C:/Qt/6.11.0/mingw_64/plugins;C:/Qt/6.11.0/mingw_64/qml;C:/Qt/6.11.0/mingw_64/translations;C:/Qt/Examples/Qt-6.11.0;${env:PATH}"
+    }
+  },
+  {
+    "name": "Qt-6.11.0-win32-msvc_Clang_19.1.5_(MSVC_CLI)_amd64_for_MSVC_17.14.37012.4_(Ferramentas_de_Build_do_VS2022_Release)",
+    "visualStudio": "8efba452",
+    "visualStudioArchitecture": "x64",
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "compilers": {
+      "C": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe",
+      "CXX": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe"
+    },
+    "isTrusted": true,
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_QTPATHS_EXE": "C:/Qt/6.11.0/msvc2022_64/bin/qtpaths.exe",
+      "PATH": "C:/Qt/6.11.0/msvc2022_64;C:/Qt/Docs/Qt-6.11.0;C:/Qt/6.11.0/msvc2022_64/include;C:/Qt/6.11.0/msvc2022_64/lib;C:/Qt/6.11.0/msvc2022_64/bin;C:/Qt/6.11.0/msvc2022_64/tests;C:/Qt/6.11.0/msvc2022_64/plugins;C:/Qt/6.11.0/msvc2022_64/qml;C:/Qt/6.11.0/msvc2022_64/translations;C:/Qt/Examples/Qt-6.11.0;${env:PATH}"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.0\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.11.0-win32-msvc_Clang_19.1.5_(MSVC_CLI)_amd64_for_MSVC_17.14.37027.9_(Ferramentas_de_Build_do_VS2022_Release)",
+    "visualStudio": "8efba452",
+    "visualStudioArchitecture": "x64",
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "compilers": {
+      "C": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe",
+      "CXX": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe"
+    },
+    "isTrusted": true,
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_QTPATHS_EXE": "C:/Qt/6.11.0/msvc2022_64/bin/qtpaths.exe",
+      "PATH": "C:/Qt/6.11.0/msvc2022_64;C:/Qt/Docs/Qt-6.11.0;C:/Qt/6.11.0/msvc2022_64/include;C:/Qt/6.11.0/msvc2022_64/lib;C:/Qt/6.11.0/msvc2022_64/bin;C:/Qt/6.11.0/msvc2022_64/tests;C:/Qt/6.11.0/msvc2022_64/plugins;C:/Qt/6.11.0/msvc2022_64/qml;C:/Qt/6.11.0/msvc2022_64/translations;C:/Qt/Examples/Qt-6.11.0;${env:PATH}"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.0\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.11.0-win32-msvc_Clang_19.1.5_(MSVC_CLI)_amd64_for_MSVC_17.14.37203.1_(Ferramentas_de_Build_do_VS2022_Release)",
+    "visualStudio": "8efba452",
+    "visualStudioArchitecture": "x64",
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "compilers": {
+      "C": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe",
+      "CXX": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe"
+    },
+    "isTrusted": true,
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_QTPATHS_EXE": "C:/Qt/6.11.0/msvc2022_64/bin/qtpaths.exe",
+      "PATH": "C:/Qt/6.11.0/msvc2022_64;C:/Qt/Docs/Qt-6.11.0;C:/Qt/6.11.0/msvc2022_64/include;C:/Qt/6.11.0/msvc2022_64/lib;C:/Qt/6.11.0/msvc2022_64/bin;C:/Qt/6.11.0/msvc2022_64/tests;C:/Qt/6.11.0/msvc2022_64/plugins;C:/Qt/6.11.0/msvc2022_64/qml;C:/Qt/6.11.0/msvc2022_64/translations;C:/Qt/Examples/Qt-6.11.0;${env:PATH}"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.0\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.11.0-win32-msvc_Ferramentas_de_Build_do_VS2022_Release_amd64",
+    "visualStudio": "8efba452",
+    "visualStudioArchitecture": "x64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_QTPATHS_EXE": "C:/Qt/6.11.0/msvc2022_64/bin/qtpaths.exe",
+      "PATH": "C:/Qt/6.11.0/msvc2022_64;C:/Qt/Docs/Qt-6.11.0;C:/Qt/6.11.0/msvc2022_64/include;C:/Qt/6.11.0/msvc2022_64/lib;C:/Qt/6.11.0/msvc2022_64/bin;C:/Qt/6.11.0/msvc2022_64/tests;C:/Qt/6.11.0/msvc2022_64/plugins;C:/Qt/6.11.0/msvc2022_64/qml;C:/Qt/6.11.0/msvc2022_64/translations;C:/Qt/Examples/Qt-6.11.0;${env:PATH}"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.0\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.11.0-win32-msvc_Ferramentas_de_Build_do_VS2022_Release_amd64_arm64",
+    "visualStudio": "8efba452",
+    "visualStudioArchitecture": "x64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_QTPATHS_EXE": "C:/Qt/6.11.0/msvc2022_64/bin/qtpaths.exe",
+      "PATH": "C:/Qt/6.11.0/msvc2022_64;C:/Qt/Docs/Qt-6.11.0;C:/Qt/6.11.0/msvc2022_64/include;C:/Qt/6.11.0/msvc2022_64/lib;C:/Qt/6.11.0/msvc2022_64/bin;C:/Qt/6.11.0/msvc2022_64/tests;C:/Qt/6.11.0/msvc2022_64/plugins;C:/Qt/6.11.0/msvc2022_64/qml;C:/Qt/6.11.0/msvc2022_64/translations;C:/Qt/Examples/Qt-6.11.0;${env:PATH}"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.0\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.11.0-win32-msvc_VSCommunity_2026_Release_amd64",
+    "visualStudio": "fd415f87",
+    "visualStudioArchitecture": "x64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_QTPATHS_EXE": "C:/Qt/6.11.0/msvc2022_64/bin/qtpaths.exe",
+      "PATH": "C:/Qt/6.11.0/msvc2022_64;C:/Qt/Docs/Qt-6.11.0;C:/Qt/6.11.0/msvc2022_64/include;C:/Qt/6.11.0/msvc2022_64/lib;C:/Qt/6.11.0/msvc2022_64/bin;C:/Qt/6.11.0/msvc2022_64/tests;C:/Qt/6.11.0/msvc2022_64/plugins;C:/Qt/6.11.0/msvc2022_64/qml;C:/Qt/6.11.0/msvc2022_64/translations;C:/Qt/Examples/Qt-6.11.0;${env:PATH}"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.0\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.10.2-mingw_64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.10.2\\mingw_64",
+      "PATH": "C:\\Qt\\6.10.2\\mingw_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja;C:\\Qt\\Tools\\mingw1310_64\\bin"
+    },
+    "toolchainFile": "C:\\Qt\\6.10.2\\mingw_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake",
+    "compilers": {
+      "C": "C:\\Qt\\Tools\\mingw1310_64\\bin\\gcc.exe",
+      "CXX": "C:\\Qt\\Tools\\mingw1310_64\\bin\\g++.exe"
+    }
+  },
+  {
+    "name": "Qt-6.10.3-llvm-mingw_64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.10.3\\llvm-mingw_64",
+      "PATH": "C:\\Qt\\6.10.3\\llvm-mingw_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.10.3\\llvm-mingw_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.10.3-mingw_64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.10.3\\mingw_64",
+      "PATH": "C:\\Qt\\6.10.3\\mingw_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja;C:\\Qt\\Tools\\mingw1310_64\\bin"
+    },
+    "toolchainFile": "C:\\Qt\\6.10.3\\mingw_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake",
+    "compilers": {
+      "C": "C:\\Qt\\Tools\\mingw1310_64\\bin\\gcc.exe",
+      "CXX": "C:\\Qt\\Tools\\mingw1310_64\\bin\\g++.exe"
+    }
+  },
+  {
+    "name": "Qt-6.10.3-msvc2022_64_Clang_19.1.5_(MSVC_CLI)_amd64_for_MSVC_17.14.37012.4_(Ferramentas_de_Build_do_VS2022_Release)",
+    "visualStudio": "8efba452",
+    "visualStudioArchitecture": "x64",
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "compilers": {
+      "C": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe",
+      "CXX": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe"
+    },
+    "isTrusted": true,
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.10.3\\msvc2022_64",
+      "PATH": "C:\\Qt\\6.10.3\\msvc2022_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.10.3\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.10.3-msvc2022_64_Clang_19.1.5_(MSVC_CLI)_amd64_for_MSVC_17.14.37027.9_(Ferramentas_de_Build_do_VS2022_Release)",
+    "visualStudio": "8efba452",
+    "visualStudioArchitecture": "x64",
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "compilers": {
+      "C": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe",
+      "CXX": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe"
+    },
+    "isTrusted": true,
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.10.3\\msvc2022_64",
+      "PATH": "C:\\Qt\\6.10.3\\msvc2022_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.10.3\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.10.3-msvc2022_64_Clang_19.1.5_(MSVC_CLI)_amd64_for_MSVC_17.14.37203.1_(Ferramentas_de_Build_do_VS2022_Release)",
+    "visualStudio": "8efba452",
+    "visualStudioArchitecture": "x64",
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "compilers": {
+      "C": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe",
+      "CXX": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe"
+    },
+    "isTrusted": true,
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.10.3\\msvc2022_64",
+      "PATH": "C:\\Qt\\6.10.3\\msvc2022_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.10.3\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.10.3-msvc2022_64_Ferramentas_de_Build_do_VS2022_Release_amd64",
+    "visualStudio": "8efba452",
+    "visualStudioArchitecture": "x64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.10.3\\msvc2022_64",
+      "PATH": "C:\\Qt\\6.10.3\\msvc2022_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.10.3\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.10.3-msvc2022_64_Ferramentas_de_Build_do_VS2022_Release_amd64_arm64",
+    "visualStudio": "8efba452",
+    "visualStudioArchitecture": "x64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.10.3\\msvc2022_64",
+      "PATH": "C:\\Qt\\6.10.3\\msvc2022_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.10.3\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.10.3-msvc2022_64_VSCommunity_2026_Release_amd64",
+    "visualStudio": "fd415f87",
+    "visualStudioArchitecture": "x64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.10.3\\msvc2022_64",
+      "PATH": "C:\\Qt\\6.10.3\\msvc2022_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.10.3\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.11.0-llvm-mingw_64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.11.0\\llvm-mingw_64",
+      "PATH": "C:\\Qt\\6.11.0\\llvm-mingw_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.0\\llvm-mingw_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.11.0-mingw_64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.11.0\\mingw_64",
+      "PATH": "C:\\Qt\\6.11.0\\mingw_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja;C:\\Qt\\Tools\\mingw1310_64\\bin"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.0\\mingw_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake",
+    "compilers": {
+      "C": "C:\\Qt\\Tools\\mingw1310_64\\bin\\gcc.exe",
+      "CXX": "C:\\Qt\\Tools\\mingw1310_64\\bin\\g++.exe"
+    }
+  },
+  {
+    "name": "Qt-6.11.0-msvc2022_64_Clang_19.1.5_(MSVC_CLI)_amd64_for_MSVC_17.14.37012.4_(Ferramentas_de_Build_do_VS2022_Release)",
+    "visualStudio": "8efba452",
+    "visualStudioArchitecture": "x64",
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "compilers": {
+      "C": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe",
+      "CXX": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe"
+    },
+    "isTrusted": true,
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.11.0\\msvc2022_64",
+      "PATH": "C:\\Qt\\6.11.0\\msvc2022_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.0\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.11.0-msvc2022_64_Clang_19.1.5_(MSVC_CLI)_amd64_for_MSVC_17.14.37027.9_(Ferramentas_de_Build_do_VS2022_Release)",
+    "visualStudio": "8efba452",
+    "visualStudioArchitecture": "x64",
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "compilers": {
+      "C": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe",
+      "CXX": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe"
+    },
+    "isTrusted": true,
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.11.0\\msvc2022_64",
+      "PATH": "C:\\Qt\\6.11.0\\msvc2022_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.0\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.11.0-msvc2022_64_Clang_19.1.5_(MSVC_CLI)_amd64_for_MSVC_17.14.37203.1_(Ferramentas_de_Build_do_VS2022_Release)",
+    "visualStudio": "8efba452",
+    "visualStudioArchitecture": "x64",
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "compilers": {
+      "C": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe",
+      "CXX": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe"
+    },
+    "isTrusted": true,
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.11.0\\msvc2022_64",
+      "PATH": "C:\\Qt\\6.11.0\\msvc2022_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.0\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.11.0-msvc2022_64_Ferramentas_de_Build_do_VS2022_Release_amd64",
+    "visualStudio": "8efba452",
+    "visualStudioArchitecture": "x64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.11.0\\msvc2022_64",
+      "PATH": "C:\\Qt\\6.11.0\\msvc2022_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.0\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.11.0-msvc2022_64_Ferramentas_de_Build_do_VS2022_Release_amd64_arm64",
+    "visualStudio": "8efba452",
+    "visualStudioArchitecture": "x64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.11.0\\msvc2022_64",
+      "PATH": "C:\\Qt\\6.11.0\\msvc2022_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.0\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.11.0-msvc2022_64_VSCommunity_2026_Release_amd64",
+    "visualStudio": "fd415f87",
+    "visualStudioArchitecture": "x64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.11.0\\msvc2022_64",
+      "PATH": "C:\\Qt\\6.11.0\\msvc2022_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.0\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.8.7-llvm-mingw_64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.8.7\\llvm-mingw_64",
+      "PATH": "C:\\Qt\\6.8.7\\llvm-mingw_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.8.7\\llvm-mingw_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.8.7-mingw_64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.8.7\\mingw_64",
+      "PATH": "C:\\Qt\\6.8.7\\mingw_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja;C:\\Qt\\Tools\\mingw1310_64\\bin"
+    },
+    "toolchainFile": "C:\\Qt\\6.8.7\\mingw_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake",
+    "compilers": {
+      "C": "C:\\Qt\\Tools\\mingw1310_64\\bin\\gcc.exe",
+      "CXX": "C:\\Qt\\Tools\\mingw1310_64\\bin\\g++.exe"
+    }
+  },
+  {
+    "name": "Qt-6.9.3-llvm-mingw_64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.9.3\\llvm-mingw_64",
+      "PATH": "C:\\Qt\\6.9.3\\llvm-mingw_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.9.3\\llvm-mingw_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.9.3-mingw_64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.9.3\\mingw_64",
+      "PATH": "C:\\Qt\\6.9.3\\mingw_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja;C:\\Qt\\Tools\\mingw1310_64\\bin"
+    },
+    "toolchainFile": "C:\\Qt\\6.9.3\\mingw_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake",
+    "compilers": {
+      "C": "C:\\Qt\\Tools\\mingw1310_64\\bin\\gcc.exe",
+      "CXX": "C:\\Qt\\Tools\\mingw1310_64\\bin\\g++.exe"
+    }
+  },
+  {
+    "name": "Qt-6.11.1-mingw_64-x86_64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.11.1\\mingw_64",
+      "PATH": "C:\\Qt\\6.11.1\\mingw_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja;C:\\Qt\\Tools\\mingw1310_64\\bin"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.1\\mingw_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake",
+    "compilers": {
+      "C": "C:\\Qt\\Tools\\mingw1310_64\\bin\\gcc.exe",
+      "CXX": "C:\\Qt\\Tools\\mingw1310_64\\bin\\g++.exe"
+    }
+  },
+  {
+    "name": "Qt-6.11.1-msvc2022_64-x86_64_Ferramentas_de Build_do_VS2026_Release_amd64",
+    "visualStudio": "5b8e1f46",
+    "visualStudioArchitecture": "x64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.11.1\\msvc2022_64",
+      "PATH": "C:\\Qt\\6.11.1\\msvc2022_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.1\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.11.1-msvc2022_64-x86_64_VSCommunity_2026_Release_amd64",
+    "visualStudio": "6ce37123",
+    "visualStudioArchitecture": "x64",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.11.1\\msvc2022_64",
+      "PATH": "C:\\Qt\\6.11.1\\msvc2022_64\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.1\\msvc2022_64\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.11.1-wasm_multithread",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.11.1\\wasm_multithread",
+      "PATH": "C:\\Qt\\6.11.1\\wasm_multithread\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.1\\wasm_multithread\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  },
+  {
+    "name": "Qt-6.11.1-wasm_singlethread",
+    "isTrusted": true,
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "cmakeSettings": {
+      "QT_QML_GENERATE_QMLLS_INI": "ON",
+      "CMAKE_CXX_FLAGS_DEBUG_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG"
+    },
+    "environmentVariables": {
+      "VSCODE_QT_INSTALLATION": "C:\\Qt\\6.11.1\\wasm_singlethread",
+      "PATH": "C:\\Qt\\6.11.1\\wasm_singlethread\\bin;${env:PATH};C:\\Qt\\Tools\\Ninja"
+    },
+    "toolchainFile": "C:\\Qt\\6.11.1\\wasm_singlethread\\lib\\cmake\\Qt6\\qt.toolchain.cmake"
+  }
+]

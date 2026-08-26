@@ -1,0 +1,120 @@
+{
+  "version": 5,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 24,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "qt6-msvc-base",
+      "hidden": true,
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "toolset": "host=x64",
+      "binaryDir": "${sourceDir}/build_qt6_msvc",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Release;RelWithDebInfo",
+        "CMAKE_C_COMPILER": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe",
+        "CMAKE_CXX_COMPILER": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe",
+        "CMAKE_PREFIX_PATH": "C:/Qt/6.11.0/msvc2022_64/lib/cmake",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "QT_DIR": "C:/Qt/6.11.0/msvc2022_64/lib/cmake/Qt6",
+        "Qt6_DIR": "C:/Qt/6.11.0/msvc2022_64/lib/cmake/Qt6",
+        "LINCEU_OUTPUT_NAME": "Linceu_Lighthouse",
+        "LINCEU_DEPLOY_DIR": "D:/MISCELANEAS/VSCode/LinceuLighthouse/Linceu_Lighthouse_msvc"
+      },
+      "environment": {
+        "QTDIR": "C:/Qt/6.11.0/msvc2022_64",
+        "VSINSTALLDIR": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/",
+        "VCINSTALLDIR": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/",
+        "PATH": "C:/Qt/6.11.0/msvc2022_64/bin;$penv{PATH}"
+      }
+    },
+    {
+      "name": "qt6-mingw-debug",
+      "displayName": "Qt6 MinGW Debug",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build_qt6_mingw",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/gcc.exe",
+        "CMAKE_CXX_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/g++.exe",
+        "CMAKE_PREFIX_PATH": "C:/Qt/6.11.0/mingw_64/lib/cmake",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "QT_DIR": "C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6",
+        "Qt6_DIR": "C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6",
+        "LINCEU_OUTPUT_NAME": "Linceu_Lighthouse",
+        "LINCEU_DEPLOY_DIR": "D:/MISCELANEAS/VSCode/LinceuLighthouse/Linceu_Lighthouse_mingw"
+      }
+    },
+    {
+      "name": "qt6-msvc-debug",
+      "inherits": "qt6-msvc-base",
+      "displayName": "Qt6 MSVC Debug",
+      "description": "Configura o projeto MSVC; a configuracao Debug e escolhida no build preset."
+    },
+    {
+      "name": "qt6-msvc-release",
+      "inherits": "qt6-msvc-base",
+      "displayName": "Qt6 MSVC Release",
+      "description": "Configura o projeto MSVC; a configuracao Release e escolhida no build preset."
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "qt6-msvc-build-env",
+      "hidden": true,
+      "environment": {
+        "QTDIR": "C:/Qt/6.11.0/msvc2022_64",
+        "VSINSTALLDIR": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/",
+        "VCINSTALLDIR": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/",
+        "PATH": "C:/Qt/6.11.0/msvc2022_64/bin;$penv{PATH}"
+      }
+    },
+    {
+      "name": "qt6-mingw-debug",
+      "configurePreset": "qt6-mingw-debug"
+    },
+    {
+      "name": "linceu-qt6-mingw-debug",
+      "displayName": "Linceu Qt6 MinGW Debug",
+      "configurePreset": "qt6-mingw-debug",
+      "targets": [
+        "Linceu_Lighthouse_cpp"
+      ]
+    },
+    {
+      "name": "qt6-msvc-debug",
+      "inherits": "qt6-msvc-build-env",
+      "configurePreset": "qt6-msvc-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "qt6-msvc-release",
+      "inherits": "qt6-msvc-build-env",
+      "configurePreset": "qt6-msvc-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "linceu-qt6-msvc-debug",
+      "inherits": "qt6-msvc-build-env",
+      "displayName": "Linceu Qt6 MSVC Debug",
+      "configurePreset": "qt6-msvc-debug",
+      "configuration": "Debug",
+      "targets": [
+        "Linceu_Lighthouse_cpp"
+      ]
+    },
+    {
+      "name": "linceu-qt6-msvc-release",
+      "inherits": "qt6-msvc-build-env",
+      "displayName": "Linceu Qt6 MSVC Release",
+      "configurePreset": "qt6-msvc-release",
+      "configuration": "Release",
+      "targets": [
+        "Linceu_Lighthouse_cpp"
+      ]
+    }
+  ]
+}

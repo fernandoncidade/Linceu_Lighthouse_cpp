@@ -1,0 +1,476 @@
+#include "DOC_EN_US.h"
+
+namespace source::ui::manual {
+
+std::vector<ManualSection> doc_en_us() {
+    const QString dataDir = data_dir();
+    return {
+        {
+            QStringLiteral("new-features-and-capabilities"),
+            QStringLiteral("New features and capabilities"),
+            {
+                QStringLiteral("Key improvements focus on real-time monitoring reliability, pause/resume/stop control, and table updates under high event volume."),
+                QStringLiteral("The instructions below explain how to use these improvements safely in daily operation."),
+            },
+            {
+                QStringLiteral("More accurate detection for file add, modify, delete, rename, and move operations."),
+                QStringLiteral("More stable visual updates for large lists with lower risk of temporary inconsistencies during bursts."),
+                QStringLiteral("More consistent language switching across menus, table, manual, help, and statistics without restart."),
+            },
+            {
+                {
+                    QStringLiteral("Recommended flow for continuous monitoring"),
+                    {
+                        QStringLiteral("1) Add target directories and run a full initial scan."),
+                        QStringLiteral("2) Confirm that the table is populated and status indicators are updated."),
+                        QStringLiteral("3) Enable continuous monitoring to capture new events in real time."),
+                        QStringLiteral("4) Use filters to reduce noise and speed up audits."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Using pause, resume, and stop safely"),
+                    {
+                        QStringLiteral("During long operations, pause monitoring to perform an intermediate review."),
+                        QStringLiteral("Resume only after validating the current visible dataset."),
+                        QStringLiteral("Before shutdown, stop monitoring/scanning explicitly and wait for final status update."),
+                    },
+                    {}
+                },
+            }
+        },
+        {
+            QStringLiteral("high-volume-operation"),
+            QStringLiteral("High-volume operation"),
+            {
+                QStringLiteral("When many files change in sequence, use short operating cycles: capture, review, filter, and export."),
+            },
+            {
+                QStringLiteral("Sort by date/event to prioritize recent changes."),
+                QStringLiteral("Apply directory/type filters before exporting datasets."),
+                QStringLiteral("Use strategic pauses to create clear review checkpoints."),
+            },
+            {
+                {
+                    QStringLiteral("Language change during heavy activity"),
+                    {
+                        QStringLiteral("Language can be changed while monitoring is active, but pausing is recommended during critical visual validation."),
+                        QStringLiteral("After changing language, verify menu labels, table headers, help, and statistics text."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Quick stability validation"),
+                    {
+                        QStringLiteral("Ensure new events continue to appear after monitoring resumes."),
+                        QStringLiteral("Check that status labels and progress indicators transition correctly between states."),
+                    },
+                    {}
+                },
+            }
+        },
+        {
+            QStringLiteral("complementary-usage-resources"),
+            QStringLiteral("Complementary usage resources"),
+            {
+                QStringLiteral("This release also adds practical daily-use resources: configurable security popup behavior, refined event classification, and statistics opening with consistency checks."),
+            },
+            {
+                QStringLiteral("Security popup controls: minimum trigger threshold, maximum lines, and cooldown between alerts."),
+                QStringLiteral("Clearer separation between Renamed and Moved events for auditing."),
+                QStringLiteral("Statistics flow with improved consistency when pending writes still exist."),
+            },
+            {
+                {
+                    QStringLiteral("Configure the security popup"),
+                    {
+                        QStringLiteral("Open the Security menu and access popup/notification settings."),
+                        QStringLiteral("Set the minimum threshold required to trigger an alert."),
+                        QStringLiteral("Set the maximum number of lines shown per popup."),
+                        QStringLiteral("Configure cooldown between alerts and save preferences."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Interpret Renamed vs Moved events"),
+                    {
+                        QStringLiteral("Renamed: same directory, only the item name changes."),
+                        QStringLiteral("Moved: directory changes, with or without a name change."),
+                        QStringLiteral("For audits, filter by Event and review source/destination paths in the details panel."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Open statistics with stable data"),
+                    {
+                        QStringLiteral("Finish heavy operations or pause monitoring before opening statistics."),
+                        QStringLiteral("After opening, verify there are no pending processing statuses."),
+                        QStringLiteral("If numbers look inconsistent, close and reopen after processing stabilizes."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Advanced rendering mode (optional)"),
+                    {
+                        QStringLiteral("If you face graphics compatibility issues, set LINCEU_OPENGL_MODE before launching the app."),
+                        QStringLiteral("Accepted values: auto, desktop, angle, and software."),
+                        QStringLiteral("Use software only for troubleshooting, as performance may decrease."),
+                    },
+                    {}
+                },
+            }
+        },
+        {
+            QStringLiteral("updated-menu-operational-flow"),
+            QStringLiteral("Operational flow for the updated menus"),
+            {
+                QStringLiteral("The File, Settings and Options menus now cover the full working cycle: select directories, start or pause analysis, prepare the table, configure statistics, export data and review security resources."),
+            },
+            {
+                QStringLiteral("Use File > Select Directory or Ctrl+Shift+O before running the initial scan."),
+                QStringLiteral("Use File > Start/Stop or Ctrl+R to control analysis, and File > Pause or Ctrl+P to create a review point without clearing the current state."),
+                QStringLiteral("Use Settings > Filters, Columns and Colored columns before exporting or opening statistics, so the table highlights only the relevant data."),
+                QStringLiteral("Use Options > Manual whenever you need to reopen these instructions without restarting the application."),
+            },
+            {
+                {
+                    QStringLiteral("Recommended sequence"),
+                    {
+                        QStringLiteral("1. Select a directory and run the initial scan."),
+                        QStringLiteral("2. Adjust filters, columns and colors to keep only the useful data visible."),
+                        QStringLiteral("3. Open Settings > Statistics > Plot Charts and choose the charts needed for the audit."),
+                        QStringLiteral("4. Open File > Statistics or press Ctrl+G to generate the visual analysis."),
+                        QStringLiteral("5. Export results only after confirming that the table and charts show the intended scope."),
+                    },
+                    {}
+                },
+            }
+        },
+        {
+            QStringLiteral("using-statistics-chart-menu"),
+            QStringLiteral("Using Settings > Statistics > Plot Charts"),
+            {
+                QStringLiteral("This submenu controls which charts are generated in the statistics window. Checked items are saved in statistics_charts_config.json inside the persistent application data folder and are reused the next time statistics are opened."),
+            },
+            {
+                QStringLiteral("Check only the charts you want to generate to reduce processing time and keep the statistics window focused."),
+                QStringLiteral("Uncheck heavy or unnecessary charts when analyzing many events."),
+                QStringLiteral("After changing the selection, open File > Statistics or press Ctrl+G to generate the window with the selected chart set."),
+            },
+            {
+                {
+                    QStringLiteral("Choosing chart groups"),
+                    {
+                        QStringLiteral("Use Pie, Bars, Pareto and Distributions to compare volumes by type, size or operation."),
+                        QStringLiteral("Use Timeline, Operations by day, Week/Hour and Heatmap to investigate temporal concentration."),
+                        QStringLiteral("Use Sankey, Event by directory and Type by directory to discover flows between operation, file type and monitored folder."),
+                        QStringLiteral("Use Directory Tree to locate which folder levels concentrate more activity."),
+                        QStringLiteral("Use Scatter, Radar and Dotplot to compare size behavior, frequency and operation distribution."),
+                    },
+                    {}
+                },
+            }
+        },
+        {
+            QStringLiteral("using-statistics-window"),
+            QStringLiteral("Using the Statistics window"),
+            {
+                QStringLiteral("The statistics window reads the monitoring database and shows the selected charts. Open it only after the table has data; during very heavy scans, wait for the status to stabilize before refreshing charts."),
+            },
+            {
+                QStringLiteral("Use the Select charts panel to show or hide charts during the current session."),
+                QStringLiteral("Use Select all to enable every chart available in the window."),
+                QStringLiteral("Use Save selected to export only checked charts as PNG files."),
+                QStringLiteral("Use Save all to export every generated chart to a timestamped folder."),
+                QStringLiteral("Use Refresh after new events, after relevant filter changes or after changing the chart selection menu."),
+                QStringLiteral("Hide the selection panel when you need more room to compare chart tabs and visual details."),
+            },
+            {}
+        },
+        {
+            QStringLiteral("using-security-menu"),
+            QStringLiteral("Using Settings > Security"),
+            {
+                QStringLiteral("The Security submenu groups audit resources, live sessions, quarantine, restoration and evidence packages. Use it after configuring directories and preferably after an initial scan."),
+            },
+            {},
+            {
+                {
+                    QStringLiteral("Profiles and multi-directory"),
+                    {
+                        QStringLiteral("Open Settings > Security > Profiles and multi-directory to manage the active profile."),
+                        QStringLiteral("Use Add directory to include another folder in the same profile and Remove selected to remove the highlighted folder."),
+                        QStringLiteral("Edit Profile name and click Save profile to identify the monitored folder set."),
+                        QStringLiteral("Click Refresh to reload the main directory, directory count and active profile summary."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Alert center and real-time sessions"),
+                    {
+                        QStringLiteral("Open Alert center to review time, risk level, summary, triggered rules, path, name, session and evidence."),
+                        QStringLiteral("Prioritize critical or high-risk alerts before reviewing common events in the main table."),
+                        QStringLiteral("Open Real-time sessions to inspect recent sessions, total events and involved directories."),
+                        QStringLiteral("Use Refresh in each window while monitoring is active to load new records without closing the dialog."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Quarantine, restoration and evidence"),
+                    {
+                        QStringLiteral("Open Quarantine and restoration to review the Quarantine and Monitored versions tabs."),
+                        QStringLiteral("In Quarantine, select a row and use Open selected folder to locate the isolated copy; restore only after checking the destination."),
+                        QStringLiteral("In Monitored versions, select a row and use Restore monitored version to recover a tracked version."),
+                        QStringLiteral("Open Evidence package, choose the destination, click Export now and inspect the generated folder."),
+                        QStringLiteral("Use Clear security database only after exporting evidence or confirming the old audit history is no longer needed."),
+                    },
+                    {}
+                },
+            }
+        },
+        {
+            QStringLiteral("using-notifications-and-export-options"),
+            QStringLiteral("Using notifications and export options"),
+            {
+                QStringLiteral("Security notifications and export options help control information volume, alert frequency and the shape of saved data."),
+            },
+            {
+                QStringLiteral("Open Settings > Security > Notifications to enable footer/status security summaries or configure popup types."),
+                QStringLiteral("In alert, session or quarantine popups, use Enable this popup, Trigger at, Maximum summary lines and Cooldown between popups to tune how often notices appear."),
+                QStringLiteral("Open Settings > Export options to decide whether saved files should respect active columns, active filters or only selected rows."),
+                QStringLiteral("Use Reset export options when you want the default behavior before generating CSV, TXT, JSON, XML, DB, XLSX or evidence packages."),
+            },
+            {}
+        },
+        {
+            QStringLiteral("overview"),
+            QStringLiteral("Overview"),
+            {
+            QStringLiteral("Linceu Lighthouse helps you inspect, monitor and analyze files and folders across multiple locations on your computer. It centralizes item information and provides tools to filter, generate statistics and extract metadata."),
+        },
+            {},
+            {}
+        },
+        {
+            QStringLiteral("main-screen"),
+            QStringLiteral("Main Screen — Elements"),
+            {},
+            {
+            QStringLiteral("𝐓𝐨𝐨𝐥𝐛𝐚𝐫: Quick access to Add Directory, Start Scan, Stop, Refresh and Preferences."),
+            QStringLiteral("𝐃𝐢𝐫𝐞𝐜𝐭𝐨𝐫𝐲 𝐬𝐞𝐥𝐞𝐜𝐭𝐨𝐫: Area to add, remove or switch monitored folders."),
+            QStringLiteral("𝐈𝐭𝐞𝐦 𝐭𝐚𝐛𝐥𝐞: Central list with columns (Name, Type, Size, Date, Event) supporting sort and filter."),
+            QStringLiteral("𝐃𝐞𝐭𝐚𝐢𝐥𝐬 𝐩𝐚𝐧𝐞𝐥: Shows metadata and quick actions for the selected item."),
+            QStringLiteral("𝐌𝐞𝐬𝐬𝐚𝐠𝐞𝐬 & 𝐩𝐫𝐨𝐠𝐫𝐞𝐬𝐬: Displays notifications, operation logs and progress bars."),
+            QStringLiteral("𝐒𝐭𝐚𝐭𝐢𝐬𝐭𝐢𝐜𝐬: Area for charts and reports generated from collected data."),
+        },
+            {}
+        },
+        {
+            QStringLiteral("getting-started"),
+            QStringLiteral("Getting Started"),
+            {},
+            {
+            QStringLiteral("Open the application using the shortcut or executable."),
+            QStringLiteral("Click 𝐀𝐝𝐝 𝐃𝐢𝐫𝐞𝐜𝐭𝐨𝐫𝐲 and choose the folder to monitor."),
+            QStringLiteral("Run an initial scan with 𝐒𝐭𝐚𝐫𝐭/𝐒𝐜𝐚𝐧."),
+            QStringLiteral("Wait for the process to finish; items will appear with available metadata."),
+            QStringLiteral("Enable 𝐂𝐨𝐧𝐭𝐢𝐧𝐮𝐨𝐮𝐬 𝐦𝐨𝐧𝐢𝐭𝐨𝐫𝐢𝐧𝐠 to detect changes automatically."),
+        },
+            {}
+        },
+        {
+            QStringLiteral("operation-modes"),
+            QStringLiteral("Operation Modes"),
+            {},
+            {
+            QStringLiteral("𝐒𝐢𝐧𝐠𝐥𝐞 𝐒𝐜𝐚𝐧: Immediate check of the selected folder(s)."),
+            QStringLiteral("𝐂𝐨𝐧𝐭𝐢𝐧𝐮𝐨𝐮𝐬 𝐌𝐨𝐧𝐢𝐭𝐨𝐫𝐢𝐧𝐠: Watch for real-time changes and update the table automatically."),
+            QStringLiteral("𝐁𝐚𝐭𝐜𝐡 𝐏𝐫𝐨𝐜𝐞𝐬𝐬𝐢𝐧𝐠: Extract metadata or run actions on multiple files at once."),
+        },
+            {}
+        },
+        {
+            QStringLiteral("understanding-table"),
+            QStringLiteral("Understanding the Item Table"),
+            {
+            QStringLiteral("Each column shows a property of the item. Use sorting, filtering and selection to find and inspect items efficiently."),
+        },
+            {
+            QStringLiteral("𝐍𝐚𝐦𝐞: File or folder name; double-click to open."),
+            QStringLiteral("𝐓𝐲𝐩𝐞: Detected type (image, video, document, folder)."),
+            QStringLiteral("𝐒𝐢𝐳𝐞: Shown in human-readable units (KB/MB/GB)."),
+            QStringLiteral("𝐃𝐚𝐭𝐞: Last modification or recorded event date."),
+            QStringLiteral("𝐄𝐯𝐞𝐧𝐭: Detected action (created, modified, moved, deleted)."),
+        },
+            {}
+        },
+        {
+            QStringLiteral("details-panel"),
+            QStringLiteral("Details Panel & Metadata"),
+            {
+            QStringLiteral("Selecting an item displays relevant metadata and quick actions (open folder, copy path, refresh metadata)."),
+        },
+            {
+            QStringLiteral("𝐅𝐮𝐥𝐥 𝐩𝐚𝐭𝐡: File location on disk."),
+            QStringLiteral("𝐀𝐮𝐭𝐡𝐨𝐫 / 𝐂𝐫𝐞𝐚𝐭𝐨𝐫: When present in metadata."),
+            QStringLiteral("𝐃𝐢𝐦𝐞𝐧𝐬𝐢𝐨𝐧𝐬: For images (width × height)."),
+            QStringLiteral("𝐃𝐮𝐫𝐚𝐭𝐢𝐨𝐧: For audio/video files."),
+            QStringLiteral("𝐁𝐢𝐭𝐫𝐚𝐭𝐞: For media files, if available."),
+            QStringLiteral("𝐏𝐞𝐫𝐦𝐢𝐬𝐬𝐢𝐨𝐧𝐬: Indicates protection or write restrictions."),
+        },
+            {}
+        },
+        {
+            QStringLiteral("file-actions"),
+            QStringLiteral("File Actions"),
+            {},
+            {
+            QStringLiteral("𝐎𝐩𝐞𝐧: Open with the system default app (double-click or Open button)."),
+            QStringLiteral("𝐂𝐨𝐩𝐲 / 𝐌𝐨𝐯𝐞: Use copy/paste or drag-and-drop to move files between folders."),
+            QStringLiteral("𝐑𝐞𝐧𝐚𝐦𝐞 / 𝐃𝐞𝐥𝐞𝐭𝐞: Use the context menu; permanent actions require confirmation."),
+            QStringLiteral("𝐑𝐞𝐬𝐭𝐨𝐫𝐞: When available, recover recent deletions using restore functionality."),
+            QStringLiteral("𝐏𝐫𝐨𝐩𝐞𝐫𝐭𝐢𝐞𝐬: View full metadata and event history for the file."),
+        },
+            {}
+        },
+        {
+            QStringLiteral("search-filters"),
+            QStringLiteral("Search and Filters"),
+            {},
+            {
+            QStringLiteral("𝐒𝐞𝐚𝐫𝐜𝐡: Enter terms in the search box to find items by name or content."),
+            QStringLiteral("𝐅𝐢𝐥𝐭𝐞𝐫𝐬: Apply filters by type, size, date or event to narrow results."),
+            QStringLiteral("𝐂𝐨𝐦𝐛𝐢𝐧𝐞 𝐟𝐢𝐥𝐭𝐞𝐫𝐬: Use multiple filters together for precise results."),
+        },
+            {}
+        },
+        {
+            QStringLiteral("save-restore"),
+            QStringLiteral("Saving and Restoring Views"),
+            {},
+            {
+            QStringLiteral("𝐒𝐚𝐯𝐞 𝐬𝐭𝐚𝐭𝐞: Store current column layout and filters as a profile."),
+            QStringLiteral("𝐑𝐞𝐬𝐭𝐨𝐫𝐞 𝐬𝐭𝐚𝐭𝐞: Load a saved profile to recover layout and filters."),
+        },
+            {}
+        },
+        {
+            QStringLiteral("batch-processing"),
+            QStringLiteral("Batch Processing"),
+            {
+            QStringLiteral("Select multiple items to extract metadata or perform batch actions. Progress and controls are available to pause or cancel."),
+        },
+            {
+            QStringLiteral("𝐒𝐭𝐚𝐫𝐭 𝐞𝐱𝐭𝐫𝐚𝐜𝐭𝐢𝐨𝐧: Choose items and run batch metadata extraction."),
+            QStringLiteral("𝐌𝐨𝐧𝐢𝐭𝐨𝐫 𝐩𝐫𝐨𝐠𝐫𝐞𝐬𝐬: Track via the progress bar and messages panel."),
+            QStringLiteral("𝐏𝐚𝐮𝐬𝐞/𝐂𝐚𝐧𝐜𝐞𝐥: Use the provided controls to interrupt processing."),
+        },
+            {}
+        },
+        {
+            QStringLiteral("reports-statistics"),
+            QStringLiteral("Reports & Statistics"),
+            {
+            QStringLiteral("The statistics section produces charts for file types, disk usage and event trends. Export images or CSV for external use."),
+        },
+            {
+            QStringLiteral("𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞 𝐜𝐡𝐚𝐫𝐭𝐬: Select metrics to visualize distributions and trends."),
+            QStringLiteral("𝐄𝐱𝐩𝐨𝐫𝐭: Save charts as images or export data as CSV."),
+        },
+            {}
+        },
+        {
+            QStringLiteral("event-monitoring"),
+            QStringLiteral("Event Monitoring"),
+            {},
+            {
+            QStringLiteral("𝐄𝐯𝐞𝐧𝐭 𝐭𝐲𝐩𝐞𝐬: Creation, modification, removal and movement."),
+            QStringLiteral("𝐑𝐞𝐚𝐥-𝐭𝐢𝐦𝐞 𝐯𝐢𝐞𝐰: Recent events are highlighted for quick inspection."),
+            QStringLiteral("𝐍𝐨𝐭𝐢𝐟𝐢𝐜𝐚𝐭𝐢𝐨𝐧𝐬: Configure visual or sound alerts in Preferences."),
+        },
+            {}
+        },
+        {
+            QStringLiteral("preferences"),
+            QStringLiteral("Preferences"),
+            {
+            QStringLiteral("Adjust language, scan behavior, notifications and update preferences. Review these settings after installation."),
+        },
+            {
+            QStringLiteral("𝐋𝐚𝐧𝐠𝐮𝐚𝐠𝐞: Choose the UI language."),
+            QStringLiteral("𝐒𝐜𝐚𝐧 𝐛𝐞𝐡𝐚𝐯𝐢𝐨𝐫: Configure schedule, depth and exclusions."),
+            QStringLiteral("𝐍𝐨𝐭𝐢𝐟𝐢𝐜𝐚𝐭𝐢𝐨𝐧𝐬: Enable or disable alerts."),
+            QStringLiteral("𝐔𝐩𝐝𝐚𝐭𝐞𝐬: Choose automatic or manual checks."),
+        },
+            {}
+        },
+        {
+            QStringLiteral("common-issues"),
+            QStringLiteral("Common Issues & Fixes"),
+            {},
+            {
+            QStringLiteral("𝐒𝐜𝐚𝐧 𝐬𝐭𝐮𝐜𝐤 𝐨𝐫 𝐞𝐫𝐫𝐨𝐫: Wait briefly; if it persists, restart the scan or the application."),
+            QStringLiteral("𝐈𝐭𝐞𝐦𝐬 𝐦𝐢𝐬𝐬𝐢𝐧𝐠: Verify the folder is added and the app has read permission."),
+            QStringLiteral("𝐔𝐧𝐚𝐛𝐥𝐞 𝐭𝐨 𝐨𝐩𝐞𝐧 𝐟𝐢𝐥𝐞: Ensure an associated application exists for the file type."),
+            QStringLiteral("𝐌𝐢𝐬𝐬𝐢𝐧𝐠 𝐦𝐞𝐭𝐚𝐝𝐚𝐭𝐚: Not all files include metadata; try refreshing or batch processing."),
+        },
+            {}
+        },
+        {
+            QStringLiteral("shortcuts"),
+            QStringLiteral("Shortcuts"),
+            {},
+            shortcut_lines(QStringLiteral("en_US")),
+            {}
+        },
+        {
+            QStringLiteral("best-practices"),
+            QStringLiteral("Best Practices"),
+            {},
+            {
+            QStringLiteral("Run an initial scan on a small folder before large operations."),
+            QStringLiteral("Save states and settings before batch tasks."),
+            QStringLiteral("Use filters to focus on relevant items."),
+        },
+            {}
+        },
+        {
+            QStringLiteral("logs-and-diagnostics"),
+            QStringLiteral("Logs & diagnostics"),
+            {},
+            {
+            QStringLiteral("The application logs can help diagnose issues; check the log file generated by the app at: ") + dataDir,
+        },
+            {}
+        },
+        {
+            QStringLiteral("faq"),
+            QStringLiteral("Frequently Asked Questions"),
+            {},
+            {},
+            {
+        {
+            QStringLiteral("Where are my data saved?"),
+            {
+            QStringLiteral("Tasks and configuration files are stored in: ") + dataDir,
+            QStringLiteral("Check that directory to find persistence files and logs."),
+        },
+            {}
+        },
+    }
+        },
+        {
+            QStringLiteral("support"),
+            QStringLiteral("How to get help and support"),
+            {},
+            {
+            QStringLiteral("Check the About section inside the application for official information and release notes."),
+            QStringLiteral("For complex issues, generate logs and send them to support. Log files are located at: ") + dataDir,
+            QStringLiteral("Send the log files and a detailed description of the issue to the support email: linceu_lighthouse@outlook.com."),
+        },
+            {}
+        },
+    };
+}
+
+}  // namespace source::ui::manual
