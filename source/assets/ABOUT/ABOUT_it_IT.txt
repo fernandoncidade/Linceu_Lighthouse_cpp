@@ -1,5 +1,5 @@
 Progetto: LINCEU LIGHTHOUSE
-Versione: 2026.8.25.0
+Versione: 2026.9.28.0
 Autori: Fernando Nillsson Cidade
 
 Descrizione: Piattaforma Locale di Intelligenza, Cronologia e Audit dei File

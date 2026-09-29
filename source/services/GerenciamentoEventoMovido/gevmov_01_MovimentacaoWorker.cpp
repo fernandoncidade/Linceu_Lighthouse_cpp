@@ -3,6 +3,7 @@
 #include <QDeadlineTimer>
 #include <QMetaObject>
 #include <QMutexLocker>
+#include <QThread>
 #include <QThreadPool>
 
 #include "source/services/ob_01_Observador.h"
@@ -20,8 +21,9 @@ MovimentacaoWorker::MovimentacaoWorker(QObject* interface, QObject* parent)
 
 namespace {
 source::services::BaseEvento* resolver_evento_base(QObject* interface_obj, QObject* evento_base_obj) {
+    if (!interface_obj) return nullptr;
     source::services::BaseEvento* base = nullptr;
-    if (interface_obj) {
+    if (interface_obj->thread() == QThread::currentThread()) {
         if (!interface_obj->property("_aceitar_eventos_monitoramento").toBool() ||
             interface_obj->property("_encerrando_interface").toBool()) {
             return nullptr;
@@ -35,10 +37,27 @@ source::services::BaseEvento* resolver_evento_base(QObject* interface_obj, QObje
             auto* obs = reinterpret_cast<source::services::Observador*>(obs_ptr);
             if (obs && obs->evento_base) return obs->evento_base.get();
         }
+    } else {
+        QMetaObject::invokeMethod(interface_obj, [&]() {
+            if (!interface_obj->property("_aceitar_eventos_monitoramento").toBool() ||
+                interface_obj->property("_encerrando_interface").toBool()) {
+                base = nullptr;
+                return;
+            }
+
+            base = interface_obj->property("evento_base").value<source::services::BaseEvento*>();
+            if (!base) {
+                const qulonglong obs_ptr = interface_obj->property("_observador_cpp_ptr").toULongLong();
+                if (obs_ptr != 0) {
+                    auto* obs = reinterpret_cast<source::services::Observador*>(obs_ptr);
+                    if (obs && obs->evento_base) base = obs->evento_base.get();
+                }
+            }
+        }, Qt::BlockingQueuedConnection);
     }
 
     Q_UNUSED(evento_base_obj)
-    return nullptr;
+    return base;
 }
 }  // namespace
 
@@ -104,10 +123,14 @@ void MovimentacaoWorker::_concluir_processamento() {
     try {
         emit processamento_concluido();
         if (interface_) {
-            QObject* gerenciador_tabela = interface_->property("gerenciador_tabela").value<QObject*>();
-            if (gerenciador_tabela) {
-                gerenciador_tabela->setProperty("atualizacao_pendente", true);
-            }
+            QMetaObject::invokeMethod(interface_, [interface_ptr = interface_]() {
+                if (interface_ptr) {
+                    QObject* gerenciador_tabela = interface_ptr->property("gerenciador_tabela").value<QObject*>();
+                    if (gerenciador_tabela) {
+                        gerenciador_tabela->setProperty("atualizacao_pendente", true);
+                    }
+                }
+            }, Qt::QueuedConnection);
         }
     } catch (...) {
         source::utils::LogManager::get_logger().error("Erro em MovimentacaoWorker._concluir_processamento", true);

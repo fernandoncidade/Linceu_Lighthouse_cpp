@@ -1,8 +1,10 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QMutex>
 #include <QStringList>
 #include <QVariantMap>
+#include <memory>
 
 class QObject;
 class QEvent;
@@ -124,6 +126,7 @@ public:
     QObject* tabela_dados;
     source::services::GerenciamentoTabela::EventTableModel* event_table_model;
     source::security::SecurityManager* security_manager;
+    std::unique_ptr<QMutex> mutex_interface;
 };
 
 }  // namespace source::gui

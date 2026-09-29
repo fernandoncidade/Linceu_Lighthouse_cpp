@@ -20,16 +20,23 @@ void processar_buffer_eventos(source::services::Observador* self) {
 
             std::deque<QVariantMap> eventos_para_processar;
             {
-                std::lock_guard<std::mutex> lock(self->evento_lock);
+                std::unique_lock<std::mutex> lock(self->evento_lock);
+                self->cv_buffer.wait_for(lock, std::chrono::milliseconds(100), [self]() {
+                    return !self->ativo || !self->pause_event_set || !self->buffer_eventos.empty();
+                });
+
+                if (!self->ativo) {
+                    break;
+                }
+
                 while (!self->buffer_eventos.empty() &&
                        static_cast<int>(eventos_para_processar.size()) < kMaxEventosPorCiclo) {
-                    eventos_para_processar.push_back(self->buffer_eventos.front());
+                    eventos_para_processar.push_back(std::move(self->buffer_eventos.front()));
                     self->buffer_eventos.pop_front();
                 }
             }
 
             if (eventos_para_processar.empty()) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
                 continue;
             }
 

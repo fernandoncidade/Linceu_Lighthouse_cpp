@@ -700,6 +700,30 @@
         <translation>Cancella tabella interfaccia utente, database di sicurezza e database dati</translation>
     </message>
     <message>
+        <source>wait</source>
+        <translation>Attendere...</translation>
+    </message>
+    <message>
+        <source>clearing_data</source>
+        <translation>Pulizia dei dati in corso, attendere...</translation>
+    </message>
+    <message>
+        <source>clear_security_db_failed</source>
+        <translation>Impossibile cancellare il database di sicurezza.</translation>
+    </message>
+    <message>
+        <source>clear_main_db_failed</source>
+        <translation>Impossibile cancellare il database principale.</translation>
+    </message>
+    <message>
+        <source>clear_unknown_error</source>
+        <translation>Errore sconosciuto durante la pulizia.</translation>
+    </message>
+    <message>
+        <source>security_database_cleared</source>
+        <translation>Database di sicurezza cancellato con successo.</translation>
+    </message>
+    <message>
         <source>import_saved_db_prompt</source>
         <translation>Ci sono dati salvati nell'ultimo database, vuoi importarli?</translation>
     </message>
@@ -6601,6 +6625,18 @@ pip install plotly</translation>
     <message>
         <source>security_export_success</source>
         <translation>Pacchetto di evidenza esportato con successo.</translation>
+    </message>
+    <message>
+        <source>security_active_backend</source>
+        <translation>Backend attivo: %1</translation>
+    </message>
+    <message>
+        <source>security_no_evidence_recorded</source>
+        <translation>Nessuna prova registrata in questa sessione.</translation>
+    </message>
+    <message>
+        <source>security_recent_records</source>
+        <translation>Registri recenti:</translation>
     </message>
     <message>
         <source>security_alert_popup_title</source>

@@ -347,15 +347,15 @@ Componentes principais:
 | `mdir_01_multi_diretorio.*` | Perfis e múltiplos diretórios monitorados. |
 | `secore_05_SecurityDbWriter.*` | Writer específico de segurança. |
 
-Diálogos de segurança:
+Diálogos e Subsistemas de Segurança:
 
-- `SecurityUiController`
-- `MultiDirectoryDialog`
-- `AlertCenterDialog`
-- `SessionCenterDialog`
-- `RecoveryDialog`
-- `EvidenceDialog`
-- `NotificationPopupConfigDialog`
+- `SecurityUiController`: Orquestrador central da interface de segurança, gerencia o ciclo de vida dos diálogos e a comunicação com os serviços de backend.
+- `MultiDirectoryDialog` (`secui_02_MultiDirectoryDialog`): Gerenciamento de múltiplos diretórios monitorados em perfis persistentes SQLite, permitindo auditoria simultânea e troca rápida de escopos de monitoramento.
+- `AlertCenterDialog` (`secui_03_AlertCenterDialog`): Central de triagem de incidentes com pontuação determinística em 4 níveis objetivos de risco (Baixo, Médio, Alto e Crítico), regras acionadas e correlação forense com pacotes de evidência.
+- `SessionCenterDialog` (`secui_04_SessionCenterDialog`): Visualização de sessões temporais com carregamento assíncrono via thread de trabalho (`run_on_security_runtime_thread`), mantendo a UI totalmente não-bloqueante mesmo com dezenas de milhares de eventos históricos; inclui indicador de carregamento, recarregamento dinâmico e tooltips formatadas para múltiplos caminhos.
+- `RecoveryDialog` (`secui_05_RecoveryDialog`): Painel de quarentena e versões monitoradas com sincronização diferencial sem tremulação (`find_row_by_text`), preservando a seleção do usuário, barra de rolagem e ordenação durante atualizações; inclui diálogo de escolha de pasta de destino personalizada e verificação criptográfica estrita de integridade via hash SHA-256.
+- `EvidenceDialog` (`secui_06_EvidenceDialog`): Geração e exportação formal de pacotes de evidência forense e relatórios criptográficos.
+- `NotificationPopupConfigDialog` (`secui_07_NotificationPopupConfigDialog`): Configuração granular de limites, taxas de amostragem e períodos de arrefecimento (cooldown) para pop-ups de segurança.
 
 ## Geração de Estatísticas
 
@@ -996,15 +996,15 @@ Core components:
 | `mdir_01_multi_diretorio.*` | Multi-directory monitoring profiles and watch paths. |
 | `secore_05_SecurityDbWriter.*` | Dedicated asynchronous security database writer. |
 
-Security Dialogs:
+Security Dialogs and Subsystems:
 
-- `SecurityUiController`
-- `MultiDirectoryDialog`
-- `AlertCenterDialog`
-- `SessionCenterDialog`
-- `RecoveryDialog`
-- `EvidenceDialog`
-- `NotificationPopupConfigDialog`
+- `SecurityUiController`: Central orchestrator for the security interface, managing dialog lifecycles and backend service integration.
+- `MultiDirectoryDialog` (`secui_02_MultiDirectoryDialog`): Multi-directory profile management backed by persistent SQLite storage, enabling simultaneous auditing and rapid scope switching across monitored folder trees.
+- `AlertCenterDialog` (`secui_03_AlertCenterDialog`): Incident triage center with deterministic risk scoring across 4 objective levels (Low, Medium, High, Critical), rule violation correlation, and forensic evidence tracking.
+- `SessionCenterDialog` (`secui_04_SessionCenterDialog`): Temporal session viewer powered by an asynchronous background worker (`run_on_security_runtime_thread`), ensuring the Qt UI remains completely non-blocking even with tens of thousands of historical events; features visual loading indicators, dynamic incremental refresh, and formatted tooltips for multi-path sessions.
+- `RecoveryDialog` (`secui_05_RecoveryDialog`): Quarantine and monitored baseline versions viewer featuring anti-flicker differential row synchronization (`find_row_by_text`), preserving user row selection, scroll position, and sorting state during live updates; includes a custom target destination chooser dialog and strict cryptographic SHA-256 integrity hash verification upon file restoration.
+- `EvidenceDialog` (`secui_06_EvidenceDialog`): Formal generation and export of self-contained forensic evidence packages and baseline reports.
+- `NotificationPopupConfigDialog` (`secui_07_NotificationPopupConfigDialog`): Granular threshold, row count, and cooldown configuration for security pop-ups.
 
 ## Statistics and Analytics Generation
 
@@ -1645,15 +1645,15 @@ Componentes principales:
 | `mdir_01_multi_diretorio.*` | Perfiles de monitorización y múltiples directorios observados. |
 | `secore_05_SecurityDbWriter.*` | Escritor asíncrono especializado para la base de datos de seguridad. |
 
-Diálogos de seguridad:
+Diálogos y Subsistemas de Seguridad:
 
-- `SecurityUiController`
-- `MultiDirectoryDialog`
-- `AlertCenterDialog`
-- `SessionCenterDialog`
-- `RecoveryDialog`
-- `EvidenceDialog`
-- `NotificationPopupConfigDialog`
+- `SecurityUiController`: Orquestador central de la interfaz de seguridad, administra el ciclo de vida de los diálogos y la integración con servicios de backend.
+- `MultiDirectoryDialog` (`secui_02_MultiDirectoryDialog`): Gestión de perfiles multidirectorio con persistencia en SQLite, permitiendo auditoría simultánea y cambio rápido de ámbitos de monitoreo.
+- `AlertCenterDialog` (`secui_03_AlertCenterDialog`): Centro de triaje de incidentes con puntuación determinista en 4 niveles objetivos de riesgo (Bajo, Medio, Alto y Crítico), reglas infringidas y correlación forense con paquetes de evidencia.
+- `SessionCenterDialog` (`secui_04_SessionCenterDialog`): Visualizador de sesiones temporales con carga asíncrona mediante hilo de trabajo (`run_on_security_runtime_thread`), garantizando una interfaz completamente no bloqueante incluso ante decenas de miles de eventos; incluye indicador de carga, actualización incremental dinámica y sugerencias emergentes formateadas para múltiples rutas.
+- `RecoveryDialog` (`secui_05_RecoveryDialog`): Panel de cuarentena y versiones monitorizadas con sincronización diferencial sin parpadeo (`find_row_by_text`), preservando la selección del usuario, posición de desplazamiento y orden durante actualizaciones; incluye diálogo de selección de carpeta de destino personalizada y verificación criptográfica estricta de integridad mediante hash SHA-256.
+- `EvidenceDialog` (`secui_06_EvidenceDialog`): Generación y exportación formal de paquetes de evidencia forense e informes criptográficos.
+- `NotificationPopupConfigDialog` (`secui_07_NotificationPopupConfigDialog`): Configuración granular de umbrales, límite de filas y tiempo de enfriamiento (cooldown) para ventanas emergentes de seguridad.
 
 ## Generación de Estadísticas
 
@@ -2294,15 +2294,15 @@ Composants essentiels :
 | `mdir_01_multi_diretorio.*` | Profils de surveillance et répertoires multiples. |
 | `secore_05_SecurityDbWriter.*` | Rédacteur asynchrone dédié à la base de données de sécurité. |
 
-Boîtes de dialogue de sécurité :
+Boîtes de dialogue et sous-systèmes de sécurité :
 
-- `SecurityUiController`
-- `MultiDirectoryDialog`
-- `AlertCenterDialog`
-- `SessionCenterDialog`
-- `RecoveryDialog`
-- `EvidenceDialog`
-- `NotificationPopupConfigDialog`
+- `SecurityUiController` : Orchestrateur central de l'interface de sécurité, gérant le cycle de vie des boîtes de dialogue et les services d'arrière-plan.
+- `MultiDirectoryDialog` (`secui_02_MultiDirectoryDialog`) : Gestion des profils multi-répertoires avec persistance SQLite, permettant la surveillance simultanée et le basculement rapide entre arborescences surveillées.
+- `AlertCenterDialog` (`secui_03_AlertCenterDialog`) : Centre de triage des incidents avec score déterministe sur 4 niveaux objectifs de risque (Faible, Moyen, Élevé et Critique), détection des règles enfreintes et corrélation avec les packages de preuves.
+- `SessionCenterDialog` (`secui_04_SessionCenterDialog`) : Visualisation des sessions temporelles avec chargement asynchrone via thread de travail (`run_on_security_runtime_thread`), garantissant une interface fluide et non bloquante même avec des dizaines de milliers d'événements historiques ; comprend indicateur de progression, rechargement incrémental dynamique et infobulles détaillées pour chemins multiples.
+- `RecoveryDialog` (`secui_05_RecoveryDialog`) : Gestionnaire de quarantaine et des versions surveillées avec synchronisation différentielle anti-scintillement (`find_row_by_text`), préservant la sélection active, le défilement et le tri lors des mises à jour ; inclut dialogue de choix du dossier de destination personnalisé et validation cryptographique stricte par hachage SHA-256 lors de la restauration.
+- `EvidenceDialog` (`secui_06_EvidenceDialog`) : Génération et exportation formelle de packages de preuves auditables et de rapports cryptographiques.
+- `NotificationPopupConfigDialog` (`secui_07_NotificationPopupConfigDialog`) : Configuration granulaire des seuils, du nombre de lignes et du délai d'attente (cooldown) des pop-ups de sécurité.
 
 ## Génération de Statistiques
 
@@ -2943,15 +2943,15 @@ Componenti fondamentali:
 | `mdir_01_multi_diretorio.*` | Profili di monitoraggio e cartelle multiple supervisionate. |
 | `secore_05_SecurityDbWriter.*` | Scrittore asincrono dedicato al database di sicurezza. |
 
-Finestre di dialogo di sicurezza:
+Finestre di dialogo e sottosistemi di sicurezza:
 
-- `SecurityUiController`
-- `MultiDirectoryDialog`
-- `AlertCenterDialog`
-- `SessionCenterDialog`
-- `RecoveryDialog`
-- `EvidenceDialog`
-- `NotificationPopupConfigDialog`
+- `SecurityUiController`: Orchestratore principale dell'interfaccia di sicurezza, gestisce il ciclo di vita dei dialoghi e l'integrazione con i servizi di backend.
+- `MultiDirectoryDialog` (`secui_02_MultiDirectoryDialog`): Gestione dei profili multi-directory con persistenza SQLite, consentendo l'audit simultaneo e il cambio rapido degli ambiti monitorati.
+- `AlertCenterDialog` (`secui_03_AlertCenterDialog`): Centro di valutazione degli incidenti con punteggio di rischio deterministico su 4 livelli oggettivi (Basso, Medio, Alto e Critico), correlazione delle regole violate e tracciamento delle prove forensi.
+- `SessionCenterDialog` (`secui_04_SessionCenterDialog`): Visualizzatore di sessioni temporali con caricamento asincrono tramite thread di lavoro (`run_on_security_runtime_thread`), mantenendo la UI perfettamente reattiva e fluida anche con decine di migliaia di eventi storici; include indicatore di caricamento, aggiornamento dinamico e tooltip formattati per directory multiple.
+- `RecoveryDialog` (`secui_05_RecoveryDialog`): Pannello di quarantena e versioni monitorate con sincronizzazione differenziale anti-sfarfallio (`find_row_by_text`), preservando la riga selezionata, lo scorrimento e l'ordinamento durante gli aggiornamenti; include dialogo di scelta della cartella di destinazione personalizzata e verifica crittografica rigorosa dell'integrità tramite hash SHA-256 al momento del ripristino.
+- `EvidenceDialog` (`secui_06_EvidenceDialog`): Generazione ed esportazione formale di pacchetti di prove verificabili e report crittografici.
+- `NotificationPopupConfigDialog` (`secui_07_NotificationPopupConfigDialog`): Configurazione granulare di soglie, numero di righe e intervallo di cooldown per le notifiche pop-up.
 
 ## Generazione delle Statistiche
 
@@ -3592,15 +3592,15 @@ Kernkomponenten:
 | `mdir_01_multi_diretorio.*` | Überwachungsprofile und Verwaltung mehrerer Verzeichnispfade. |
 | `secore_05_SecurityDbWriter.*` | Dedizierter asynchroner Writer für die Sicherheitsdatenbank. |
 
-Sicherheitsdialoge:
+Sicherheitsdialoge und Teilsysteme:
 
-- `SecurityUiController`
-- `MultiDirectoryDialog`
-- `AlertCenterDialog`
-- `SessionCenterDialog`
-- `RecoveryDialog`
-- `EvidenceDialog`
-- `NotificationPopupConfigDialog`
+- `SecurityUiController`: Zentraler Orchestrator der Sicherheitsoberfläche, steuert den Lebenszyklus der Dialoge und die Backend-Integration.
+- `MultiDirectoryDialog` (`secui_02_MultiDirectoryDialog`): Verwaltung persistenter Multi-Verzeichnis-Profile in SQLite für simultane Überwachung und schnellen Wechsel überwachter Verzeichnisstrukturen.
+- `AlertCenterDialog` (`secui_03_AlertCenterDialog`): Vorfall-Triage-Zentrale mit deterministischer Risikobewertung in 4 objektiven Stufen (Niedrig, Mittel, Hoch, Kritisch), Regelverletzungskorrelation und forensischer Beweissicherung.
+- `SessionCenterDialog` (`secui_04_SessionCenterDialog`): Zeitliche Sitzungsansicht mit asynchronem Hintergrund-Ladevorgang (`run_on_security_runtime_thread`), wodurch die Qt-Benutzeroberfläche selbst bei zehntausenden Verlaufsereignissen vollkommen reaktionsfähig bleibt; bietet visuelle Ladeanzeige, dynamische inkrementelle Aktualisierung und formatierte Tooltips für Mehrpfadsitzungen.
+- `RecoveryDialog` (`secui_05_RecoveryDialog`): Quarantäne- und Versionsverwaltung mit flimmerfreier differenzieller Zeilensynchronisation (`find_row_by_text`), die Zeilenauswahl, Scrollposition und Spaltensortierung bei Live-Updates unverändert beibehält; umfasst Zielordner-Auswahldialog und strikte kryptografische SHA-256-Hash-Integritätsprüfung bei Dateiwiederherstellung.
+- `EvidenceDialog` (`secui_06_EvidenceDialog`): Formelle Erstellung und Export auditierbarer forensischer Beweispakete und kryptografischer Berichte.
+- `NotificationPopupConfigDialog` (`secui_07_NotificationPopupConfigDialog`): Granulare Konfiguration von Schwellenwerten, Zeilenlimits und Abklingzeiten (Cooldown) für Sicherheits-Popups.
 
 ## Statistik- und Analysegenerierung
 

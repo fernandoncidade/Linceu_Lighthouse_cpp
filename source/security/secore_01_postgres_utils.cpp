@@ -70,7 +70,6 @@ void apply_local_cache_settings(QSqlDatabase& db) {
     query.exec(QStringLiteral("PRAGMA journal_size_limit=268435456"));
     query.exec(QStringLiteral("PRAGMA foreign_keys=ON"));
     query.exec(QStringLiteral("PRAGMA busy_timeout=5000"));
-    query.exec(QStringLiteral("PRAGMA optimize"));
 }
 
 void record_failure(const QString& message) {
@@ -163,13 +162,28 @@ QSqlDatabase open_local_cache_database(const QString& scope) {
     }
 
     db.setDatabaseName(cache_path);
-    if (!db.isOpen() && !db.open()) {
+    const bool was_open = db.isOpen();
+    if (!was_open && !db.open()) {
         record_failure(QStringLiteral("Falha ao abrir o banco local de segurança: %1")
                            .arg(db.lastError().text()));
         return QSqlDatabase();
     }
 
-    apply_local_cache_settings(db);
+    if (!was_open) {
+        apply_local_cache_settings(db);
+    }
+
+    QThread* current_thread = QThread::currentThread();
+    if (current_thread != nullptr) {
+        static thread_local bool s_cleanup_hooked = false;
+        if (!s_cleanup_hooked) {
+            s_cleanup_hooked = true;
+            QObject::connect(current_thread, &QThread::finished, []() {
+                close_thread_local_connections();
+            });
+        }
+    }
+
     {
         QMutexLocker locker(&runtime_lock());
         runtime_state().local_cache_active = true;

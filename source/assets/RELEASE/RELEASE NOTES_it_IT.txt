@@ -1,3 +1,52 @@
+NOTE DI RILASCIO: Versione 2026.9.28.0
+
+PUNTI PRINCIPALI DI QUESTA VERSIONE
+
+Questa versione di Linceu Lighthouse introduce importanti miglioramenti in termini di stabilità, sicurezza locale e facilità d'uso, offrendo un'esperienza più agile e affidabile nel monitoraggio quotidiano di file e cartelle.
+
+La cronologia delle sessioni viene ora caricata in background, evitando qualsiasi blocco o rallentamento della finestra anche in presenza di decine di migliaia di eventi registrati. L'area di quarantena e recupero file è stata completamente perfezionata: le tabelle si aggiornano in modo fluido e senza sfarfallio dello schermo, preservando la selezione dell'elemento e la posizione di scorrimento esattamente dove l'utente le ha lasciate.
+
+Inoltre, il ripristino dei file consente ora di scegliere la cartella di destinazione preferita ed esegue un controllo automatico di integrità per garantire che i file recuperati siano intatti e privi di alterazioni. Il centro avvisi suddivide le segnalazioni in chiari livelli di priorità, facilitando decisioni rapide e consapevoli.
+
+
+NUOVE FUNZIONALITÀ E MIGLIORAMENTI
+
+1. Sessioni in Tempo Reale Più Rapide e Scorrevoli
+- Il caricamento della cronologia delle sessioni avviene in background, mantenendo l'applicazione sempre pronta all'uso e reattiva.
+- Indicatore visivo che segnala chiaramente il caricamento dei dati delle sessioni.
+- Pratici suggerimenti al passaggio del cursore sui riepiloghi delle cartelle per visualizzare tutti i percorsi inclusi nella sessione.
+- Pulsante di aggiornamento rapido per consultare nuove sessioni senza dover chiudere la finestra.
+
+2. Quarantena Intelligente con Aggiornamento Senza Sfarfallio
+- Le tabelle della quarantena e delle versioni protette si aggiornano in modo continuo e senza scatti visivi.
+- La riga selezionata, la barra di scorrimento e l'ordinamento delle colonne rimangono stabili all'arrivo di nuovi elementi.
+- Pulsante dedicato per aprire la cartella del file isolato direttamente in Esplora file di Windows.
+
+3. Ripristino Sicuro dei File con Controllo Automatico di Integrità
+- Scelta della cartella di destinazione: ripristina il file nel percorso originale o seleziona una cartella sicura di verifica.
+- Convalida automatica dell'integrità durante il ripristino, accertando che il file corrisponda perfettamente alla copia protetta.
+- Notifiche chiare che confermano il corretto esito dell'operazione di ripristino.
+
+4. Centro Avvisi Organizzato per Livello di Priorità
+- Notifiche ordinate in quattro livelli chiari: Basso, Medio, Alto e Critico.
+- Visibilità immediata delle situazioni più urgenti, permettendo di intervenire tempestivamente.
+- Spiegazione intuitiva dei motivi dell'avviso, del nome del file coinvolto e della relativa cartella.
+- Aggiornamento continuo degli avvisi senza interrompere il monitoraggio in corso.
+
+5. Gestione Semplice di Più Cartelle
+- Configurazione rapida di cartelle monitorate all'interno di profili memorizzati localmente sul computer.
+- Controllo e protezione simultanea di più cartelle e unità disco.
+- Riepilogo immediato con il numero di cartelle attive e il percorso principale monitorato.
+
+6. Manuale e Guida Integrati in 6 Lingue
+- Il Manuale Utente integrato nell'applicazione è stato ampliato con spiegazioni dettagliate passo dopo passo per ogni strumento.
+- Traduzione completa e accurata in sei lingue: portoghese, inglese, spagnolo, francese, italiano e tedesco.
+- Navigazione agevole con collegamenti rapidi a ogni sezione e percorsi di utilizzo consigliati.
+
+
+_________________________________________________
+
+
 NOTE DI RILASCIO: Versione 2026.8.25.0
 
 PUNTI SALIENTI DI QUESTA VERSIONE

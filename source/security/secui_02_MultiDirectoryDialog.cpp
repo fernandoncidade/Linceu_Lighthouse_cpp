@@ -191,10 +191,10 @@ void MultiDirectoryDialog::add_directory() {
     show_translated_security_feedback(interface_,
                                       QStringLiteral("security_directory_added"),
                                       QStringLiteral("Diretório adicionado ao monitoramento."));
-    show_status_message(interface_,
-                        get_text(loc_, QStringLiteral("security_directory_added"),
-                                 QStringLiteral("Diretório adicionado ao monitoramento.")),
-                        10000);
+    show_translated_status_message(interface_,
+                                   QStringLiteral("security_directory_added"),
+                                   QStringLiteral("Diretório adicionado ao monitoramento."),
+                                   10000);
     refresh_data();
 }
 
@@ -230,10 +230,10 @@ void MultiDirectoryDialog::remove_selected_directory() {
     show_translated_security_feedback(interface_,
                                       QStringLiteral("security_directory_removed"),
                                       QStringLiteral("Diretório removido do monitoramento."));
-    show_status_message(interface_,
-                        get_text(loc_, QStringLiteral("security_directory_removed"),
-                                 QStringLiteral("Diretório removido do monitoramento.")),
-                        10000);
+    show_translated_status_message(interface_,
+                                   QStringLiteral("security_directory_removed"),
+                                   QStringLiteral("Diretório removido do monitoramento."),
+                                   10000);
     refresh_data();
 }
 
@@ -256,10 +256,10 @@ void MultiDirectoryDialog::save_profile_name() {
     show_translated_security_feedback(interface_,
                                       QStringLiteral("security_profile_saved"),
                                       QStringLiteral("Perfil de monitoramento atualizado."));
-    show_status_message(interface_,
-                        get_text(loc_, QStringLiteral("security_profile_saved"),
-                                 QStringLiteral("Perfil de monitoramento atualizado.")),
-                        10000);
+    show_translated_status_message(interface_,
+                                   QStringLiteral("security_profile_saved"),
+                                   QStringLiteral("Perfil de monitoramento atualizado."),
+                                   10000);
     refresh_data();
 }
 

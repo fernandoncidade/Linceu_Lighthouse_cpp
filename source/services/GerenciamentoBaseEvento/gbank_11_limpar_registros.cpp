@@ -103,8 +103,6 @@ void limpar_registros(source::services::BaseEvento* self) {
                     QSqlQuery checkpoint(db);
                     checkpoint.exec(QStringLiteral("PRAGMA wal_checkpoint(TRUNCATE)"));
                     checkpoint.exec(QStringLiteral("PRAGMA optimize"));
-                    checkpoint.exec(QStringLiteral("VACUUM"));
-                    checkpoint.exec(QStringLiteral("PRAGMA wal_checkpoint(TRUNCATE)"));
 
                     db.close();
                 }

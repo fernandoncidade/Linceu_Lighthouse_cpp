@@ -10,6 +10,8 @@
 #include <QString>
 #include <QVariantMap>
 
+class QSqlDatabase;
+
 namespace source::services::GerenciamentoBaseEvento {
 
 class DatabaseWriter {
@@ -30,6 +32,7 @@ public:
 private:
     void worker();
     bool persist_batch(const std::deque<QPair<QString, QVariantMap>>& batch);
+    bool persist_batch_internal(QSqlDatabase& db, const std::deque<QPair<QString, QVariantMap>>& batch);
 
 private:
     QString db_path_;
@@ -41,6 +44,7 @@ private:
     std::atomic<bool> stop_event_;
     std::atomic<bool> started_;
     std::atomic<bool> suspended_;
+    std::atomic<bool> suspended_ack_;
     std::atomic<bool> persisting_;
     std::thread thread_;
 

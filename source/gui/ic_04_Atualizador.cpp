@@ -194,7 +194,10 @@ void Atualizador::atualizar_interface(InterfaceMonitor* interface_monitor) {
             observador_cpp = reinterpret_cast<source::services::Observador*>(ptr);
         }
 
-        if (observador_cpp != nullptr && observador_cpp->ativo.load()) {
+        const QString resultado_chave = interface_monitor->property("_resultado_chave").toString().trimmed();
+        if (!resultado_chave.isEmpty()) {
+            set_text(rotulo_resultado, get_text(interface_monitor->loc, resultado_chave));
+        } else if (observador_cpp != nullptr && observador_cpp->ativo.load()) {
             set_text(rotulo_resultado, get_text(interface_monitor->loc, "monitoring_started"));
         } else if (observador_cpp != nullptr) {
             set_text(rotulo_resultado, get_text(interface_monitor->loc, "monitoring_stopped"));

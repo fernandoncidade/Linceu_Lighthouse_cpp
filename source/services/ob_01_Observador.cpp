@@ -48,6 +48,7 @@ Observador::Observador(const QString& diretorio_, std::function<void(const QVari
       thread_scan(nullptr),
       scan_worker(nullptr),
     handle_dir(0),
+      handle_stop_event(0),
       owns_loc_(true) {
     try {
         gerenciador_colunas = std::make_unique<source::services::GerenciadorColunas>(this);

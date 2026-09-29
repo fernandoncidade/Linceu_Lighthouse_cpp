@@ -1,5 +1,6 @@
 #include "evid_01_exportacao_evidencia.h"
 
+#include <atomic>
 #include <QCryptographicHash>
 #include <QDateTime>
 #include <QDir>
@@ -130,8 +131,10 @@ QVariantMap ExportacaoEvidencia::register_event(const QVariantMap& evento, const
         return out;
     }
 
+    static std::atomic<quint64> s_evidence_seq{0};
+    const quint64 seq = ++s_evidence_seq;
     const QString timestamp = QDateTime::currentDateTimeUtc().toString(QStringLiteral("yyyyMMdd_HHmmss_zzz"));
-    const QString evidence_id = QStringLiteral("evidence_%1").arg(timestamp);
+    const QString evidence_id = QStringLiteral("evidence_%1_%2").arg(timestamp).arg(seq);
     const QString payload_json = serialize_json(evento);
     const QString context_json = serialize_json(contexto);
     const QString manifest_path = evidence_reference(evidence_id);

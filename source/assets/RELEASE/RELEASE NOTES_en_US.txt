@@ -1,3 +1,52 @@
+RELEASE NOTES: Version 2026.9.28.0
+
+RELEASE HIGHLIGHTS
+
+This release of Linceu Lighthouse brings significant improvements to stability, local security, and overall user experience, delivering a smoother and more dependable way to track and safeguard your files and folders.
+
+Activity sessions now load smoothly in the background, preventing interface pauses or freezing even when dealing with tens of thousands of historical events. The quarantine and file recovery area has been thoroughly refined: tables update seamlessly without screen flickering, keeping your selected item and scroll position exactly where you left them.
+
+Furthermore, restoring files now lets you choose your preferred destination folder and automatically verifies data integrity to guarantee recovered files are intact and uncorrupted. The alert center categorizes events into clear priority levels, helping you make quick, confident decisions.
+
+
+NEW FEATURES AND ENHANCEMENTS
+
+1. Faster and Smoother Real-Time Sessions
+- Monitoring session history now loads in the background, keeping the application fast and fully interactive at all times.
+- Visual loading indicator clearly showing when session data is being retrieved.
+- Helpful hover tooltips over directory summaries, making it simple to view all monitored paths within multi-folder sessions.
+- Convenient refresh button to check for new session blocks without closing the window.
+
+2. Smart Quarantine with Flicker-Free Updates
+- Quarantine and protected version tables now update smoothly without visual distraction or screen jumping.
+- Your selected row, scroll position, and column sorting remain stable as new items arrive in real time.
+- Direct button to open the folder containing the quarantined item in Windows File Explorer for prompt inspection.
+
+3. Safe File Recovery with Automatic Integrity Check
+- Destination selection upon recovery: restore the file directly to its original location or pick an alternate safe folder for inspection.
+- Automatic integrity check performed during restoration, confirming that the recovered file matches the protected backup copy.
+- Clear confirmation messages notifying you of successful restoration.
+
+4. Alert Center Prioritized by Urgency
+- Security alerts clearly organized into four straightforward priority levels: Low, Medium, High, and Critical.
+- Immediate visibility of high-priority events, allowing you to focus on items requiring prompt attention.
+- Transparent information explaining why each alert was raised, along with the affected file and folder path.
+- Seamless updates as new alerts are detected without interrupting active monitoring.
+
+5. Convenient Multi-Directory Management
+- Easily add, organize, and remove monitored folders within profiles stored directly on your computer.
+- Monitor and audit multiple folder locations and drives at the same time.
+- Clear status overview displaying active profiles, folder counts, and primary paths.
+
+6. Comprehensive Help and Manual in 6 Languages
+- The embedded User Manual has been expanded with detailed step-by-step instructions for all features.
+- Full localization across six languages: Portuguese, English, Spanish, French, Italian, and German.
+- Polished navigation with quick links to topics and recommended daily workflows.
+
+
+_________________________________________________
+
+
 RELEASE NOTES: Version 2026.8.25.0
 
 HIGHLIGHTS OF THIS VERSION

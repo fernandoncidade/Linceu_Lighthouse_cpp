@@ -31,6 +31,9 @@ constexpr char kSecurityFeedbackKeyProperty[] = "_security_feedback_key";
 constexpr char kSecurityFeedbackFallbackProperty[] = "_security_feedback_fallback";
 constexpr char kSecurityFeedbackExpiresAtProperty[] = "_security_feedback_expires_at_ms";
 constexpr char kSecurityFeedbackGenerationProperty[] = "_security_feedback_generation";
+constexpr char kSecurityStatusMessageKeyProperty[] = "_security_status_msg_key";
+constexpr char kSecurityStatusMessageFallbackProperty[] = "_security_status_msg_fallback";
+constexpr char kSecurityStatusMessageExpiresAtProperty[] = "_security_status_msg_expires_at_ms";
 
 QString property_name_for_key(const QString& key) {
     QString sanitized = key;
@@ -307,6 +310,10 @@ void set_security_result_label(QObject* interface_obj, const QString& text) {
     apply_security_result_label(interface_obj, text);
 }
 
+void set_security_result_label(QObject* interface_obj, const QString& key, const QString& fallback) {
+    show_translated_security_feedback(interface_obj, key, fallback, 0);
+}
+
 void show_translated_security_feedback(QObject* interface_obj,
                                        const QString& key,
                                        const QString& fallback,
@@ -322,7 +329,9 @@ void show_translated_security_feedback(QObject* interface_obj,
     }
 
     const int safe_timeout_ms = qMax(0, timeout_ms);
-    const qint64 expires_at_ms = QDateTime::currentMSecsSinceEpoch() + safe_timeout_ms;
+    const qint64 expires_at_ms = (safe_timeout_ms > 0)
+                                     ? (QDateTime::currentMSecsSinceEpoch() + safe_timeout_ms)
+                                     : 0;
     const int generation = next_security_feedback_generation(interface_obj);
     interface_obj->setProperty(kSecurityFeedbackKeyProperty, effective_key);
     interface_obj->setProperty(kSecurityFeedbackFallbackProperty, fallback);
@@ -347,7 +356,7 @@ void show_translated_security_feedback(QObject* interface_obj,
         }
 
         const qint64 expires_at = interface_viva->property(kSecurityFeedbackExpiresAtProperty).toLongLong();
-        if (expires_at > QDateTime::currentMSecsSinceEpoch()) {
+        if (expires_at > 0 && expires_at > QDateTime::currentMSecsSinceEpoch()) {
             return;
         }
 
@@ -365,19 +374,36 @@ void retranslate_active_security_feedback(QObject* interface_obj) {
     }
 
     const QString key = interface_obj->property(kSecurityFeedbackKeyProperty).toString().trimmed();
-    if (key.isEmpty()) {
-        return;
+    if (!key.isEmpty()) {
+        const qint64 expires_at_ms = interface_obj->property(kSecurityFeedbackExpiresAtProperty).toLongLong();
+        const qint64 now_ms = QDateTime::currentMSecsSinceEpoch();
+        if (expires_at_ms > 0 && expires_at_ms <= now_ms) {
+            clear_security_result_label(interface_obj);
+        } else {
+            const QString fallback = interface_obj->property(kSecurityFeedbackFallbackProperty).toString();
+            apply_security_result_label(interface_obj, get_text(get_localizador(interface_obj), key, fallback));
+        }
     }
 
-    const qint64 expires_at_ms = interface_obj->property(kSecurityFeedbackExpiresAtProperty).toLongLong();
-    const qint64 now_ms = QDateTime::currentMSecsSinceEpoch();
-    if (expires_at_ms > 0 && expires_at_ms <= now_ms) {
-        clear_security_result_label(interface_obj);
-        return;
+    const QString status_key = interface_obj->property(kSecurityStatusMessageKeyProperty).toString().trimmed();
+    if (!status_key.isEmpty()) {
+        const qint64 status_expires_at = interface_obj->property(kSecurityStatusMessageExpiresAtProperty).toLongLong();
+        const qint64 now_ms = QDateTime::currentMSecsSinceEpoch();
+        if (status_expires_at > 0 && status_expires_at <= now_ms) {
+            clear_status_message(interface_obj);
+        } else {
+            const int remaining_ms = (status_expires_at > now_ms)
+                                         ? static_cast<int>(status_expires_at - now_ms)
+                                         : 0;
+            const QString status_fallback = interface_obj->property(kSecurityStatusMessageFallbackProperty).toString();
+            const QString translated = get_text(get_localizador(interface_obj), status_key, status_fallback);
+            if (QObject* status_obj = interface_obj->property("status_bar").value<QObject*>()) {
+                if (auto* status = qobject_cast<QStatusBar*>(status_obj)) {
+                    status->showMessage(translated, remaining_ms);
+                }
+            }
+        }
     }
-
-    const QString fallback = interface_obj->property(kSecurityFeedbackFallbackProperty).toString();
-    apply_security_result_label(interface_obj, get_text(get_localizador(interface_obj), key, fallback));
 }
 
 void set_security_footer_summary_notification(QObject* interface_obj, const QString& text) {
@@ -496,9 +522,9 @@ void clear_status_message(QObject* interface_obj) {
     if (interface_obj == nullptr) {
         return;
     }
-    if (!interface_obj->property("_security_status_message_active").toBool()) {
-        return;
-    }
+    interface_obj->setProperty(kSecurityStatusMessageKeyProperty, QString());
+    interface_obj->setProperty(kSecurityStatusMessageFallbackProperty, QString());
+    interface_obj->setProperty(kSecurityStatusMessageExpiresAtProperty, QVariant::fromValue<qint64>(0));
     if (QObject* status_obj = interface_obj->property("status_bar").value<QObject*>()) {
         if (auto* status = qobject_cast<QStatusBar*>(status_obj)) {
             status->clearMessage();
@@ -517,6 +543,32 @@ void show_status_message(QObject* interface_obj, const QString& text, int timeou
             interface_obj->setProperty("_security_status_message_active", true);
         }
     }
+}
+
+void show_translated_status_message(QObject* interface_obj,
+                                    const QString& key,
+                                    const QString& fallback,
+                                    int timeout_ms) {
+    if (interface_obj == nullptr) {
+        return;
+    }
+
+    const QString effective_key = key.trimmed();
+    if (effective_key.isEmpty()) {
+        show_status_message(interface_obj, fallback, timeout_ms);
+        return;
+    }
+
+    const int safe_timeout_ms = qMax(0, timeout_ms);
+    const qint64 expires_at_ms = (safe_timeout_ms > 0)
+                                     ? (QDateTime::currentMSecsSinceEpoch() + safe_timeout_ms)
+                                     : 0;
+    interface_obj->setProperty(kSecurityStatusMessageKeyProperty, effective_key);
+    interface_obj->setProperty(kSecurityStatusMessageFallbackProperty, fallback);
+    interface_obj->setProperty(kSecurityStatusMessageExpiresAtProperty, QVariant::fromValue(expires_at_ms));
+
+    const QString translated = get_text(get_localizador(interface_obj), effective_key, fallback);
+    show_status_message(interface_obj, translated, safe_timeout_ms);
 }
 
 }  // namespace source::security::ui

@@ -13,8 +13,10 @@ class QTabWidget;
 namespace source::security::ui {
 
 class RecoveryDialog : public QDialog {
+    Q_OBJECT
 public:
     explicit RecoveryDialog(QWidget* parent, QObject* interface_obj);
+    ~RecoveryDialog() override;
 
 public slots:
     void refresh_data();

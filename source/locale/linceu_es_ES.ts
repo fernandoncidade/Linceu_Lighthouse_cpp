@@ -700,6 +700,30 @@
         <translation>Borrar tabla de la UI, base de seguridad y base de datos</translation>
     </message>
     <message>
+        <source>wait</source>
+        <translation>Espere...</translation>
+    </message>
+    <message>
+        <source>clearing_data</source>
+        <translation>Limpiando datos, por favor espere...</translation>
+    </message>
+    <message>
+        <source>clear_security_db_failed</source>
+        <translation>Error al limpiar la base de datos de seguridad.</translation>
+    </message>
+    <message>
+        <source>clear_main_db_failed</source>
+        <translation>Error al limpiar la base de datos principal.</translation>
+    </message>
+    <message>
+        <source>clear_unknown_error</source>
+        <translation>Error desconocido durante la limpieza.</translation>
+    </message>
+    <message>
+        <source>security_database_cleared</source>
+        <translation>Base de datos de seguridad limpiada con éxito.</translation>
+    </message>
+    <message>
         <source>import_saved_db_prompt</source>
         <translation>Hay datos guardados en la última base de datos; ¿desea importarlos?</translation>
     </message>
@@ -6601,6 +6625,18 @@ pip install plotly</translation>
     <message>
         <source>security_export_success</source>
         <translation>Paquete de evidencia exportado con éxito.</translation>
+    </message>
+    <message>
+        <source>security_active_backend</source>
+        <translation>Backend activo: %1</translation>
+    </message>
+    <message>
+        <source>security_no_evidence_recorded</source>
+        <translation>No hay evidencias registradas en esta sesión.</translation>
+    </message>
+    <message>
+        <source>security_recent_records</source>
+        <translation>Registros recientes:</translation>
     </message>
     <message>
         <source>security_alert_popup_title</source>

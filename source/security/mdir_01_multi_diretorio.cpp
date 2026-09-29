@@ -1,6 +1,7 @@
 #include "mdir_01_multi_diretorio.h"
 
 #include <memory>
+#include <mutex>
 #include <unordered_map>
 #include <vector>
 
@@ -40,6 +41,11 @@ struct RuntimeState {
     QStringList directories;
     std::vector<std::unique_ptr<source::services::Observador>> observers;
 };
+
+std::recursive_mutex& runtimes_mutex() {
+    static std::recursive_mutex mtx;
+    return mtx;
+}
 
 std::unordered_map<QObject*, std::shared_ptr<RuntimeState>>& all_runtimes() {
     static std::unordered_map<QObject*, std::shared_ptr<RuntimeState>> runtimes;
@@ -312,6 +318,7 @@ ProfileState ensure_profile_for_directory(const QString& directory) {
 }
 
 RuntimeState* runtime_for(QObject* interface_obj) {
+    std::lock_guard<std::recursive_mutex> lock(runtimes_mutex());
     auto& runtimes = all_runtimes();
     const auto it = runtimes.find(interface_obj);
     if (it == runtimes.end()) {
@@ -400,6 +407,7 @@ void MultiDiretorioCoordinator::ensure_profile_for_interface(QObject* interface_
         return;
     }
 
+    std::lock_guard<std::recursive_mutex> lock(runtimes_mutex());
     const ProfileState profile = ensure_profile_for_directory(primary_directory);
     auto& runtimes = all_runtimes();
     auto& runtime_ptr = runtimes[interface_obj];
@@ -609,6 +617,7 @@ source::services::Observador* MultiDiretorioCoordinator::configure_observers(
 
     if (!interface_obj->property("_observador_cpp_cleanup_connected").toBool()) {
         QObject::connect(interface_obj, &QObject::destroyed, [this](QObject* obj) {
+            std::lock_guard<std::recursive_mutex> lock(runtimes_mutex());
             stop_interface(obj);
             all_runtimes().erase(obj);
         });

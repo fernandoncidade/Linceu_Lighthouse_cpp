@@ -35,7 +35,10 @@ void Inicializador::inicializar_componentes(InterfaceMonitor* interface_monitor)
         }
         interface_monitor->setProperty("tabela_dados",
                                        QVariant::fromValue(static_cast<QObject*>(interface_monitor->tabela_dados)));
-        interface_monitor->setProperty("mutex", QVariant::fromValue(new QMutex()));
+        if (!interface_monitor->mutex_interface) {
+            interface_monitor->mutex_interface = std::make_unique<QMutex>();
+        }
+        interface_monitor->setProperty("mutex", QVariant::fromValue(interface_monitor->mutex_interface.get()));
 
         auto* status = interface_monitor->statusBar();
         if (status != nullptr) {

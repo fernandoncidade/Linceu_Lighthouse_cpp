@@ -23,6 +23,7 @@
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QSet>
+#include <QSignalBlocker>
 #include <QSpinBox>
 #include <QStringList>
 #include <QTabWidget>
@@ -207,16 +208,6 @@ QString find_window_icon_path() {
     return {};
 }
 
-LangInput current_default_input() {
-    const QDate today = QDate::currentDate();
-    return {
-        QString("%1.%2.%3.0").arg(today.year()).arg(today.month()).arg(today.day()),
-        today.day(),
-        today.month() - 1,
-        today.year()
-    };
-}
-
 QString readme_version(const QString& version) {
     QString normalized = version.trimmed();
     if (!normalized.startsWith('v', Qt::CaseInsensitive)) {
@@ -231,6 +222,55 @@ QString plain_version(const QString& version) {
         normalized.remove(0, 1);
     }
     return normalized;
+}
+
+QString format_version_from_date(int year, int month, int day, const QString& existing_version = QString()) {
+    QString revision = QStringLiteral("0");
+    if (!existing_version.isEmpty()) {
+        const QString plain = plain_version(existing_version.trimmed());
+        const QStringList parts = plain.split('.');
+        if (parts.size() >= 4) {
+            bool ok = false;
+            const int rev = parts.at(3).toInt(&ok);
+            if (ok && rev >= 0) {
+                revision = QString::number(rev);
+            }
+        }
+    }
+    return QStringLiteral("%1.%2.%3.%4").arg(year).arg(month).arg(day).arg(revision);
+}
+
+bool parse_version_to_date(const QString& version_str, int& day, int& month_index, int& year, int* revision = nullptr) {
+    static const QRegularExpression rx_ver_date(R"(^v?(\d{4})\.(\d{1,2})\.(\d{1,2})(?:\.(\d+))?$)", QRegularExpression::CaseInsensitiveOption);
+    const QRegularExpressionMatch m = rx_ver_date.match(version_str.trimmed());
+    if (m.hasMatch()) {
+        const int y = m.captured(1).toInt();
+        const int mo = m.captured(2).toInt();
+        const int d = m.captured(3).toInt();
+        if (mo >= 1 && mo <= 12 && d >= 1 && d <= 31 && y >= 1900 && y <= 3000) {
+            const QDate qd(y, mo, d);
+            if (qd.isValid()) {
+                year = y;
+                month_index = mo - 1;
+                day = d;
+                if (revision && !m.captured(4).isEmpty()) {
+                    *revision = m.captured(4).toInt();
+                }
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+LangInput current_default_input() {
+    const QDate today = QDate::currentDate();
+    return {
+        format_version_from_date(today.year(), today.month(), today.day()),
+        today.day(),
+        today.month() - 1,
+        today.year()
+    };
 }
 
 int parse_month_name_to_index(const QString& month_name) {
@@ -322,7 +362,7 @@ bool parse_date_string(const QString& raw_text, int& day, int& month_index, int&
 
     // 3. Numeric ISO: e.g. "2026-08-23", "2026/08/23"
     static const QRegularExpression rx_numeric_iso(
-        R"((\d{4})[-/.](\d{1,2})[-/.](\d{1,2}))");
+        R"(\b(\d{4})[-/](\d{1,2})[-/](\d{1,2})\b)");
     m = rx_numeric_iso.match(text);
     if (m.hasMatch()) {
         int y = m.captured(1).toInt();
@@ -521,14 +561,14 @@ QHash<QString, QStringList> build_patterns() {
           R"(^(> \*\*Nota:\*\*.*)$)",
           R"(^(> \*\*Remarque\s*:\*\*.*)$)",
           R"(^(> \*\*Hinweis:\*\*.*)$)",
-          R"(^(Versão:\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)",
-          R"(^(\*\*Versão:\*\*\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)",
-          R"(^(Version\s*:\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)",
-          R"(^(\*\*Version\s*:\*\*\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)",
-          R"(^(Versión:\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)",
-          R"(^(\*\*Versión:\*\*\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)",
-          R"(^(Versione:\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)",
-          R"(^(\*\*Versione:\*\*\s*v[0-9]+(?:\.[0-9]+){1,3}<br>)$)"}},
+          R"(^(Versão:\s*v[0-9]+(?:\.[0-9]+){1,3}(?:<br>)?)\s*$)",
+          R"(^(\*\*Versão:\*\*\s*v[0-9]+(?:\.[0-9]+){1,3}(?:<br>)?)\s*$)",
+          R"(^(Version\s*:\s*v[0-9]+(?:\.[0-9]+){1,3}(?:<br>)?)\s*$)",
+          R"(^(\*\*Version\s*:\*\*\s*v[0-9]+(?:\.[0-9]+){1,3}(?:<br>)?)\s*$)",
+          R"(^(Versión:\s*v[0-9]+(?:\.[0-9]+){1,3}(?:<br>)?)\s*$)",
+          R"(^(\*\*Versión:\*\*\s*v[0-9]+(?:\.[0-9]+){1,3}(?:<br>)?)\s*$)",
+          R"(^(Versione:\s*v[0-9]+(?:\.[0-9]+){1,3}(?:<br>)?)\s*$)",
+          R"(^(\*\*Versione:\*\*\s*v[0-9]+(?:\.[0-9]+){1,3}(?:<br>)?)\s*$)"}},
 
         {"observacao", {R"(^(-\s*`?v?[0-9]+(?:\.[0-9]+){1,3}`?)\s*$)"}},
 
@@ -713,25 +753,51 @@ QList<FileCheckStatus> check_all_files(const QString& base_dir) {
         st.exists = ok;
 
         if (ok) {
-            // Detect version
+            const QString clean_txt = QString(txt).remove('\r');
+
+            // 1. Check configured patterns first against normalized text
+            const QStringList patterns = PATTERNS.value(entry.key);
+            for (const QString& pat : patterns) {
+                QRegularExpression re(pat, QRegularExpression::MultilineOption);
+                const QRegularExpressionMatch match = re.match(clean_txt);
+                if (match.hasMatch()) {
+                    st.found_patterns.append(match.captured(1).trimmed());
+                } else {
+                    st.missing_patterns.append(pat);
+                }
+            }
+
+            // 2. Detect version: prioritize version captured by matched pattern
             QString found_ver;
-            const QStringList lines = txt.split(QRegularExpression("\\r?\\n"));
-            for (const QString& line : lines) {
-                if (line.contains("Versão", Qt::CaseInsensitive) ||
-                    line.contains("Version", Qt::CaseInsensitive) ||
-                    line.contains("Versión", Qt::CaseInsensitive) ||
-                    line.contains("Versione", Qt::CaseInsensitive) ||
-                    line.contains("MyAppVersion", Qt::CaseInsensitive)) {
-                    if (parse_version_string(line, found_ver)) {
-                        st.detected_version = found_ver;
-                        break;
+            for (const QString& f : st.found_patterns) {
+                if (parse_version_string(f, found_ver)) {
+                    st.detected_version = found_ver;
+                    break;
+                }
+            }
+
+            if (st.detected_version.isEmpty()) {
+                const QStringList lines = clean_txt.split('\n');
+                for (const QString& line : lines) {
+                    if (line.trimmed().startsWith('#')) continue; // Skip markdown headings
+                    if (line.contains("Versão", Qt::CaseInsensitive) ||
+                        line.contains("Version", Qt::CaseInsensitive) ||
+                        line.contains("Versión", Qt::CaseInsensitive) ||
+                        line.contains("Versione", Qt::CaseInsensitive) ||
+                        line.contains("MyAppVersion", Qt::CaseInsensitive)) {
+                        if (parse_version_string(line, found_ver)) {
+                            st.detected_version = found_ver;
+                            break;
+                        }
                     }
                 }
             }
 
-            // Detect date
+            // 3. Detect date: scan lines skipping markdown headings
             int d = 0, m = 0, y = 0;
+            const QStringList lines = clean_txt.split('\n');
             for (const QString& line : lines) {
+                if (line.trimmed().startsWith('#')) continue; // Skip markdown headings
                 if (line.contains("atualização", Qt::CaseInsensitive) ||
                     line.contains("updated", Qt::CaseInsensitive) ||
                     line.contains("mise à jour", Qt::CaseInsensitive) ||
@@ -747,17 +813,6 @@ QList<FileCheckStatus> check_all_files(const QString& base_dir) {
                         st.detected_date = QString("%1/%2/%3").arg(d).arg(m + 1).arg(y);
                         break;
                     }
-                }
-            }
-
-            const QStringList patterns = PATTERNS.value(entry.key);
-            for (const QString& pat : patterns) {
-                QRegularExpression re(pat, QRegularExpression::MultilineOption);
-                const QRegularExpressionMatch match = re.match(txt);
-                if (match.hasMatch()) {
-                    st.found_patterns.append(match.captured(1).trimmed());
-                } else {
-                    st.missing_patterns.append(pat);
                 }
             }
         }
@@ -892,7 +947,8 @@ QGroupBox* create_group(const QString& title, const QString& version_label, cons
 
     layout->addWidget(new QLabel(day_label));
     day_spin = new QSpinBox();
-    day_spin->setRange(1, 31);
+    const int initial_max_days = QDate(defaults.year, defaults.month_index + 1, 1).daysInMonth();
+    day_spin->setRange(1, initial_max_days);
     day_spin->setValue(defaults.day);
     layout->addWidget(day_spin);
 
@@ -907,6 +963,43 @@ QGroupBox* create_group(const QString& title, const QString& version_label, cons
     year_spin->setRange(1900, 3000);
     year_spin->setValue(defaults.year);
     layout->addWidget(year_spin);
+
+    auto update_ver = [version_edit, day_spin, month_combo, year_spin]() {
+        const int y = year_spin->value();
+        const int m = month_combo->currentIndex() + 1;
+        const int max_days = QDate(y, m, 1).daysInMonth();
+        if (day_spin->maximum() != max_days) {
+            day_spin->setMaximum(max_days);
+        }
+        const int d = day_spin->value();
+        const QString new_ver = format_version_from_date(y, m, d, version_edit->text());
+        if (version_edit->text() != new_ver) {
+            version_edit->setText(new_ver);
+        }
+    };
+
+    QObject::connect(day_spin, QOverload<int>::of(&QSpinBox::valueChanged), group, [update_ver](int) {
+        update_ver();
+    });
+    QObject::connect(month_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), group, [update_ver](int) {
+        update_ver();
+    });
+    QObject::connect(year_spin, QOverload<int>::of(&QSpinBox::valueChanged), group, [update_ver](int) {
+        update_ver();
+    });
+
+    QObject::connect(version_edit, &QLineEdit::editingFinished, group, [version_edit, day_spin, month_combo, year_spin]() {
+        int d = 0, m_idx = 0, y = 0;
+        if (parse_version_to_date(version_edit->text(), d, m_idx, y)) {
+            const QSignalBlocker b_day(day_spin);
+            const QSignalBlocker b_month(month_combo);
+            const QSignalBlocker b_year(year_spin);
+            day_spin->setMaximum(QDate(y, m_idx + 1, 1).daysInMonth());
+            day_spin->setValue(d);
+            month_combo->setCurrentIndex(m_idx);
+            year_spin->setValue(y);
+        }
+    });
 
     return group;
 }
@@ -1022,9 +1115,34 @@ VersionEditor::VersionEditor(QWidget* parent)
     QObject::connect(sync_ver_btn, &QPushButton::clicked, this, &VersionEditor::on_sync_pt_version);
     QObject::connect(today_btn, &QPushButton::clicked, this, &VersionEditor::on_set_today_all);
 
-    // Carga inicial dos arquivos
-    load_versions_and_dates_from_files();
+    // Inicializa com a data atual do sistema operacional e versões correspondentes
+    on_set_today_all();
     on_check();
+}
+
+void VersionEditor::set_date_and_version(QLineEdit* ver_edit, QSpinBox* day_spin, QComboBox* month_combo, QSpinBox* year_spin, const QDate& date) {
+    if (!ver_edit || !day_spin || !month_combo || !year_spin || !date.isValid()) return;
+
+    const QSignalBlocker b_day(day_spin);
+    const QSignalBlocker b_month(month_combo);
+    const QSignalBlocker b_year(year_spin);
+    const QSignalBlocker b_ver(ver_edit);
+
+    day_spin->setRange(1, date.daysInMonth());
+    day_spin->setValue(date.day());
+    month_combo->setCurrentIndex(date.month() - 1);
+    year_spin->setValue(date.year());
+
+    const QString new_ver = format_version_from_date(date.year(), date.month(), date.day(), ver_edit->text());
+    ver_edit->setText(new_ver);
+}
+
+void VersionEditor::update_version_from_date(QLineEdit* ver_edit, int day, int month, int year) {
+    if (!ver_edit) return;
+    const QString new_ver = format_version_from_date(year, month, day, ver_edit->text());
+    if (ver_edit->text() != new_ver) {
+        ver_edit->setText(new_ver);
+    }
 }
 
 void VersionEditor::on_select_folder() {
@@ -1032,7 +1150,6 @@ void VersionEditor::on_select_folder() {
     if (!dir_path.isEmpty()) {
         selected_base_dir_ = QDir::cleanPath(dir_path);
         folder_path_->setText(selected_base_dir_);
-        load_versions_and_dates_from_files();
         on_check();
     }
 }
@@ -1041,22 +1158,32 @@ void VersionEditor::load_versions_and_dates_from_files() {
     const auto statuses = check_all_files(selected_base_dir_);
 
     // Helper to update fields if found
-    auto try_populate = [](const QList<FileCheckStatus>& list, const QString& lang,
-                           QLineEdit* ver_edit, QSpinBox* day_spin, QComboBox* month_combo, QSpinBox* year_spin) {
+    auto try_populate = [this](const QList<FileCheckStatus>& list, const QString& lang,
+                               QLineEdit* ver_edit, QSpinBox* day_spin, QComboBox* month_combo, QSpinBox* year_spin) {
         for (const FileCheckStatus& st : list) {
             if (st.lang == lang && st.exists) {
-                if (!st.detected_version.isEmpty()) {
-                    ver_edit->setText(plain_version(st.detected_version));
-                }
+                int d = 0, m = 0, y = 0;
+                bool date_ok = false;
                 if (!st.detected_date.isEmpty()) {
-                    int d = 0, m = 0, y = 0;
-                    if (parse_date_string(st.detected_date, d, m, y)) {
-                        day_spin->setValue(d);
-                        month_combo->setCurrentIndex(m);
-                        year_spin->setValue(y);
+                    date_ok = parse_date_string(st.detected_date, d, m, y);
+                }
+                if (date_ok) {
+                    const QDate parsed_date(y, m + 1, d);
+                    if (parsed_date.isValid()) {
+                        set_date_and_version(ver_edit, day_spin, month_combo, year_spin, parsed_date);
+                        if (!st.detected_version.isEmpty()) {
+                            const QString f_ver = plain_version(st.detected_version);
+                            ver_edit->setText(format_version_from_date(y, m + 1, d, f_ver));
+                        }
+                    }
+                } else if (!st.detected_version.isEmpty()) {
+                    ver_edit->setText(plain_version(st.detected_version));
+                    int vd = 0, vm_idx = 0, vy = 0;
+                    if (parse_version_to_date(st.detected_version, vd, vm_idx, vy)) {
+                        set_date_and_version(ver_edit, day_spin, month_combo, year_spin, QDate(vy, vm_idx + 1, vd));
                     }
                 }
-                if (!st.detected_version.isEmpty() && !st.detected_date.isEmpty()) {
+                if (!st.detected_version.isEmpty() || date_ok) {
                     break;
                 }
             }
@@ -1075,25 +1202,38 @@ void VersionEditor::on_sync_pt_version() {
     const QString pt_ver = plain_version(pt_version_->text().trimmed());
     if (pt_ver.isEmpty()) return;
 
-    en_version_->setText(pt_ver);
-    es_version_->setText(pt_ver);
-    fr_version_->setText(pt_ver);
-    it_version_->setText(pt_ver);
-    de_version_->setText(pt_ver);
+    const int d = pt_day_->value();
+    const int m = pt_month_->currentIndex();
+    const int y = pt_year_->value();
+    const QDate pt_date(y, m + 1, d);
+
+    auto sync_target = [&](QLineEdit* ver_edit, QSpinBox* day_spin, QComboBox* month_combo, QSpinBox* year_spin) {
+        if (pt_date.isValid()) {
+            set_date_and_version(ver_edit, day_spin, month_combo, year_spin, pt_date);
+            ver_edit->setText(pt_ver);
+        } else {
+            ver_edit->setText(pt_ver);
+            day_spin->setValue(d);
+            month_combo->setCurrentIndex(m);
+            year_spin->setValue(y);
+        }
+    };
+
+    sync_target(en_version_, en_day_, en_month_, en_year_);
+    sync_target(es_version_, es_day_, es_month_, es_year_);
+    sync_target(fr_version_, fr_day_, fr_month_, fr_year_);
+    sync_target(it_version_, it_day_, it_month_, it_year_);
+    sync_target(de_version_, de_day_, de_month_, de_year_);
 }
 
 void VersionEditor::on_set_today_all() {
     const QDate today = QDate::currentDate();
-    const int d = today.day();
-    const int m = today.month() - 1;
-    const int y = today.year();
-
-    pt_day_->setValue(d); pt_month_->setCurrentIndex(m); pt_year_->setValue(y);
-    en_day_->setValue(d); en_month_->setCurrentIndex(m); en_year_->setValue(y);
-    es_day_->setValue(d); es_month_->setCurrentIndex(m); es_year_->setValue(y);
-    fr_day_->setValue(d); fr_month_->setCurrentIndex(m); fr_year_->setValue(y);
-    it_day_->setValue(d); it_month_->setCurrentIndex(m); it_year_->setValue(y);
-    de_day_->setValue(d); de_month_->setCurrentIndex(m); de_year_->setValue(y);
+    set_date_and_version(pt_version_, pt_day_, pt_month_, pt_year_, today);
+    set_date_and_version(en_version_, en_day_, en_month_, en_year_, today);
+    set_date_and_version(es_version_, es_day_, es_month_, es_year_, today);
+    set_date_and_version(fr_version_, fr_day_, fr_month_, fr_year_, today);
+    set_date_and_version(it_version_, it_day_, it_month_, it_year_, today);
+    set_date_and_version(de_version_, de_day_, de_month_, de_year_, today);
 }
 
 void VersionEditor::on_check() {

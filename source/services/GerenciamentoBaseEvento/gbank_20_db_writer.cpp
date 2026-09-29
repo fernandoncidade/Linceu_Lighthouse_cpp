@@ -88,6 +88,7 @@ DatabaseWriter::DatabaseWriter(const QString& db_path, int batch_size, int batch
       stop_event_(false),
       started_(false),
       suspended_(false),
+      suspended_ack_(false),
       persisting_(false) {}
 
 DatabaseWriter::~DatabaseWriter() { stop(); }
@@ -132,12 +133,34 @@ void DatabaseWriter::discard_pending() {
 }
 
 bool DatabaseWriter::suspend_processing(int timeout_ms) {
+    if (timeout_ms < 0) {
+        timeout_ms = 0;
+    }
     suspended_.store(true);
     cv_.notify_all();
-    return wait_until_idle(timeout_ms);
+
+    const auto deadline = std::chrono::steady_clock::now() +
+                          std::chrono::milliseconds(timeout_ms);
+
+    while (std::chrono::steady_clock::now() <= deadline) {
+        bool queue_empty = false;
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            queue_empty = queue_.empty();
+        }
+
+        if (queue_empty && !persisting_.load() && suspended_ack_.load()) {
+            return true;
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    return !persisting_.load() && suspended_ack_.load();
 }
 
 void DatabaseWriter::resume_processing() {
+    suspended_ack_.store(false);
     suspended_.store(false);
     cv_.notify_all();
 }
@@ -172,90 +195,137 @@ bool DatabaseWriter::wait_until_idle(int timeout_ms) {
 }
 
 void DatabaseWriter::worker() {
+    const QString connName = QStringLiteral("dbwriter_worker_%1").arg(reinterpret_cast<quintptr>(this));
     try {
-        while (true) {
-            std::deque<QPair<QString, QVariantMap>> batch;
-            {
-                std::unique_lock<std::mutex> lock(mutex_);
-                cv_.wait_for(lock, std::chrono::milliseconds(batch_timeout_ms_), [this]() {
-                    return stop_event_ || (!suspended_.load() && !queue_.empty());
-                });
-                if (stop_event_ && queue_.empty()) {
-                    break;
+        {
+            QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), connName);
+            db.setDatabaseName(db_path_);
+            if (db.open()) {
+                apply_sqlite_writer_settings(db);
+            } else {
+                source::utils::LogManager::get_logger().error("Falha ao abrir conexão persistente no DatabaseWriter worker", true);
+            }
+
+            while (true) {
+                std::deque<QPair<QString, QVariantMap>> batch;
+                {
+                    std::unique_lock<std::mutex> lock(mutex_);
+                    cv_.wait_for(lock, std::chrono::milliseconds(batch_timeout_ms_), [this]() {
+                        return stop_event_ || (!suspended_.load() && !queue_.empty());
+                    });
+                    if (stop_event_ && queue_.empty()) {
+                        break;
+                    }
+                    if (suspended_.load()) {
+                        if (db.isOpen()) {
+                            db.close();
+                        }
+                        suspended_ack_.store(true);
+                        cv_.wait(lock, [this]() {
+                            return stop_event_ || !suspended_.load();
+                        });
+                        suspended_ack_.store(false);
+                        if (!stop_event_ && !db.isOpen()) {
+                            if (db.open()) {
+                                apply_sqlite_writer_settings(db);
+                            }
+                        }
+                        continue;
+                    }
+                    while (!queue_.empty() && static_cast<int>(batch.size()) < batch_size_) {
+                        batch.push_back(queue_.front());
+                        queue_.pop_front();
+                    }
                 }
-                if (suspended_.load()) {
-                    continue;
-                }
-                while (!queue_.empty() && static_cast<int>(batch.size()) < batch_size_) {
-                    batch.push_back(queue_.front());
-                    queue_.pop_front();
+
+                if (!batch.empty()) {
+                    persisting_.store(true);
+                    if (db.isOpen() || db.open()) {
+                        persist_batch_internal(db, batch);
+                    }
+                    persisting_.store(false);
                 }
             }
 
-            if (!batch.empty()) {
-                persisting_.store(true);
-                persist_batch(batch);
-                persisting_.store(false);
+            if (db.isOpen()) {
+                db.close();
             }
         }
+        QSqlDatabase::removeDatabase(connName);
     } catch (...) {
         persisting_.store(false);
+        QSqlDatabase::removeDatabase(connName);
         source::utils::LogManager::get_logger().critical("DatabaseWriter falhou", true);
     }
 }
 
 bool DatabaseWriter::persist_batch(const std::deque<QPair<QString, QVariantMap>>& batch) {
-    QString connName;
+    const QString connName = QStringLiteral("dbwriter_worker_%1").arg(reinterpret_cast<quintptr>(this));
+    if (QSqlDatabase::contains(connName)) {
+        QSqlDatabase db = QSqlDatabase::database(connName, false);
+        if (db.isOpen()) {
+            return persist_batch_internal(db, batch);
+        }
+    }
+
+    const QString fallbackConn = QStringLiteral("dbwriter_fallback_%1").arg(reinterpret_cast<quintptr>(this));
     bool ok = false;
     try {
-        connName = QStringLiteral("dbwriter_%1").arg(reinterpret_cast<quintptr>(db_path_.constData()));
         {
-            QSqlDatabase db = QSqlDatabase::contains(connName)
-                                  ? QSqlDatabase::database(connName, false)
-                                  : QSqlDatabase::addDatabase("QSQLITE", connName);
+            QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), fallbackConn);
             db.setDatabaseName(db_path_);
-            if (!db.open()) {
-                return false;
+            if (db.open()) {
+                apply_sqlite_writer_settings(db);
+                ok = persist_batch_internal(db, batch);
+                db.close();
             }
-
-            const QStringList colunas = source::security::core::colunas_evento_monitoramento();
-            const QString placeholders = bind_placeholders(colunas.size());
-            apply_sqlite_writer_settings(db);
-
-            QHash<QString, QList<QVariantMap>> grouped_rows;
-            QStringList ordered_tables;
-            QList<QVariantMap> monitor_rows;
-            monitor_rows.reserve(static_cast<int>(batch.size()));
-            for (const auto& item : batch) {
-                const QString& tabela = item.first;
-                const QVariantMap& evento = item.second;
-                if (!grouped_rows.contains(tabela)) {
-                    ordered_tables.append(tabela);
-                }
-                grouped_rows[tabela].append(evento);
-                monitor_rows.append(evento);
-            }
-
-            db.transaction();
-            ok = exec_insert_batch(db, QStringLiteral("monitoramento"), monitor_rows, colunas, placeholders);
-            for (const QString& tabela : ordered_tables) {
-                if (!ok) {
-                    break;
-                }
-                ok = exec_insert_batch(db, tabela, grouped_rows.value(tabela), colunas, placeholders);
-            }
-            if (ok) {
-                ok = db.commit();
-            } else {
-                db.rollback();
-            }
-            db.close();
         }
-        QSqlDatabase::removeDatabase(connName);
+        QSqlDatabase::removeDatabase(fallbackConn);
         return ok;
     } catch (...) {
-        if (!connName.isEmpty()) {
-            QSqlDatabase::removeDatabase(connName);
+        QSqlDatabase::removeDatabase(fallbackConn);
+        source::utils::LogManager::get_logger().error("Erro ao persistir batch fallback de eventos", true);
+        return false;
+    }
+}
+
+bool DatabaseWriter::persist_batch_internal(QSqlDatabase& db, const std::deque<QPair<QString, QVariantMap>>& batch) {
+    bool ok = false;
+    try {
+        const QStringList colunas = source::security::core::colunas_evento_monitoramento();
+        const QString placeholders = bind_placeholders(colunas.size());
+
+        QHash<QString, QList<QVariantMap>> grouped_rows;
+        QStringList ordered_tables;
+        QList<QVariantMap> monitor_rows;
+        monitor_rows.reserve(static_cast<int>(batch.size()));
+        for (const auto& item : batch) {
+            const QString& tabela = item.first;
+            const QVariantMap& evento = item.second;
+            if (!grouped_rows.contains(tabela)) {
+                ordered_tables.append(tabela);
+            }
+            grouped_rows[tabela].append(evento);
+            monitor_rows.append(evento);
+        }
+
+        db.transaction();
+        ok = exec_insert_batch(db, QStringLiteral("monitoramento"), monitor_rows, colunas, placeholders);
+        for (const QString& tabela : ordered_tables) {
+            if (!ok) {
+                break;
+            }
+            ok = exec_insert_batch(db, tabela, grouped_rows.value(tabela), colunas, placeholders);
+        }
+        if (ok) {
+            ok = db.commit();
+        } else {
+            db.rollback();
+        }
+        return ok;
+    } catch (...) {
+        if (db.isOpen()) {
+            db.rollback();
         }
         source::utils::LogManager::get_logger().error("Erro ao persistir batch de eventos", true);
         return false;

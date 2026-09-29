@@ -4,11 +4,14 @@
 #include <QApplication>
 #include <QDialog>
 #include <QDir>
+#include <QEventLoop>
 #include <QFile>
 #include <QFileInfo>
+#include <QFutureWatcher>
 #include <QLabel>
 #include <QMessageBox>
 #include <QMetaObject>
+#include <QProgressDialog>
 #include <QPushButton>
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -16,10 +19,13 @@
 #include <QTableWidget>
 #include <QVariant>
 #include <QVBoxLayout>
+#include <QtConcurrent/QtConcurrentRun>
 
 #include <exception>
 #include <stdexcept>
 
+#include "source/security/secore_02_SecurityManager.h"
+#include "source/security/secui_00_helpers.h"
 #include "source/security/secui_01_SecurityUiController.h"
 #include "source/services/GerenciamentoBaseEvento/gbank_02_criar_banco_de_dados.h"
 #include "source/services/GerenciamentoBaseEvento/gbank_20_db_writer.h"
@@ -149,9 +155,11 @@ LimpezaAlvo selecionar_alvo_limpeza(QWidget* parent, QObject* loc) {
 void fechar_todas_conexoes_db(const QString& db_path) {
     const QStringList names = QSqlDatabase::connectionNames();
     for (const QString& name : names) {
+        if (name.startsWith(QStringLiteral("dbwriter_worker_"))) {
+            continue;
+        }
         bool match = false;
-        if (name.startsWith(QStringLiteral("dbwriter_")) ||
-            name.startsWith(QStringLiteral("baseevento_")) ||
+        if (name.startsWith(QStringLiteral("baseevento_")) ||
             name.startsWith(QStringLiteral("limpeza_db_")) ||
             name.startsWith(QStringLiteral("stats_db_")) ||
             name.startsWith(QStringLiteral("import_db_")) ||
@@ -190,11 +198,10 @@ bool limpar_banco_dados_direto(const QString& db_path) {
 
     fechar_todas_conexoes_db(db_path);
 
-    QFile::remove(db_path + QStringLiteral("-wal"));
-    QFile::remove(db_path + QStringLiteral("-shm"));
-
     const bool file_removed = QFile::remove(db_path);
     if (file_removed) {
+        QFile::remove(db_path + QStringLiteral("-wal"));
+        QFile::remove(db_path + QStringLiteral("-shm"));
         source::services::GerenciamentoBaseEvento::criar_banco_de_dados_path(db_path);
     } else {
         const QString conn_name = QStringLiteral("limpeza_db_%1")
@@ -232,8 +239,6 @@ bool limpar_banco_dados_direto(const QString& db_path) {
                 QSqlQuery checkpoint(db);
                 checkpoint.exec(QStringLiteral("PRAGMA wal_checkpoint(TRUNCATE)"));
                 checkpoint.exec(QStringLiteral("PRAGMA optimize"));
-                checkpoint.exec(QStringLiteral("VACUUM"));
-                checkpoint.exec(QStringLiteral("PRAGMA wal_checkpoint(TRUNCATE)"));
 
                 db.close();
             }
@@ -241,9 +246,6 @@ bool limpar_banco_dados_direto(const QString& db_path) {
         QSqlDatabase::removeDatabase(conn_name);
 
         fechar_todas_conexoes_db(db_path);
-
-        QFile::remove(db_path + QStringLiteral("-wal"));
-        QFile::remove(db_path + QStringLiteral("-shm"));
     }
 
     if (writer) {
@@ -313,82 +315,9 @@ void GerenciadorLimpeza::limpar_dados() {
             return;
         }
 
-        if (alvo == LimpezaAlvo::BancoSeguranca) {
-            if (auto* security_ui_controller = get_security_ui_controller(interface_)) {
-                security_ui_controller->clear_security_database();
-            } else {
-                source::utils::LogManager::get_logger().warning(
-                    QStringLiteral("SecurityUiController indisponível ao solicitar limpeza do banco de segurança."));
-            }
-            return;
-        }
-
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-        try {
-            bool observador_ativo = false;
-            if (interface_->property("_observador_cpp_ptr").toULongLong() != 0) {
-                observador_ativo = true;
-            }
-            auto* observador = interface_->property("observador").value<QObject*>();
-            if (observador != nullptr && observador->property("ativo").isValid()) {
-                observador_ativo = observador->property("ativo").toBool();
-            }
-
-            const bool limpar_banco = (alvo == LimpezaAlvo::BancoDados || alvo == LimpezaAlvo::Ambos);
-            const bool limpar_ui = (alvo == LimpezaAlvo::TabelaUI || alvo == LimpezaAlvo::Ambos);
-            const bool limpar_banco_seguranca = (alvo == LimpezaAlvo::Ambos);
-
-            if (limpar_banco && observador_ativo) {
-                invoke_if_available(interface_->property("gerenciador_botoes").value<QObject*>(), "alternar_analise_diretorio");
-            }
-
-            if (limpar_banco_seguranca) {
-                auto* security_ui_controller = get_security_ui_controller(interface_);
-                if (security_ui_controller == nullptr) {
-                    throw std::runtime_error("SecurityUiController indisponível para limpeza combinada.");
-                }
-
-                QString security_error;
-                if (!security_ui_controller->clear_security_database(false, false, &security_error)) {
-                    throw std::runtime_error(
-                        security_error.isEmpty()
-                            ? "Falha ao limpar o banco de segurança."
-                            : security_error.toUtf8().constData());
-                }
-            }
-
-            if (limpar_banco) {
-                QString db_path = interface_->property("_monitoramento_db_path").toString();
-                if (db_path.isEmpty()) {
-                    db_path = QDir(source::utils::obter_caminho_persistente())
-                                  .filePath(QStringLiteral("monitoramento.db"));
-                }
-
-                auto* evento_base = interface_->property("evento_base").value<QObject*>();
-                bool limpou_via_evento_base = false;
-                if (evento_base != nullptr) {
-                    limpou_via_evento_base = QMetaObject::invokeMethod(evento_base, "limpar_registros");
-                }
-
-                if (!limpou_via_evento_base) {
-                    if (!limpar_banco_dados_direto(db_path)) {
-                        source::utils::LogManager::get_logger().warning(
-                            QStringLiteral("Falha ao limpar banco de dados diretamente: %1").arg(db_path));
-                    }
-                }
-
-                interface_->setProperty("_monitoramento_db_tem_dados", false);
-                interface_->setProperty("contador_eventos", 0);
-                interface_->setProperty("excluidos_recentemente", QVariantMap());
-                interface_->setProperty("_scan_contador", 0);
-                interface_->setProperty("_scan_total", 0);
-                interface_->setProperty("_scan_em_execucao", false);
-            }
-
-            if (limpar_ui) {
-                limpar_tabela_ui(interface_);
-            }
-
+        // Fast-path: Apenas tabela da UI (instantâneo, sem I/O de disco)
+        if (alvo == LimpezaAlvo::TabelaUI) {
+            limpar_tabela_ui(interface_);
             invoke_if_available(interface_, "atualizar_status");
 
             QObject* gerenciador_colunas = interface_->property("gerenciador_colunas").value<QObject*>();
@@ -396,61 +325,238 @@ void GerenciadorLimpeza::limpar_dados() {
                 invoke_if_available(gerenciador_colunas, "limpar_cache_metadados");
             }
 
-            if (limpar_ui) {
-                const QString texto_data_cleared = get_text(loc, "data_cleared");
-                set_text(interface_->property("rotulo_resultado").value<QObject*>(), texto_data_cleared);
-                set_text(interface_->property("rotulo_contador_eventos").value<QObject*>(),
-                         QString("%1: 0").arg(get_text_or_fallback(loc, "events_monitored",
-                                                                   QStringLiteral("Eventos Monitorados"))));
-            }
+            const QString texto_data_cleared = get_text(loc, "data_cleared");
+            set_text(interface_->property("rotulo_resultado").value<QObject*>(), texto_data_cleared);
+            interface_->setProperty("_resultado_chave", QStringLiteral("data_cleared"));
+            set_text(interface_->property("rotulo_contador_eventos").value<QObject*>(),
+                     QString("%1: 0").arg(get_text_or_fallback(loc, "events_monitored",
+                                                               QStringLiteral("Eventos Monitorados"))));
+            source::security::ui::show_translated_status_message(
+                interface_,
+                QStringLiteral("clear_ui_success"),
+                QStringLiteral("Tabela da interface limpa com sucesso."));
 
-            if (QApplication::overrideCursor() != nullptr) {
-                QApplication::restoreOverrideCursor();
+            if (parent != nullptr) {
+                parent->repaint();
             }
+            QApplication::processEvents();
 
-            QString mensagem_sucesso;
-            if (alvo == LimpezaAlvo::TabelaUI) {
-                mensagem_sucesso = get_text_or_fallback(
-                    loc, "clear_ui_success",
-                    QStringLiteral("Tabela da interface limpa com sucesso."));
-            } else if (alvo == LimpezaAlvo::BancoDados) {
-                mensagem_sucesso = get_text_or_fallback(
-                    loc, "clear_db_success",
-                    QStringLiteral("Banco de dados limpo com sucesso."));
+            QMessageBox::information(parent,
+                                     get_text_or_fallback(loc, "success", QStringLiteral("Sucesso")),
+                                     get_text_or_fallback(loc, "clear_ui_success",
+                                                          QStringLiteral("Tabela da interface limpa com sucesso.")));
+            return;
+        }
+
+        // Opções com I/O de banco: BancoDados, BancoSeguranca ou Ambos
+        const bool limpar_banco = (alvo == LimpezaAlvo::BancoDados || alvo == LimpezaAlvo::Ambos);
+        const bool limpar_ui = (alvo == LimpezaAlvo::Ambos);
+        const bool limpar_banco_seguranca = (alvo == LimpezaAlvo::BancoSeguranca || alvo == LimpezaAlvo::Ambos);
+
+        // Se o monitoramento estiver ativo, para antes de limpar a base
+        bool observador_ativo = false;
+        if (interface_->property("_observador_cpp_ptr").toULongLong() != 0) {
+            observador_ativo = true;
+        }
+        auto* observador = interface_->property("observador").value<QObject*>();
+        if (observador != nullptr && observador->property("ativo").isValid()) {
+            observador_ativo = observador->property("ativo").toBool();
+        }
+
+        if (limpar_banco && observador_ativo) {
+            invoke_if_available(interface_->property("gerenciador_botoes").value<QObject*>(), "alternar_analise_diretorio");
+            QApplication::processEvents();
+        }
+
+        QString db_path = interface_->property("_monitoramento_db_path").toString();
+        if (db_path.isEmpty()) {
+            db_path = QDir(source::utils::obter_caminho_persistente())
+                          .filePath(QStringLiteral("monitoramento.db"));
+        }
+
+        auto* security_manager = source::security::ui::get_security_manager(interface_);
+
+        // Exibe diálogo de progresso indeterminado para manter a janela ativa e a fila de mensagens do Windows respondendo
+        QProgressDialog progress(parent);
+        progress.setWindowTitle(get_text_or_fallback(loc, "wait", QStringLiteral("Aguarde...")));
+        progress.setLabelText(get_text_or_fallback(loc, "clearing_data", QStringLiteral("Limpando dados, por favor aguarde...")));
+        progress.setCancelButton(nullptr);
+        progress.setWindowFlag(Qt::WindowCloseButtonHint, false);
+        progress.setRange(0, 0);
+        progress.setWindowModality(Qt::WindowModal);
+        progress.setMinimumDuration(0);
+        progress.show();
+        QApplication::processEvents();
+
+        enum class CleanupStatus {
+            Ok,
+            SecurityDbFailed,
+            MainDbFailed,
+            Exception,
+            Unknown
+        };
+
+        struct CleanupResult {
+            CleanupStatus status = CleanupStatus::Ok;
+            QString details;
+        };
+
+        QFutureWatcher<CleanupResult> watcher;
+        QEventLoop loop;
+        QObject::connect(&watcher, &QFutureWatcher<CleanupResult>::finished, &loop, &QEventLoop::quit);
+
+        QFuture<CleanupResult> future = QtConcurrent::run([=]() -> CleanupResult {
+            CleanupResult res;
+            try {
+                if (limpar_banco_seguranca) {
+                    if (security_manager != nullptr) {
+                        QString sec_err;
+                        if (!security_manager->clear_security_database(&sec_err)) {
+                            res.status = CleanupStatus::SecurityDbFailed;
+                            res.details = sec_err;
+                            return res;
+                        }
+                    }
+                }
+
+                if (limpar_banco) {
+                    if (!limpar_banco_dados_direto(db_path)) {
+                        res.status = CleanupStatus::MainDbFailed;
+                        return res;
+                    }
+                }
+            } catch (const std::exception& ex) {
+                res.status = CleanupStatus::Exception;
+                res.details = QString::fromUtf8(ex.what());
+            } catch (...) {
+                res.status = CleanupStatus::Unknown;
+            }
+            return res;
+        });
+
+        watcher.setFuture(future);
+        loop.exec();
+
+        progress.close();
+        if (parent != nullptr) {
+            parent->repaint();
+        }
+        QApplication::processEvents();
+
+        const CleanupResult result = future.result();
+        if (result.status != CleanupStatus::Ok) {
+            QString error_message;
+            if (result.status == CleanupStatus::SecurityDbFailed) {
+                error_message = result.details.isEmpty()
+                    ? get_text_or_fallback(loc, "clear_security_db_failed", QStringLiteral("Falha ao limpar banco de segurança."))
+                    : result.details;
+            } else if (result.status == CleanupStatus::MainDbFailed) {
+                error_message = get_text_or_fallback(loc, "clear_main_db_failed", QStringLiteral("Falha ao limpar banco de dados principal."));
+            } else if (result.status == CleanupStatus::Exception) {
+                error_message = result.details;
             } else {
-                mensagem_sucesso = get_text_or_fallback(loc, "clear_success",
-                                                        QStringLiteral("Dados limpos com sucesso."));
+                error_message = get_text_or_fallback(loc, "clear_unknown_error", QStringLiteral("Erro desconhecido durante limpeza."));
             }
-            QMessageBox::information(parent, get_text_or_fallback(loc, "success", QStringLiteral("Sucesso")),
-                                     mensagem_sucesso);
-        } catch (const std::exception& e) {
-            if (QApplication::overrideCursor() != nullptr) {
-                QApplication::restoreOverrideCursor();
-            }
+
             source::utils::LogManager::get_logger().error(
-                QStringLiteral("Erro ao limpar dados: %1").arg(QString::fromUtf8(e.what())),
-                true);
+                QStringLiteral("Erro ao limpar dados: %1").arg(error_message), true);
             QMessageBox::critical(parent,
                                   get_text_or_fallback(loc, "error", QStringLiteral("Erro")),
                                   format_with_one_arg(
                                       get_text_or_fallback(loc, "clear_error",
                                                            QStringLiteral("Erro ao limpar dados: %1")),
-                                      QString::fromUtf8(e.what())));
-        } catch (...) {
-            if (QApplication::overrideCursor() != nullptr) {
-                QApplication::restoreOverrideCursor();
-            }
-            source::utils::LogManager::get_logger().error("Erro ao limpar dados", true);
-            QMessageBox::critical(parent,
-                                  get_text_or_fallback(loc, "error", QStringLiteral("Erro")),
-                                  format_with_one_arg(get_text_or_fallback(loc, "clear_error",
-                                                                           QStringLiteral("Erro ao limpar dados: %1")),
-                                                      QStringLiteral("erro desconhecido")));
+                                      error_message));
+            return;
         }
+
+        // Atualização consistente do estado na thread GUI
+        if (limpar_banco) {
+            interface_->setProperty("_monitoramento_db_tem_dados", false);
+            interface_->setProperty("contador_eventos", 0);
+            interface_->setProperty("excluidos_recentemente", QVariantMap());
+            interface_->setProperty("_scan_contador", 0);
+            interface_->setProperty("_scan_total", 0);
+            interface_->setProperty("_scan_em_execucao", false);
+        }
+
+        if (limpar_ui) {
+            limpar_tabela_ui(interface_);
+            const QString texto_data_cleared = get_text(loc, "data_cleared");
+            set_text(interface_->property("rotulo_resultado").value<QObject*>(), texto_data_cleared);
+            interface_->setProperty("_resultado_chave", QStringLiteral("data_cleared"));
+            set_text(interface_->property("rotulo_contador_eventos").value<QObject*>(),
+                     QString("%1: 0").arg(get_text_or_fallback(loc, "events_monitored",
+                                                               QStringLiteral("Eventos Monitorados"))));
+        }
+
+        if (limpar_banco_seguranca) {
+            source::security::ui::show_translated_security_feedback(
+                interface_,
+                QStringLiteral("security_database_cleared"),
+                QStringLiteral("Banco de segurança limpo com sucesso."));
+        }
+
+        if (alvo == LimpezaAlvo::TabelaUI) {
+            source::security::ui::show_translated_status_message(
+                interface_,
+                QStringLiteral("clear_ui_success"),
+                QStringLiteral("Tabela da interface limpa com sucesso."));
+        } else if (alvo == LimpezaAlvo::BancoDados) {
+            source::security::ui::show_translated_status_message(
+                interface_,
+                QStringLiteral("clear_db_success"),
+                QStringLiteral("Banco de dados limpo com sucesso."));
+        } else if (alvo == LimpezaAlvo::BancoSeguranca) {
+            source::security::ui::show_translated_status_message(
+                interface_,
+                QStringLiteral("security_database_cleared"),
+                QStringLiteral("Banco de segurança limpo com sucesso."));
+        } else if (alvo == LimpezaAlvo::Ambos) {
+            source::security::ui::show_translated_status_message(
+                interface_,
+                QStringLiteral("clear_success"),
+                QStringLiteral("Dados limpos com sucesso."));
+        }
+
+        invoke_if_available(interface_, "atualizar_status");
+
+        QObject* gerenciador_colunas = interface_->property("gerenciador_colunas").value<QObject*>();
+        if (gerenciador_colunas != nullptr) {
+            invoke_if_available(gerenciador_colunas, "limpar_cache_metadados");
+        }
+
+        if (parent != nullptr) {
+            parent->repaint();
+        }
+        QApplication::processEvents();
+
+        QString mensagem_sucesso;
+        if (alvo == LimpezaAlvo::TabelaUI) {
+            mensagem_sucesso = get_text_or_fallback(loc, "clear_ui_success",
+                                                    QStringLiteral("Tabela da interface limpa com sucesso."));
+        } else if (alvo == LimpezaAlvo::BancoDados) {
+            mensagem_sucesso = get_text_or_fallback(loc, "clear_db_success",
+                                                    QStringLiteral("Banco de dados limpo com sucesso."));
+        } else if (alvo == LimpezaAlvo::BancoSeguranca) {
+            mensagem_sucesso = get_text_or_fallback(loc, "security_database_cleared",
+                                                    QStringLiteral("Banco de segurança limpo com sucesso."));
+        } else {
+            mensagem_sucesso = get_text_or_fallback(loc, "clear_success",
+                                                    QStringLiteral("Dados limpos com sucesso."));
+        }
+
+        QMessageBox::information(parent, get_text_or_fallback(loc, "success", QStringLiteral("Sucesso")),
+                                 mensagem_sucesso);
+    } catch (const std::exception& e) {
+        source::utils::LogManager::get_logger().error(
+            QStringLiteral("Erro ao limpar dados: %1").arg(QString::fromUtf8(e.what())), true);
+        QMessageBox::critical(parent,
+                              get_text_or_fallback(loc, "error", QStringLiteral("Erro")),
+                              format_with_one_arg(
+                                  get_text_or_fallback(loc, "clear_error",
+                                                       QStringLiteral("Erro ao limpar dados: %1")),
+                                  QString::fromUtf8(e.what())));
     } catch (...) {
-        if (QApplication::overrideCursor() != nullptr) {
-            QApplication::restoreOverrideCursor();
-        }
         source::utils::LogManager::get_logger().error("Erro ao limpar dados", true);
         QMessageBox::critical(parent,
                               get_text_or_fallback(loc, "error", QStringLiteral("Erro")),
@@ -458,8 +564,6 @@ void GerenciadorLimpeza::limpar_dados() {
                                                                        QStringLiteral("Erro ao limpar dados: %1")),
                                                   QStringLiteral("erro desconhecido")));
     }
-
-    QApplication::processEvents();
 }
 
 }  // namespace source::ui

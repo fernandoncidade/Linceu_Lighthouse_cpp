@@ -34,7 +34,17 @@ QString event_path(const QVariantMap& evento) {
     return evento.value(QStringLiteral("dir_anterior")).toString();
 }
 
+constexpr qint64 kMaxSyncHashFileSize = 50 * 1024 * 1024; // 50 MB
+
 QString compute_sha256(const QString& path) {
+    const QFileInfo info(path);
+    if (!info.exists() || !info.isFile()) {
+        return QString();
+    }
+    if (info.size() > kMaxSyncHashFileSize) {
+        return QStringLiteral("HASH_PENDING_LARGE_FILE");
+    }
+
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly)) {
         return QString();

@@ -50,7 +50,10 @@ void GerenciadorMensagens::atualizar_rotulos(InterfaceMonitor* interface_monitor
         interface_monitor->atualizar_rotulo_diretorios_monitorados();
 
         source::services::Observador* obs = obter_observador_cpp(interface_monitor);
-        if (obs != nullptr && obs->ativo.load()) {
+        const QString resultado_chave = interface_monitor->property("_resultado_chave").toString().trimmed();
+        if (!resultado_chave.isEmpty()) {
+            set_label_text(rotulo_resultado, get_text(interface_monitor->loc, resultado_chave));
+        } else if (obs != nullptr && obs->ativo.load()) {
             set_label_text(rotulo_resultado, get_text(interface_monitor->loc, "monitoring_started"));
         } else if (obs != nullptr) {
             set_label_text(rotulo_resultado, get_text(interface_monitor->loc, "monitoring_stopped"));

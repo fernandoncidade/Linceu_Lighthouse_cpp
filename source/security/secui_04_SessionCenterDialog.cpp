@@ -1,10 +1,12 @@
 #include "secui_04_SessionCenterDialog.h"
 
+#include <QHash>
 #include <QHeaderView>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPointer>
 #include <QPushButton>
+#include <QRegularExpression>
 #include <QSignalBlocker>
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -29,9 +31,7 @@ QTableWidgetItem* make_item(const QString& text) {
     return item;
 }
 
-QVariantList query_rows(const QString& db_path, const QString& sql, const QVariantList& binds) {
-    Q_UNUSED(db_path)
-
+QVariantList query_security_rows(const QString& sql, const QVariantList& binds) {
     QVariantList rows;
     QSqlDatabase db = source::security::pg::open_database(
         QStringLiteral("security_sessions_dialog_worker"));
@@ -57,22 +57,79 @@ QVariantList query_rows(const QString& db_path, const QString& sql, const QVaria
     return rows;
 }
 
-QVariantList fetch_sessions_delta(const QString& db_path,
-                                  const QString& profile_id,
+QString format_directories_summary(const QString& raw) {
+    if (raw.isEmpty()) {
+        return QString();
+    }
+    const QStringList parts = raw.split(QRegularExpression(QStringLiteral("[,;\n]+")), Qt::SkipEmptyParts);
+    if (parts.isEmpty()) {
+        return QString();
+    }
+    QString first = parts.first().trimmed();
+    if (parts.size() == 1) {
+        if (first.size() > 120) {
+            return first.left(117) + QStringLiteral("...");
+        }
+        return first;
+    }
+    if (first.size() > 80) {
+        first = first.left(77) + QStringLiteral("...");
+    }
+    return QStringLiteral("%1 (+%2)").arg(first).arg(parts.size() - 1);
+}
+
+QVariantList query_monitoramento_session_rows(const QString& db_path,
+                                              const QString& connection_suffix,
+                                              const QString& sql,
+                                              const QVariantList& binds = {}) {
+    QVariantList rows;
+    const QString connection_name = QStringLiteral("security_session_dialog_%1").arg(connection_suffix);
+    QSqlDatabase db = QSqlDatabase::contains(connection_name)
+                          ? QSqlDatabase::database(connection_name, false)
+                          : QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), connection_name);
+    if (!db.isValid()) {
+        return rows;
+    }
+
+    db.setDatabaseName(db_path);
+    db.setConnectOptions(QStringLiteral("QSQLITE_OPEN_READONLY;QSQLITE_BUSY_TIMEOUT=5000"));
+    if (!db.isOpen() && !db.open()) {
+        return rows;
+    }
+
+    QSqlQuery query(db);
+    query.exec(QStringLiteral("PRAGMA query_only = ON;"));
+    query.exec(QStringLiteral("PRAGMA busy_timeout = 5000;"));
+    query.prepare(sql);
+    for (const QVariant& bind : binds) {
+        query.addBindValue(bind);
+    }
+    if (query.exec()) {
+        const QSqlRecord record = query.record();
+        while (query.next()) {
+            QVariantMap row;
+            for (int i = 0; i < record.count(); ++i) {
+                row.insert(record.fieldName(i), query.value(i));
+            }
+            rows.append(row);
+        }
+    }
+    return rows;
+}
+
+QVariantList fetch_sessions_delta(const QString& profile_id,
                                   const QString& last_updated_at,
                                   int limit) {
     const int safe_limit = qMax(1, limit);
     if (!profile_id.isEmpty()) {
-        return query_rows(
-            db_path,
+        return query_security_rows(
             QStringLiteral("SELECT session_id, profile_id, label, started_at, updated_at, total_eventos, diretorios "
                            "FROM security_sessions WHERE profile_id = ? AND updated_at > ? "
                            "ORDER BY updated_at ASC LIMIT ?"),
             {profile_id, last_updated_at, safe_limit});
     }
 
-    return query_rows(
-        db_path,
+    return query_security_rows(
         QStringLiteral("SELECT session_id, profile_id, label, started_at, updated_at, total_eventos, diretorios "
                        "FROM security_sessions WHERE updated_at > ? ORDER BY updated_at ASC LIMIT ?"),
         {last_updated_at, safe_limit});
@@ -83,8 +140,7 @@ QVariantList fetch_sessions_snapshot(const QString& db_path,
                                      int limit) {
     const int safe_limit = qMax(1, limit);
     if (!profile_id.isEmpty()) {
-        QVariantList rows = query_rows(
-            db_path,
+        QVariantList rows = query_security_rows(
             QStringLiteral("SELECT session_id, profile_id, label, started_at, updated_at, total_eventos, diretorios "
                            "FROM security_sessions WHERE profile_id = ? ORDER BY updated_at DESC LIMIT ?"),
             {profile_id, safe_limit});
@@ -92,18 +148,18 @@ QVariantList fetch_sessions_snapshot(const QString& db_path,
             return rows;
         }
 
-        return query_rows(
+        return query_monitoramento_session_rows(
             db_path,
+            QStringLiteral("snapshot_profile"),
             QStringLiteral("SELECT session_id, monitor_profile_id AS profile_id, "
                            "MAX(session_label) AS label, MIN(timestamp) AS started_at, MAX(timestamp) AS updated_at, "
-                           "COUNT(*) AS total_eventos, GROUP_CONCAT(DISTINCT COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
-                           "FROM monitoramento WHERE monitor_profile_id = ? AND COALESCE(session_id, '') <> '' "
+                           "COUNT(*) AS total_eventos, MAX(COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
+                           "FROM (SELECT rowid, session_id, monitor_profile_id, session_label, timestamp, dir_atual, dir_anterior FROM monitoramento WHERE monitor_profile_id = ? AND COALESCE(session_id, '') <> '' ORDER BY rowid DESC LIMIT 10000) "
                            "GROUP BY session_id ORDER BY MAX(rowid) DESC LIMIT ?"),
             {profile_id, safe_limit});
     }
 
-    QVariantList rows = query_rows(
-        db_path,
+    QVariantList rows = query_security_rows(
         QStringLiteral("SELECT session_id, profile_id, label, started_at, updated_at, total_eventos, diretorios "
                        "FROM security_sessions ORDER BY updated_at DESC LIMIT ?"),
         {safe_limit});
@@ -111,12 +167,13 @@ QVariantList fetch_sessions_snapshot(const QString& db_path,
         return rows;
     }
 
-    return query_rows(
+    return query_monitoramento_session_rows(
         db_path,
+        QStringLiteral("snapshot_all"),
         QStringLiteral("SELECT session_id, monitor_profile_id AS profile_id, "
                        "MAX(session_label) AS label, MIN(timestamp) AS started_at, MAX(timestamp) AS updated_at, "
-                       "COUNT(*) AS total_eventos, GROUP_CONCAT(DISTINCT COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
-                       "FROM monitoramento WHERE COALESCE(session_id, '') <> '' "
+                       "COUNT(*) AS total_eventos, MAX(COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
+                       "FROM (SELECT rowid, session_id, monitor_profile_id, session_label, timestamp, dir_atual, dir_anterior FROM monitoramento WHERE COALESCE(session_id, '') <> '' ORDER BY rowid DESC LIMIT 10000) "
                        "GROUP BY session_id ORDER BY MAX(rowid) DESC LIMIT ?"),
         {safe_limit});
 }
@@ -129,30 +186,32 @@ QVariantList fetch_sessions_delta_with_fallback(const QString& db_path,
         return fetch_sessions_snapshot(db_path, profile_id, limit);
     }
 
-    QVariantList rows = fetch_sessions_delta(db_path, profile_id, last_updated_at, limit);
+    QVariantList rows = fetch_sessions_delta(profile_id, last_updated_at, limit);
     if (!rows.isEmpty()) {
         return rows;
     }
 
     const int safe_limit = qMax(1, limit);
     if (!profile_id.isEmpty()) {
-        return query_rows(
+        return query_monitoramento_session_rows(
             db_path,
+            QStringLiteral("delta_profile"),
             QStringLiteral("SELECT session_id, monitor_profile_id AS profile_id, "
                            "MAX(session_label) AS label, MIN(timestamp) AS started_at, MAX(timestamp) AS updated_at, "
-                           "COUNT(*) AS total_eventos, GROUP_CONCAT(DISTINCT COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
-                           "FROM monitoramento WHERE monitor_profile_id = ? AND COALESCE(session_id, '') <> '' "
+                           "COUNT(*) AS total_eventos, MAX(COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
+                           "FROM (SELECT rowid, session_id, monitor_profile_id, session_label, timestamp, dir_atual, dir_anterior FROM monitoramento WHERE monitor_profile_id = ? AND COALESCE(session_id, '') <> '' ORDER BY rowid DESC LIMIT 10000) "
                            "GROUP BY session_id HAVING MAX(timestamp) > ? "
                            "ORDER BY MAX(timestamp) ASC LIMIT ?"),
             {profile_id, last_updated_at, safe_limit});
     }
 
-    return query_rows(
+    return query_monitoramento_session_rows(
         db_path,
+        QStringLiteral("delta_all"),
         QStringLiteral("SELECT session_id, monitor_profile_id AS profile_id, "
                        "MAX(session_label) AS label, MIN(timestamp) AS started_at, MAX(timestamp) AS updated_at, "
-                       "COUNT(*) AS total_eventos, GROUP_CONCAT(DISTINCT COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
-                       "FROM monitoramento WHERE COALESCE(session_id, '') <> '' "
+                       "COUNT(*) AS total_eventos, MAX(COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
+                       "FROM (SELECT rowid, session_id, monitor_profile_id, session_label, timestamp, dir_atual, dir_anterior FROM monitoramento WHERE COALESCE(session_id, '') <> '' ORDER BY rowid DESC LIMIT 10000) "
                        "GROUP BY session_id HAVING MAX(timestamp) > ? ORDER BY MAX(timestamp) ASC LIMIT ?"),
         {last_updated_at, safe_limit});
 }
@@ -206,6 +265,11 @@ SessionCenterDialog::SessionCenterDialog(QWidget* parent, QObject* interface_obj
     table_->verticalHeader()->setVisible(false);
     table_->horizontalHeader()->setStretchLastSection(true);
     table_->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+    table_->setColumnWidth(0, 160);
+    table_->setColumnWidth(1, 140);
+    table_->setColumnWidth(2, 100);
+    table_->setColumnWidth(3, 260);
+    table_->setColumnWidth(4, 140);
     layout->addWidget(table_, 1);
 
     auto* buttons_layout = new QHBoxLayout();
@@ -274,11 +338,12 @@ void SessionCenterDialog::refresh_data() {
     const bool replace_all = !initialized_;
     const quint64 request_id = ++refresh_request_id_;
     refresh_inflight_ = true;
-    refresh_button_->setEnabled(false);
-    summary_label_->setText(
-        get_text(loc_, replace_all ? QStringLiteral("loading") : QStringLiteral("security_refresh"),
-                 replace_all ? QStringLiteral("Carregando") : QStringLiteral("Atualizar")) +
-        QStringLiteral("..."));
+    if (replace_all) {
+        refresh_button_->setEnabled(false);
+        summary_label_->setText(
+            get_text(loc_, QStringLiteral("loading"), QStringLiteral("Carregando")) +
+            QStringLiteral("..."));
+    }
 
     QPointer<SessionCenterDialog> self_guard(this);
     run_on_security_runtime_thread(interface_, [self_guard,
@@ -325,6 +390,10 @@ void SessionCenterDialog::finish_refresh(const QVariantList& rows,
 }
 
 void SessionCenterDialog::apply_rows(const QVariantList& rows, bool replace_all) {
+    if (!replace_all && rows.isEmpty()) {
+        return;
+    }
+
     auto* localizador = get_localizador(interface_);
     const QString backend = interface_ != nullptr
                                 ? interface_->property("security_storage_backend").toString()
@@ -336,8 +405,18 @@ void SessionCenterDialog::apply_rows(const QVariantList& rows, bool replace_all)
         table_->setRowCount(rows.size());
     }
 
+    QHash<QString, int> session_row_map;
+    if (!replace_all) {
+        for (int r = 0; r < table_->rowCount(); ++r) {
+            if (const QTableWidgetItem* item = table_->item(r, 4)) {
+                session_row_map.insert(item->text(), r);
+            }
+        }
+    }
+
     for (int row_index = 0; row_index < rows.size(); ++row_index) {
         const QVariantMap row = rows.at(row_index).toMap();
+        const QString session_id = row.value(QStringLiteral("session_id")).toString();
         const QString label = source::security::traduzir_valor_ui(
             localizador,
             QStringLiteral("session_label"),
@@ -345,18 +424,33 @@ void SessionCenterDialog::apply_rows(const QVariantList& rows, bool replace_all)
 
         int target_row = row_index;
         if (!replace_all) {
-            target_row = find_row_by_session_id(table_, row.value(QStringLiteral("session_id")).toString());
-            if (target_row < 0) {
+            auto it = session_row_map.constFind(session_id);
+            if (it != session_row_map.constEnd()) {
+                target_row = it.value();
+            } else {
                 target_row = 0;
                 table_->insertRow(target_row);
+                for (auto map_it = session_row_map.begin(); map_it != session_row_map.end(); ++map_it) {
+                    map_it.value() += 1;
+                }
+                session_row_map.insert(session_id, 0);
             }
+        }
+
+        const QString raw_diretorios = row.value(QStringLiteral("diretorios")).toString();
+        const QString display_diretorios = format_directories_summary(raw_diretorios);
+        QTableWidgetItem* dir_item = make_item(display_diretorios);
+        if (raw_diretorios.size() > 500) {
+            dir_item->setToolTip(raw_diretorios.left(500) + QStringLiteral("..."));
+        } else if (!raw_diretorios.isEmpty()) {
+            dir_item->setToolTip(raw_diretorios);
         }
 
         table_->setItem(target_row, 0, make_item(row.value(QStringLiteral("updated_at")).toString()));
         table_->setItem(target_row, 1, make_item(label));
         table_->setItem(target_row, 2, make_item(row.value(QStringLiteral("total_eventos")).toString()));
-        table_->setItem(target_row, 3, make_item(row.value(QStringLiteral("diretorios")).toString()));
-        table_->setItem(target_row, 4, make_item(row.value(QStringLiteral("session_id")).toString()));
+        table_->setItem(target_row, 3, dir_item);
+        table_->setItem(target_row, 4, make_item(session_id));
         const QString candidate_updated_at = row.value(QStringLiteral("updated_at")).toString();
         if (last_updated_at_ < candidate_updated_at) {
             last_updated_at_ = candidate_updated_at;
@@ -364,14 +458,16 @@ void SessionCenterDialog::apply_rows(const QVariantList& rows, bool replace_all)
     }
 
     table_->setUpdatesEnabled(true);
-    table_->resizeColumnsToContents();
     table_->viewport()->update();
 
-    summary_label_->setText(
+    const QString new_summary =
         QStringLiteral("%1: %2 | Backend: %3")
             .arg(get_text(loc_, QStringLiteral("security_session_center"), QStringLiteral("Sessões em tempo real")),
                  QString::number(table_->rowCount()),
-                 backend.isEmpty() ? QStringLiteral("sqlite") : backend));
+                 backend.isEmpty() ? QStringLiteral("sqlite") : backend);
+    if (summary_label_->text() != new_summary) {
+        summary_label_->setText(new_summary);
+    }
 }
 
 }  // namespace source::security::ui

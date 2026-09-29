@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QDate>
 #include <QHash>
 #include <QString>
 #include <QWidget>
@@ -17,6 +18,9 @@ namespace mocks {
 class VersionEditor : public QWidget {
 public:
     explicit VersionEditor(QWidget* parent = nullptr);
+
+    void set_date_and_version(QLineEdit* ver_edit, QSpinBox* day_spin, QComboBox* month_combo, QSpinBox* year_spin, const QDate& date);
+    void update_version_from_date(QLineEdit* ver_edit, int day, int month, int year);
 
 private:
     QString selected_base_dir_;

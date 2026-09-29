@@ -33,7 +33,25 @@ QString get_fallback_text(source::ui::LocalizadorQt*, const QString& key) {
             {"colors_reset_success", "Colors restored successfully!"},
             {"translating_table", "Aguarde, tradução em andamento..."},
             {"translation_complete", "Tradução concluída!"},
-            {"language_change_performance_warning", "Warning: Changing the language will reload translations across the entire UI and may temporarily impact performance until completion. If monitoring is running, this operation can cause missed events or temporary freezes. It is strongly recommended to change the language before starting monitoring. Do you want to proceed?"}
+            {"language_change_performance_warning", "Warning: Changing the language will reload translations across the entire UI and may temporarily impact performance until completion. If monitoring is running, this operation can cause missed events or temporary freezes. It is strongly recommended to change the language before starting monitoring. Do you want to proceed?"},
+            {"wait", "Please wait..."},
+            {"clearing_data", "Clearing data, please wait..."},
+            {"clear_security_db_failed", "Failed to clear security database."},
+            {"clear_main_db_failed", "Failed to clear main database."},
+            {"clear_unknown_error", "Unknown error during cleanup."},
+            {"security_database_cleared", "Security database cleared successfully."},
+            {"data_cleared", "Data cleared"},
+            {"clear_db_success", "Database cleared successfully."},
+            {"clear_ui_success", "Interface table cleared successfully."},
+            {"clear_success", "Data cleared successfully."},
+            {"security_active_backend", "Active backend: %1"},
+            {"security_no_evidence_recorded", "No evidence recorded in this session."},
+            {"security_recent_records", "Recent records:"},
+            {"security_restore_success", "File restored successfully."},
+            {"security_export_success", "Evidence package exported successfully."},
+            {"security_directory_added", "Directory added to monitoring."},
+            {"security_directory_removed", "Directory removed from monitoring."},
+            {"security_profile_saved", "Monitoring profile updated."}
         };
         return fallbacks.value(key, key);
     } catch (...) {

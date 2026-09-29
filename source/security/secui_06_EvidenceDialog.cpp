@@ -13,6 +13,7 @@
 
 #include "secui_00_helpers.h"
 #include "source/security/secore_02_SecurityManager.h"
+#include "source/security/secore_04_traduzir_strings_ui.h"
 #include "source/ui/ui_12_LocalizadorQt.h"
 
 namespace source::security::ui {
@@ -136,9 +137,13 @@ void EvidenceDialog::refresh_data() {
                  backend.isEmpty() ? QStringLiteral("sqlite") : backend));
 
     QStringList lines;
-    lines << QStringLiteral("Backend ativo: %1").arg(backend.isEmpty() ? QStringLiteral("sqlite") : backend);
+    lines << get_text(loc_, QStringLiteral("security_active_backend"),
+                      QStringLiteral("Backend ativo: %1")).arg(backend.isEmpty() ? QStringLiteral("sqlite") : backend);
     if (!target.isEmpty()) {
-        lines << QStringLiteral("Destino: %1").arg(target);
+        lines << QStringLiteral("%1: %2")
+                     .arg(get_text(loc_, QStringLiteral("security_destination"),
+                                   QStringLiteral("Destino")),
+                          target);
     }
     lines << QStringLiteral("%1: %2")
                  .arg(get_text(loc_, QStringLiteral("security_evidence_center"),
@@ -153,18 +158,23 @@ void EvidenceDialog::refresh_data() {
     }
 
     if (evidence_rows.isEmpty()) {
-        lines << get_text(loc_, QStringLiteral("security_last_package"),
+        lines << get_text(loc_, QStringLiteral("security_no_evidence_recorded"),
                           QStringLiteral("Nenhuma evidência registrada nesta sessão."));
     } else {
         lines << QString();
-        lines << QStringLiteral("Registros recentes:");
+        lines << get_text(loc_, QStringLiteral("security_recent_records"),
+                          QStringLiteral("Registros recentes:"));
         for (const QVariant& row_value : evidence_rows) {
             const QVariantMap row = row_value.toMap();
+            const QString risk = source::security::traduzir_valor_ui(
+                get_localizador(interface_),
+                QStringLiteral("risk_level"),
+                row.value(QStringLiteral("risk_level")).toString());
             lines << QStringLiteral("[%1] %2 | %3 | %4")
                          .arg(row.value(QStringLiteral("created_at")).toString(),
                               row.value(QStringLiteral("evidence_id")).toString(),
                               row.value(QStringLiteral("nome")).toString(),
-                              row.value(QStringLiteral("risk_level")).toString());
+                              risk);
         }
     }
 
@@ -196,8 +206,14 @@ void EvidenceDialog::export_package() {
             get_text(loc_, QStringLiteral("security_operation_failed"),
                      QStringLiteral("Operação não concluída."));
         result_browser_->setPlainText(error_text);
-        set_security_result_label(interface_, error_text);
-        show_status_message(interface_, error_text);
+        show_translated_security_feedback(
+            interface_,
+            QStringLiteral("security_operation_failed"),
+            QStringLiteral("Operação não concluída."));
+        show_translated_status_message(
+            interface_,
+            QStringLiteral("security_operation_failed"),
+            QStringLiteral("Operação não concluída."));
         return;
     }
 
@@ -205,8 +221,14 @@ void EvidenceDialog::export_package() {
     const QString success = get_text(loc_, QStringLiteral("security_export_success"),
                                      QStringLiteral("Pacote de evidência exportado com sucesso."));
     result_browser_->setPlainText(QStringLiteral("%1\n%2").arg(success, package_path));
-    set_security_result_label(interface_, success);
-    show_status_message(interface_, success);
+    show_translated_security_feedback(
+        interface_,
+        QStringLiteral("security_export_success"),
+        QStringLiteral("Pacote de evidência exportado com sucesso."));
+    show_translated_status_message(
+        interface_,
+        QStringLiteral("security_export_success"),
+        QStringLiteral("Pacote de evidência exportado com sucesso."));
     refresh_data();
 }
 

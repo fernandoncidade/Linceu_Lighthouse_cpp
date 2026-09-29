@@ -69,11 +69,17 @@ void parar(source::services::Observador* self) {
         parar_scan(self);
 
     #ifdef _WIN32
+        HANDLE hStop = reinterpret_cast<HANDLE>(self->handle_stop_event);
+        if (hStop != nullptr && hStop != INVALID_HANDLE_VALUE) {
+            SetEvent(hStop);
+        }
         HANDLE handle = reinterpret_cast<HANDLE>(self->handle_dir);
         if (handle != nullptr && handle != INVALID_HANDLE_VALUE) {
             CancelIoEx(handle, nullptr);
         }
     #endif
+
+        self->cv_buffer.notify_all();
 
         join_thread_safely(self->thread, QStringLiteral("monitor"));
         join_thread_safely(self->thread_buffer, QStringLiteral("buffer"));
@@ -85,6 +91,7 @@ void parar(source::services::Observador* self) {
         self->desligando = false;
 
         if (self->interface && self->loc) {
+            self->interface->setProperty("_resultado_chave", QVariant());
             QObject* rotulo = self->interface->property("rotulo_resultado").value<QObject*>();
             if (rotulo) {
                 QMetaObject::invokeMethod(rotulo, "setText", Qt::QueuedConnection, Q_ARG(QString, self->loc->get_text("monitoring_stopped")));

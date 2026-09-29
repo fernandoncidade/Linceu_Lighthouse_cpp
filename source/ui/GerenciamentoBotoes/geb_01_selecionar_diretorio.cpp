@@ -19,6 +19,7 @@
 #include <QPointer>
 #include <QProgressBar>
 #include <QPushButton>
+#include <QScrollBar>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
@@ -37,6 +38,7 @@
 #include "source/gui/ic_01_InterfaceMonitor.h"
 #include "source/security/secore_02_SecurityManager.h"
 #include "source/security/secui_00_helpers.h"
+#include "source/services/GerenciamentoObservador/ObserverRegistry.h"
 #include "source/services/ob_01_Observador.h"
 #include "source/services/ob_08_EventoMovido.h"
 #include "source/ui/ui_01_GerenciadorBotoes.h"
@@ -189,10 +191,6 @@ QVariantList carregar_eventos_salvos(const QString& db_path, const ImportProgres
                 if (progresso_cb) {
                     progresso_cb(processados, total, evento);
                 }
-
-                if (processados % 25 == 0) {
-                    QApplication::processEvents();
-                }
             }
         } else {
             source::utils::LogManager::get_logger().warning(
@@ -271,10 +269,6 @@ QString texto_alerta_importacao(QObject* loc) {
     return texto;
 }
 
-using ObservadorMap = std::unordered_map<QObject*, std::unique_ptr<source::services::Observador>>;
-ObservadorMap g_observadores_cpp;
-std::mutex g_observadores_cpp_mutex;
-
 source::services::Observador* obter_observador_cpp(QObject* interface_obj) {
     if (interface_obj != nullptr) {
         auto* security_manager = source::security::ui::get_security_manager(interface_obj);
@@ -283,12 +277,7 @@ source::services::Observador* obter_observador_cpp(QObject* interface_obj) {
         }
     }
 
-    std::lock_guard<std::mutex> lock(g_observadores_cpp_mutex);
-    const auto it = g_observadores_cpp.find(interface_obj);
-    if (it == g_observadores_cpp.end()) {
-        return nullptr;
-    }
-    return it->second.get();
+    return source::services::GerenciamentoObservador::ObserverRegistry::instance().obter(interface_obj);
 }
 
 void remover_observador_cpp(QObject* interface_obj) {
@@ -303,17 +292,7 @@ void remover_observador_cpp(QObject* interface_obj) {
         return;
     }
 
-    std::unique_ptr<source::services::Observador> removido;
-    {
-        std::lock_guard<std::mutex> lock(g_observadores_cpp_mutex);
-        const auto it = g_observadores_cpp.find(interface_obj);
-        if (it == g_observadores_cpp.end()) {
-            return;
-        }
-        removido = std::move(it->second);
-        g_observadores_cpp.erase(it);
-    }
-
+    auto removido = source::services::GerenciamentoObservador::ObserverRegistry::instance().remover(interface_obj);
     interface_obj->setProperty("_observador_cpp_ptr", QVariant::fromValue<qulonglong>(0));
 
     if (removido != nullptr) {
@@ -356,10 +335,7 @@ source::services::Observador* criar_observador_cpp(QObject* interface_obj, const
     novo_observador->interface = interface_obj;
 
     source::services::Observador* observador_raw = novo_observador.get();
-    {
-        std::lock_guard<std::mutex> lock(g_observadores_cpp_mutex);
-        g_observadores_cpp[interface_obj] = std::move(novo_observador);
-    }
+    source::services::GerenciamentoObservador::ObserverRegistry::instance().registrar(interface_obj, std::move(novo_observador));
 
     interface_obj->setProperty("_observador_cpp_ptr",
                                QVariant::fromValue<qulonglong>(reinterpret_cast<qulonglong>(observador_raw)));
@@ -436,6 +412,7 @@ void selecionar_diretorio(source::ui::GerenciadorBotoes* self) {
 
                 QDialog import_dialog(parent);
                 import_dialog.setWindowModality(Qt::WindowModal);
+                import_dialog.setWindowFlags((import_dialog.windowFlags() & ~Qt::WindowCloseButtonHint) | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
                 import_dialog.setWindowTitle(
                     get_text_or_fallback(loc, QStringLiteral("import_saved_db_title"), QStringLiteral("Importando dados salvos")));
                 import_dialog.setMinimumWidth(500);
@@ -468,6 +445,7 @@ void selecionar_diretorio(source::ui::GerenciadorBotoes* self) {
                 detalhes_layout->setContentsMargins(0, 0, 0, 0);
                 auto* detalhes_view = new QPlainTextEdit(detalhes_widget);
                 detalhes_view->setReadOnly(true);
+                detalhes_view->setMinimumHeight(180);
                 detalhes_view->document()->setMaximumBlockCount(4000);
                 detalhes_view->setPlaceholderText(
                     get_text_or_fallback(loc, QStringLiteral("import_saved_db_details_placeholder"),
@@ -475,13 +453,25 @@ void selecionar_diretorio(source::ui::GerenciadorBotoes* self) {
                 detalhes_layout->addWidget(detalhes_view);
                 detalhes_widget->setVisible(false);
 
+                QStringList buffer_detalhes;
+
                 QObject::connect(toggle_detalhes, &QToolButton::toggled, &import_dialog,
-                                 [detalhes_widget, toggle_detalhes, texto_mostrar_detalhes,
-                                  texto_ocultar_detalhes, &import_dialog](bool checked) {
+                                 [detalhes_widget, toggle_detalhes, detalhes_view, &buffer_detalhes,
+                                  texto_mostrar_detalhes, texto_ocultar_detalhes, &import_dialog](bool checked) {
                                      detalhes_widget->setVisible(checked);
                                      toggle_detalhes->setText(checked ? texto_ocultar_detalhes
                                                                       : texto_mostrar_detalhes);
-                                     import_dialog.adjustSize();
+                                     if (checked) {
+                                         if (detalhes_view->toPlainText().isEmpty() && !buffer_detalhes.isEmpty()) {
+                                             detalhes_view->setPlainText(buffer_detalhes.join(QLatin1Char('\n')));
+                                         }
+                                         if (auto* bar = detalhes_view->verticalScrollBar()) {
+                                             bar->setValue(bar->maximum());
+                                         }
+                                         import_dialog.resize(qMax(import_dialog.width(), 650), qMax(import_dialog.height(), 460));
+                                     } else {
+                                         import_dialog.adjustSize();
+                                     }
                                  });
 
                 dialog_layout->addWidget(status_label);
@@ -521,8 +511,16 @@ void selecionar_diretorio(source::ui::GerenciadorBotoes* self) {
                                 .arg(total));
 
                         if (!evento.isEmpty()) {
-                            detalhes_view->appendPlainText(
-                                formatar_linha_evento_importado(evento, processados));
+                            const QString linha = formatar_linha_evento_importado(evento, processados);
+                            if (buffer_detalhes.size() < 4000) {
+                                buffer_detalhes.append(linha);
+                            }
+                            if (detalhes_widget->isVisible()) {
+                                detalhes_view->appendPlainText(linha);
+                                if (auto* bar = detalhes_view->verticalScrollBar()) {
+                                    bar->setValue(bar->maximum());
+                                }
+                            }
                         }
 
                         if (processados % 25 == 0 || processados == total) {
@@ -543,8 +541,16 @@ void selecionar_diretorio(source::ui::GerenciadorBotoes* self) {
                         QStringLiteral("%1 (%2)")
                             .arg(texto_concluido)
                             .arg(eventos.size()));
-                    detalhes_view->appendPlainText(
-                        QStringLiteral("---- %1 ----").arg(status_label->text()));
+                    const QString footer_line = QStringLiteral("---- %1 ----").arg(status_label->text());
+                    if (buffer_detalhes.size() < 4000) {
+                        buffer_detalhes.append(footer_line);
+                    }
+                    if (detalhes_widget->isVisible()) {
+                        detalhes_view->appendPlainText(footer_line);
+                        if (auto* bar = detalhes_view->verticalScrollBar()) {
+                            bar->setValue(bar->maximum());
+                        }
+                    }
                     QApplication::processEvents();
                     import_dialog.accept();
                     return;

@@ -171,6 +171,12 @@ void restaurar_rotulo_monitoramento_apos_traducao(QObject* interface_obj,
             return;
         }
 
+        const QString resultado_chave = interface_guard->property("_resultado_chave").toString().trimmed();
+        if (!resultado_chave.isEmpty()) {
+            set_rotulo_resultado(interface_guard.data(), loc_guard->get_text(resultado_chave));
+            return;
+        }
+
         const bool ativo = monitoramento_ativo(interface_guard.data());
         const bool pausado = monitoramento_pausado(interface_guard.data());
         if (ativo && !pausado) {

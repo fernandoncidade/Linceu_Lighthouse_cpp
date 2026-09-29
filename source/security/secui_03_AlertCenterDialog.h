@@ -9,14 +9,17 @@ class QTableWidget;
 namespace source::security::ui {
 
 class AlertCenterDialog : public QDialog {
+    Q_OBJECT
 public:
     explicit AlertCenterDialog(QWidget* parent, QObject* interface_obj);
+    ~AlertCenterDialog() override = default;
 
 public slots:
     void refresh_data();
     void refresh_texts();
 
 private:
+    void finish_refresh(const QVariantList& rows, bool replace_all, quint64 request_id);
     void apply_rows(const QVariantList& rows, bool replace_all);
 
     QObject* interface_;
@@ -25,7 +28,10 @@ private:
     QTableWidget* table_;
     QPushButton* refresh_button_;
     QPushButton* close_button_;
+    bool refresh_pending_;
     bool initialized_;
+    bool refresh_inflight_;
+    quint64 refresh_request_id_;
     qint64 last_alert_id_;
 };
 

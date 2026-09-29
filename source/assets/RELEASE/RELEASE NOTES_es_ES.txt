@@ -1,3 +1,52 @@
+NOTAS DE LANZAMIENTO: Versión 2026.9.28.0
+
+DESTACADOS DE ESTA VERSIÓN
+
+Esta versión de Linceu Lighthouse incorpora mejoras significativas en estabilidad, seguridad local y facilidad de uso, ofreciendo una experiencia más ágil y confiable en la supervisión diaria de archivos y carpetas.
+
+El historial de sesiones ahora se carga en segundo plano, evitando bloqueos o pausas en la ventana incluso ante decenas de miles de eventos registrados. La sección de cuarentena y recuperación de archivos ha sido completamente optimizada: las tablas se actualizan sin parpadeos en pantalla y conservan el elemento seleccionado y la posición de desplazamiento exactamente donde el usuario los dejó.
+
+Además, la restauración de archivos permite elegir la carpeta de destino deseada y realiza una comprobación automática de integridad para asegurar que los archivos recuperados se encuentren intactos. El centro de alertas clasifica los avisos según niveles claros de atención, facilitando una respuesta rápida y organizada.
+
+
+NUEVAS FUNCIONALIDADES Y MEJORAS
+
+1. Sesiones en Tiempo Real Más Rápidas y Fluidas
+- El historial de sesiones se carga en segundo plano, asegurando que la aplicación permanezca ágil y disponible en todo momento.
+- Indicador visual que informa con claridad cuando se están recuperando datos de sesiones.
+- Sugerencias visuales al pasar el cursor sobre los resúmenes de directorios para consultar todas las rutas monitoreadas en la misma sesión.
+- Botón de actualización rápida para revisar nuevas sesiones sin necesidad de cerrar la ventana.
+
+2. Cuarentena Inteligente y Actualización Fluida
+- Las tablas de cuarentena y versiones protegidas se actualizan de manera suave y sin parpadeos molestos en pantalla.
+- La selección de fila, la barra de desplazamiento y el orden de las columnas se mantienen estables al recibir nuevos registros.
+- Botón directo para abrir la carpeta del archivo aislado en el Explorador de Archivos de Windows.
+
+3. Restauración Segura de Archivos con Verificación Automática
+- Elección de destino al restaurar: devuelva el archivo a su ubicación original o seleccione una carpeta alternativa y segura de prueba.
+- Comprobación automática de integridad durante la restauración, garantizando que el archivo recuperado sea idéntico a la copia protegida.
+- Avisos claros y comprensibles que confirman la finalización correcta de la restauración.
+
+4. Centro de Alertas Organizado por Nivel de Atención
+- Avisos clasificados en cuatro niveles comprensibles: Bajo, Medio, Alto y Crítico.
+- Visibilidad inmediata de situaciones prioritarias para centrarse en los eventos más importantes.
+- Explicación clara de las razones que motivaron la alerta, junto con el archivo y la carpeta correspondientes.
+- Actualización continua sin necesidad de detener la supervisión en curso.
+
+5. Gestión Cómoda de Múltiples Carpetas
+- Facilidad para añadir y organizar carpetas monitoreadas mediante perfiles guardados localmente.
+- Posibilidad de auditar y proteger varias carpetas y discos simultáneamente.
+- Resumen visible con la cantidad de carpetas activas y la ruta principal en uso.
+
+6. Manual y Ayuda Integrados en 6 Idiomas
+- El Manual de Usuario integrado se ha ampliado con instrucciones detalladas paso a paso sobre el manejo de todas las herramientas.
+- Textos completamente traducidos y revisados en seis idiomas: portugués, inglés, español, francés, italiano y alemán.
+- Navegación mejorada con accesos rápidos a cada tema y secuencias de trabajo recomendadas.
+
+
+_________________________________________________
+
+
 NOTAS DE LANZAMIENTO: Versión 2026.8.25.0
 
 DESTACADOS DE ESTA VERSIÓN

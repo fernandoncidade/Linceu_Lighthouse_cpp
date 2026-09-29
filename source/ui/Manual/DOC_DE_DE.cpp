@@ -9,13 +9,15 @@ std::vector<ManualSection> doc_de_de() {
             QStringLiteral("neue-funktionen"),
             QStringLiteral("Neue Funktionen"),
             {
-                QStringLiteral("Es wurden Verbesserungen bei der Zuverlässigkeit der Echtzeit-Überwachung, bei Pause/Fortsetzen/Stoppen und bei der Tabellenaktualisierung unter hoher Ereignislast umgesetzt."),
-                QStringLiteral("Die folgenden Anweisungen zeigen, wie diese Verbesserungen im täglichen Betrieb sicher genutzt werden."),
+                QStringLiteral("Version 2026.9.28.0 bietet grundlegende Zuverlässigkeitsverbesserungen bei der Echtzeit-Überwachung, ein nicht blockierendes asynchrones Laden von Echtzeitsitzungen im Hintergrund, flackerfreie differentielle Tabellenabgleiche in der Quarantäne sowie sichere Wiederherstellungen mit kryptografischer SHA-256-Integritätsprüfung."),
+                QStringLiteral("Die folgenden Anweisungen erläutern, wie diese Funktionen im Arbeitsalltag sicher, vorhersehbar und effizient eingesetzt werden."),
             },
             {
-                QStringLiteral("Präzisere Erkennung von Hinzufügen, Ändern, Löschen, Umbenennen und Verschieben von Dateien."),
-                QStringLiteral("Stabilere visuelle Aktualisierung bei großen Listen mit geringerem Risiko temporärer Inkonsistenzen während Lastspitzen."),
-                QStringLiteral("Konsistenterer Sprachwechsel in Menüs, Tabelle, Handbuch, Hilfe und Statistiken ohne Neustart."),
+                QStringLiteral("Nicht blockierende Echtzeitsitzungen: asynchrones Laden im Hintergrund mit Fortschrittsanzeige und Abbruchunterstützung."),
+                QStringLiteral("Intelligente Quarantäne und Wiederherstellung: differentielle Tabellenaktualisierungen, die Zeilenauswahl, Sortierung und Bildlaufposition beibehalten."),
+                QStringLiteral("Sichere Dateiwiederherstellung mit Zielordnerauswahl und kryptografischer SHA-256-Integritätsprüfung."),
+                QStringLiteral("Alarmzentrale mit strukturierter Einstufung nach Risikostufen und deterministischer Regelüberprüfung."),
+                QStringLiteral("Optimierte Multi-Verzeichnis-Verwaltung mit persistenten Profilen für die gleichzeitige Überwachung mehrerer Ordner."),
             },
             {
                 {
@@ -34,6 +36,28 @@ std::vector<ManualSection> doc_de_de() {
                         QStringLiteral("Bei langen Vorgängen Überwachung pausieren und Zwischenprüfung durchführen."),
                         QStringLiteral("Erst nach Validierung der sichtbaren Daten fortsetzen."),
                         QStringLiteral("Vor dem Beenden Überwachung/Scan explizit stoppen und letzte Statusaktualisierung abwarten."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Asynchrone Echtzeitsitzungen verwenden"),
+                    {
+                        QStringLiteral("Öffnen Sie Einstellungen > Sicherheit > Echtzeitsitzungen."),
+                        QStringLiteral("Der Sitzungsverlauf wird in einem separaten Hintergrund-Worker geladen, sodass die Benutzeroberfläche selbst bei Tausenden Ereignissen flüssig bleibt."),
+                        QStringLiteral("Prüfen Sie die Spalten: Aktualisiert am, Sitzungsbezeichnung, Ereignisanzahl, Überwachte Verzeichnisse und Evidenzkennung."),
+                        QStringLiteral("Fahren Sie mit der Maus über die Verzeichnisse, um bei mehreren überwachten Ordnern die vollständige Pfadliste einzusehen."),
+                        QStringLiteral("Klicken Sie jederzeit auf Aktualisieren, um neue inkrementelle Ereignisse abzufragen, ohne das Dialogfenster zu schließen."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Intelligente Quarantäne und Wiederherstellung bedienen"),
+                    {
+                        QStringLiteral("Öffnen Sie Einstellungen > Sicherheit > Quarantäne und Wiederherstellung."),
+                        QStringLiteral("Wechseln Sie zwischen den Registern Quarantäne (isolierte verdächtige Dateien) und Überwachte Versionen (kryptografische Baseline-Snapshots)."),
+                        QStringLiteral("Die Tabellenaktualisierung erfolgt differentiell: neue Datensätze verändern weder Ihre aktuelle Zeilenmarkierung noch die Scrollposition."),
+                        QStringLiteral("Wählen Sie eine Datei und klicken Sie auf Ausgewählten Ordner öffnen, um den Speicherort im Windows-Explorer zu öffnen."),
+                        QStringLiteral("Klicken Sie auf Ausgewählte Kopie wiederherstellen (oder Überwachte Version wiederherstellen), um einen sicheren Zielordner festzulegen und die Datei mit Integritätsbestätigung zurückzuholen."),
                     },
                     {}
                 },
@@ -245,7 +269,7 @@ std::vector<ManualSection> doc_de_de() {
             QStringLiteral("sicherheitsmenue-verwenden"),
             QStringLiteral("Einstellungen > Sicherheit verwenden"),
             {
-                QStringLiteral("Das Sicherheitsuntermenü bündelt Audit, Echtzeitsitzungen, Quarantäne, Wiederherstellung und Evidenzpakete. Verwenden Sie es nach der Verzeichniskonfiguration und möglichst nach einem ersten Scan."),
+                QStringLiteral("Das Sicherheitsuntermenü vereint Auditressourcen, Echtzeit-Sitzungsverfolgung, Quarantäne, Wiederherstellung, kryptografische Baselines und Evidenzpakete. Verwenden Sie es nach der Verzeichniskonfiguration und vorzugsweise nach einem initialen Scan."),
             },
             {},
             {
@@ -253,30 +277,51 @@ std::vector<ManualSection> doc_de_de() {
                     QStringLiteral("Profile und Multi-Verzeichnis"),
                     {
                         QStringLiteral("Öffnen Sie Einstellungen > Sicherheit > Profile und Multi-Verzeichnis, um das aktive Profil zu verwalten."),
-                        QStringLiteral("Nutzen Sie Verzeichnis hinzufügen, um einen weiteren Ordner aufzunehmen, und Ausgewähltes entfernen, um den markierten Ordner zu entfernen."),
+                        QStringLiteral("Nutzen Sie Verzeichnis hinzufügen, um einen weiteren Ordner in das Profil aufzunehmen, und Ausgewähltes entfernen, um den markierten Ordner zu entfernen."),
                         QStringLiteral("Bearbeiten Sie Profilname und klicken Sie Profil speichern, um die überwachte Ordnergruppe zu benennen."),
                         QStringLiteral("Klicken Sie Aktualisieren, um Hauptverzeichnis, Verzeichnisanzahl und aktives Profil neu zu laden."),
                     },
                     {}
                 },
                 {
-                    QStringLiteral("Alarmzentrale und Echtzeitsitzungen"),
+                    QStringLiteral("Echtzeit-Alarmzentrale"),
                     {
-                        QStringLiteral("Öffnen Sie Alarmzentrale, um Zeit, Risikostufe, Zusammenfassung, ausgelöste Regeln, Pfad, Name, Sitzung und Evidenz zu prüfen."),
-                        QStringLiteral("Priorisieren Sie kritische oder hohe Alarme vor gewöhnlichen Ereignissen in der Haupttabelle."),
-                        QStringLiteral("Öffnen Sie Echtzeitsitzungen, um aktuelle Sitzungen, Ereignisanzahl und beteiligte Verzeichnisse zu prüfen."),
-                        QStringLiteral("Nutzen Sie Aktualisieren in jedem Fenster bei aktiver Überwachung, um neue Datensätze ohne Schließen des Dialogs zu laden."),
+                        QStringLiteral("Öffnen Sie Einstellungen > Sicherheit > Alarmzentrale, um Sicherheitsereignisse nach Risikostufen zu prüfen: Niedrig, Mittel, Hoch und Kritisch."),
+                        QStringLiteral("Prüfen Sie Alarmzusammenfassung, ausgelöste Regeln, Pfad, Dateiname, beteiligte Sitzung und Evidenzkennung."),
+                        QStringLiteral("Priorisieren Sie die Untersuchung kritischer oder hoher Alarme vor der Durchsicht gewöhnlicher Ereignisse in der Haupttabelle."),
+                        QStringLiteral("Klicken Sie auf Aktualisieren, um neu erkannte Alarme abzufragen, ohne die laufende Überwachung zu unterbrechen."),
                     },
                     {}
                 },
                 {
-                    QStringLiteral("Quarantäne, Wiederherstellung und Evidenz"),
+                    QStringLiteral("Asynchrone Echtzeitsitzungen"),
                     {
-                        QStringLiteral("Öffnen Sie Quarantäne und Wiederherstellung, um die Register Quarantäne und Überwachte Versionen zu prüfen."),
-                        QStringLiteral("Wählen Sie in Quarantäne eine Zeile und nutzen Sie Ausgewählten Ordner öffnen, um die isolierte Kopie zu finden; stellen Sie erst nach Zielprüfung wieder her."),
-                        QStringLiteral("Wählen Sie in Überwachte Versionen eine Zeile und nutzen Sie Überwachte Version wiederherstellen, um eine registrierte Version zurückzuholen."),
-                        QStringLiteral("Öffnen Sie Evidenzpaket, wählen Sie das Ziel, klicken Sie Jetzt exportieren und prüfen Sie den erzeugten Ordner."),
-                        QStringLiteral("Nutzen Sie Sicherheitsdatenbank leeren nur nach Evidenzexport oder wenn der alte Auditverlauf nicht mehr benötigt wird."),
+                        QStringLiteral("Öffnen Sie Einstellungen > Sicherheit > Echtzeitsitzungen, um Aktivitätsblöcke des Dateisystems nachzuvollziehen."),
+                        QStringLiteral("Das Laden erfolgt in einem dedizierten Hintergrund-Worker, wodurch visuelle Verzögerungen selbst bei umfangreichen Verlaufsdaten vermieden werden."),
+                        QStringLiteral("Prüfen Sie Zeitstempel, lesbare Sitzungsbezeichnung, Gesamtereignisanzahl, Verzeichnisübersicht und eindeutige Sitzungs-ID."),
+                        QStringLiteral("Fahren Sie mit der Maus über die Verzeichnisspalte, um bei mehreren Ordnern die vollständige Pfadliste anzuzeigen."),
+                        QStringLiteral("Nutzen Sie Aktualisieren, um neu erfasste inkrementelle Sitzungen bei aktiver Überwachung einzusehen."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Intelligente Quarantäne und Wiederherstellung"),
+                    {
+                        QStringLiteral("Öffnen Sie Einstellungen > Sicherheit > Quarantäne und Wiederherstellung für Zugriff auf die Register Quarantäne und Überwachte Versionen."),
+                        QStringLiteral("Die Tabellen nutzen flackerfreie differentielle Synchronisation: Zeilenauswahl, Sortierung und Scrollposition bleiben während Aktualisierungen erhalten."),
+                        QStringLiteral("Wählen Sie im Register Quarantäne eine isolierte Datei und nutzen Sie Ausgewählten Ordner öffnen zur Anzeige im Windows-Explorer."),
+                        QStringLiteral("Klicken Sie auf Ausgewählte Kopie wiederherstellen, um das Zielauswahlfenster zu öffnen: stellen Sie am Ursprungspfad oder in einem sicheren Prüfordner wieder her."),
+                        QStringLiteral("Wählen Sie im Register Überwachte Versionen einen Baseline-Snapshot und nutzen Sie Überwachte Version wiederherstellen für den Abruf."),
+                        QStringLiteral("Das System validiert die kryptografische SHA-256-Integrität und bestätigt die erfolgreiche Wiederherstellung umgehend."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Evidenzpaket und Audit"),
+                    {
+                        QStringLiteral("Öffnen Sie Einstellungen > Sicherheit > Evidenzpaket, um strukturierte, revisionssichere Berichte zu exportieren."),
+                        QStringLiteral("Wählen Sie den Zielordner, klicken Sie auf Jetzt exportieren und prüfen Sie das generierte Paket mit kryptografischen Baselines und strukturierten Protokollen."),
+                        QStringLiteral("Verwenden Sie Sicherheitsdatenbank leeren ausschließlich nach dem Sichern von Evidenzpaketen und Bestätigung, dass Altdaten nicht mehr benötigt werden."),
                     },
                     {}
                 },

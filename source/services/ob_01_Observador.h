@@ -1,6 +1,7 @@
 #pragma once
 
 #include <atomic>
+#include <condition_variable>
 #include <deque>
 #include <functional>
 #include <memory>
@@ -72,6 +73,7 @@ public:
     std::mutex lock;
     std::mutex evento_lock;
     std::mutex registros_lock;
+    std::condition_variable cv_buffer;
 
     source::ui::LocalizadorQt* loc;
     int falhas_consecutivas;
@@ -102,6 +104,7 @@ public:
     std::unique_ptr<std::thread> thread;
     std::unique_ptr<std::thread> thread_buffer;
     quintptr handle_dir;
+    quintptr handle_stop_event;
 
 private:
     bool owns_loc_;

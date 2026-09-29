@@ -34,6 +34,7 @@ void run_on_security_runtime_thread(QObject* interface_obj, std::function<void()
 void register_dialog(QObject* interface_obj, const char* property_name, QWidget* dialog);
 void set_result_label(QObject* interface_obj, const QString& text);
 void set_security_result_label(QObject* interface_obj, const QString& text);
+void set_security_result_label(QObject* interface_obj, const QString& key, const QString& fallback);
 void show_translated_security_feedback(QObject* interface_obj,
                                        const QString& key,
                                        const QString& fallback = QString(),
@@ -55,5 +56,9 @@ void set_security_popup_config(QObject* interface_obj,
                                const SecurityPopupConfig& config);
 void clear_status_message(QObject* interface_obj);
 void show_status_message(QObject* interface_obj, const QString& text, int timeout_ms = 8000);
+void show_translated_status_message(QObject* interface_obj,
+                                    const QString& key,
+                                    const QString& fallback = QString(),
+                                    int timeout_ms = 8000);
 
 }  // namespace source::security::ui

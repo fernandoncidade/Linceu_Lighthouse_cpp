@@ -21,8 +21,8 @@
 
 # Manual do Usuário — Linceu Lighthouse
 
-Versão documentada: `2026.8.25.0`
-Data: `25 de agosto de 2026`
+Versão documentada: `2026.9.28.0`
+Data: `28 de setembro de 2026`
 ---
 
 <details>
@@ -343,6 +343,39 @@ Esta seção complementa o manual com os recursos mais recentes do projeto e mos
 2. Valores aceitos: **auto**, **desktop**, **angle**, **software**.
 3. Use **software** apenas para diagnóstico de compatibilidade (pode reduzir desempenho).
 
+## Recursos da versão 2026.9.28.0
+
+Esta versão consolida melhorias estruturais no monitoramento em tempo real, carregamento assíncrono não bloqueante para sessões em tempo real, atualização diferencial sem tremulação na quarentena e restauração com validação criptográfica SHA-256.
+
+### Sessões em tempo real assíncronas
+1. Acesse **Configurações > Segurança > Sessões em tempo real**.
+2. O histórico de sessões é carregado em segundo plano por uma tarefa assíncrona, mantendo a interface ágil e responsiva mesmo com milhares de eventos.
+3. Observe a indicação de carregamento durante a consulta e confira as colunas: data de atualização, rótulo amigável da sessão, total de eventos, resumo de diretórios e identificador único.
+4. Ao posicionar o cursor sobre o resumo de diretórios, uma dica de ferramenta flutuante exibe a lista completa de pastas monitoradas.
+5. Pressione **Atualizar** para obter sessões incrementais sem fechar a janela.
+
+### Quarentena e restauração inteligente
+1. Acesse **Configurações > Segurança > Quarentena e restauração**.
+2. Alterne entre as abas **Quarentena** (arquivos isolados) e **Versões monitoradas** (histórico criptográfico da linha de base).
+3. A sincronização da tabela é estritamente diferencial: novas adições ou alterações não desfazem sua seleção atual nem reiniciam a barra de rolagem ou ordenação.
+4. Selecione uma linha e clique em **Abrir pasta selecionada** para inspecionar o arquivo no Explorador de Arquivos do Windows.
+5. Clique em **Restaurar cópia selecionada** (ou **Restaurar versão monitorada**) para abrir o diálogo de escolha de destino: restaure no caminho original ou selecione uma pasta segura de teste.
+6. A integridade do arquivo é conferida automaticamente via cálculo de hash SHA-256, exibindo confirmação imediata de sucesso.
+
+### Central de alertas em tempo real
+1. Acesse **Configurações > Segurança > Central de alertas**.
+2. Revise a lista de alertas classificados por níveis de risco objetivos: Baixo, Médio, Alto e Crítico.
+3. Identifique imediatamente quais regras do motor local foram violadas, o caminho afetado e a referência de evidência forense vinculada.
+4. Priorize incidentes de risco crítico ou alto antes de avaliar modificações de rotina na tabela principal.
+5. Use **Atualizar** para acompanhar novos alertas detectados em tempo real sem interrupção.
+
+### Gerenciamento de perfis multi-diretório
+1. Acesse **Configurações > Segurança > Perfis e multi-diretório**.
+2. Clique em **Adicionar diretório** para incluir diretórios adicionais ao perfil de auditoria.
+3. Para excluir uma pasta, selecione-a na lista e clique em **Remover selecionado**.
+4. Ajuste o **Nome do perfil** e clique em **Salvar perfil** para persistência no banco local.
+5. Clique em **Atualizar** para sincronizar o status entre a janela e o serviço de monitoramento.
+
 ## Recursos da versão 2026.7.4.0
 
 Esta versão amplia o uso diário da tabela e melhora a leitura dos metadados exibidos. O objetivo é permitir que o usuário trabalhe com mais tipos de arquivo, entenda melhor o conteúdo listado e veja datas completas também em estruturas de pastas.
@@ -423,47 +456,47 @@ Depois de abrir **Arquivo > Estatísticas** ou **Ctrl+G**, use a janela de estat
 
 ## 14) Menu Configurações > Segurança
 
-O submenu **Configurações > Segurança** concentra recursos de auditoria, evidência, alertas e recuperação.
+O submenu **Configurações > Segurança** concentra recursos de auditoria, evidência, alertas, sessões e recuperação de arquivos.
 
 ### Perfis e multi-diretório
 
-Use **Configurações > Segurança > Perfis e multi-diretório** para operar com vários diretórios no mesmo perfil.
+Use **Configurações > Segurança > Perfis e multi-diretório** para gerenciar pastas monitoradas simultaneamente.
 
 1. Abra a janela de perfis.
-2. Clique **Adicionar diretório** para incluir uma nova pasta monitorada.
-3. Selecione uma pasta na lista e clique **Remover selecionado** para removê-la do perfil.
-4. Altere **Nome do perfil** para identificar melhor o conjunto monitorado.
-5. Clique **Salvar perfil**.
+2. Clique **Adicionar diretório** para incluir uma nova pasta no perfil.
+3. Selecione uma pasta na lista e clique **Remover selecionado** para retirá-la.
+4. Altere o **Nome do perfil** para identificar o conjunto monitorado.
+5. Clique **Salvar perfil** para gravar a configuração no banco local.
 6. Use **Atualizar** para recarregar o resumo de diretório principal, total de diretórios e perfil ativo.
 
 ### Central de alertas
 
-Use **Configurações > Segurança > Central de alertas** para priorizar ocorrências por risco.
+Use **Configurações > Segurança > Central de alertas** para priorizar ocorrências por risco determinístico.
 
-1. Abra a central.
-2. Revise as colunas **Criado em**, **Nível de risco**, **Resumo do alerta**, **Regras**, **Caminho**, **Nome**, **Sessão** e **Evidência**.
-3. Comece por alertas altos ou críticos.
-4. Use **Atualizar** enquanto o monitoramento estiver ativo para carregar registros novos.
+1. Abra a central de alertas.
+2. Revise as colunas **Criado em**, **Nível de risco** (Baixo, Médio, Alto, Crítico), **Resumo do alerta**, **Regras**, **Caminho**, **Nome**, **Sessão** e **Evidência**.
+3. Priorize a análise de alertas de risco Alto ou Crítico antes de examinar eventos comuns.
+4. Use **Atualizar** enquanto o monitoramento estiver ativo para carregar registros novos sem interrupção.
 
 ### Sessões em tempo real
 
-Use **Configurações > Segurança > Sessões em tempo real** para acompanhar blocos de atividade.
+Use **Configurações > Segurança > Sessões em tempo real** para acompanhar blocos de atividade do sistema de arquivos.
 
-1. Abra a janela de sessões.
-2. Verifique a sessão, total de eventos e diretórios envolvidos.
-3. Use essas informações para relacionar picos de atividade com diretórios monitorados.
-4. Clique **Atualizar** quando quiser carregar novas sessões sem fechar a janela.
+1. Abra a janela de sessões. O carregamento ocorre de forma assíncrona em segundo plano, evitando travamentos na interface.
+2. Acompanhe a indicação de progresso e examine data/hora, rótulo amigável, total de eventos e resumo de diretórios.
+3. Passe o mouse sobre o resumo de diretórios para ver os caminhos completos na dica flutuante (tooltip).
+4. Clique **Atualizar** para carregar sessões incrementais a qualquer momento.
 
 ### Quarentena e restauração
 
 Use **Configurações > Segurança > Quarentena e restauração** para revisar itens isolados e versões monitoradas.
 
-1. Abra a janela.
-2. Na aba **Quarentena**, selecione uma linha.
-3. Use **Abrir pasta selecionada** para localizar a cópia isolada.
-4. Use **Restaurar cópia selecionada** somente depois de validar o destino.
-5. Na aba **Versões monitoradas**, selecione uma linha e use **Restaurar versão monitorada** para recuperar uma versão acompanhada.
-6. Prefira restaurar para uma pasta de revisão antes de substituir arquivos em uso.
+1. Abra a janela e navegue entre as abas **Quarentena** e **Versões monitoradas**.
+2. A tabela utiliza sincronização diferencial estável: seleção, rolagem e ordenação permanecem inalteradas durante as atualizações.
+3. Na aba **Quarentena**, selecione uma linha e use **Abrir pasta selecionada** para inspecionar o arquivo isolado no Explorador.
+4. Clique em **Restaurar cópia selecionada** para abrir o diálogo de destino: escolha restaurar no caminho original ou em uma pasta alternativa de teste.
+5. Na aba **Versões monitoradas**, selecione uma versão histórica e clique em **Restaurar versão monitorada**.
+6. A integridade dos dados recuperados é validada automaticamente por hash SHA-256 antes da confirmação final.
 
 ### Pacote de evidência
 
@@ -553,8 +586,8 @@ Antes de salvar dados, configure **Configurações > Opções de exportação**.
 
 # User Manual — Linceu Lighthouse
 
-Documented version: `2026.8.25.0`  
-Date: `August 25, 2026`
+Documented version: `2026.9.28.0`  
+Date: `September 28, 2026`
 ---
 
 <details>
@@ -869,6 +902,39 @@ This section supplements the manual with the latest project features and demonst
 2. In virtualized or legacy environments, set the environment variable `LINCEU_OPENGL_MODE=software`.
 3. Charts render smoothly using software rasterization without crashes.
 
+## Version 2026.9.28.0 Features
+
+This version delivers significant stability, local security, and usability enhancements featuring asynchronous non-blocking real-time session loading, anti-flicker differential quarantine synchronization, and safe recovery with SHA-256 cryptographic verification.
+
+### Asynchronous Real-Time Sessions
+1. Open **Settings > Security > Real-time sessions**.
+2. Historical sessions load in the background via a worker thread, ensuring the interface remains fully responsive even with thousands of events.
+3. Track the loading indicator and review timestamps, friendly session labels, total events, directory summaries, and unique IDs.
+4. Hover over the directory summary to view a tooltip listing all monitored paths in multi-directory sessions.
+5. Click **Refresh** to load newly recorded sessions without closing the dialog.
+
+### Smart Quarantine and Recovery
+1. Open **Settings > Security > Quarantine and restoration**.
+2. Switch between the **Quarantine** (isolated files) and **Monitored versions** (cryptographic baseline history) tabs.
+3. Table synchronization is strictly differential: updates do not reset row selection, scroll position, or column sorting.
+4. Select a row and click **Open selected folder** to inspect the file in Windows File Explorer.
+5. Click **Restore selected copy** (or **Restore monitored version**) to open the destination chooser dialog: restore to the original path or choose a safe inspection folder.
+6. File integrity is verified automatically using SHA-256 cryptographic hashes upon restoration, displaying immediate confirmation.
+
+### Real-Time Alert Center
+1. Open **Settings > Security > Alert Center**.
+2. Review incidents prioritized by deterministic risk levels: Low, Medium, High, and Critical.
+3. Inspect violated rules, affected paths, friendly filenames, and correlated evidence package references.
+4. Triage High and Critical alerts before reviewing routine filesystem modifications.
+5. Click **Refresh** to inspect newly triggered alerts during active monitoring.
+
+### Multi-Directory Profiles
+1. Open **Settings > Security > Profiles and multi-directory**.
+2. Click **Add directory** to include additional monitored folders in the profile.
+3. Select any directory and click **Remove selected** to remove it.
+4. Edit the **Profile name** and click **Save profile** to store settings in the local database.
+5. Click **Refresh** to synchronize profile state with the active monitoring engine.
+
 ## Version 2026.7.4.0 Features
 
 ### Opening files reported in the table
@@ -935,47 +1001,47 @@ After opening **File > Statistics** or pressing **Ctrl+G**, use the statistics w
 
 ## 14) Settings > Security Menu
 
-The **Settings > Security** submenu centralizes audit, evidence, alert, and recovery features.
+The **Settings > Security** submenu centralizes audit, evidence, alert, real-time session, and recovery features.
 
 ### Profiles and multi-directory
 
-Use **Settings > Security > Profiles and multi-directory** to operate with multiple directories in the same profile.
+Use **Settings > Security > Profiles and multi-directory** to operate with multiple monitored directories in the same profile.
 
 1. Open the profiles window.
-2. Click **Add directory** to include a new monitored folder.
-3. Select a folder in the list and click **Remove selected** to remove it from the profile.
-4. Edit **Profile name** to better identify the monitored set.
-5. Click **Save profile**.
+2. Click **Add directory** to include a new monitored folder in the active profile.
+3. Select a folder in the list and click **Remove selected** to remove it.
+4. Edit **Profile name** to customize the profile label.
+5. Click **Save profile** to persist the configuration to the local database.
 6. Use **Refresh** to reload the summary of primary directory, total directories, and active profile.
 
 ### Alert Center
 
-Use **Settings > Security > Alert Center** to prioritize incidents by risk.
+Use **Settings > Security > Alert Center** to prioritize incidents by deterministic risk levels.
 
 1. Open the alert center.
-2. Review columns: **Created at**, **Risk level**, **Alert summary**, **Rules**, **Path**, **Name**, **Session**, and **Evidence**.
-3. Start with high or critical alerts.
-4. Use **Refresh** while monitoring is active to load new records.
+2. Review columns: **Created at**, **Risk level** (Low, Medium, High, Critical), **Alert summary**, **Rules**, **Path**, **Name**, **Session**, and **Evidence**.
+3. Triage High and Critical alerts before reviewing routine events.
+4. Use **Refresh** while monitoring is active to load newly triggered records without interruption.
 
 ### Real-time sessions
 
-Use **Settings > Security > Real-time sessions** to track blocks of activity.
+Use **Settings > Security > Real-time sessions** to track blocks of filesystem activity.
 
-1. Open the sessions window.
-2. Check the session, total events, and directories involved.
-3. Use this information to correlate activity spikes with monitored directories.
-4. Click **Refresh** when you want to load new sessions without closing the window.
+1. Open the sessions window. Historical sessions are loaded asynchronously in the background, keeping the UI completely smooth.
+2. Check the session timestamp, friendly name, total events, and directory summary.
+3. Hover over the directory summary to see full paths in the tooltip for multi-directory sessions.
+4. Click **Refresh** to load newly recorded sessions without closing the dialog.
 
 ### Quarantine and restoration
 
-Use **Settings > Security > Quarantine and restoration** to review isolated items and monitored versions.
+Use **Settings > Security > Quarantine and restoration** to inspect isolated files and cryptographic baselines.
 
-1. Open the window.
-2. On the **Quarantine** tab, select a row.
-3. Use **Open selected folder** to locate the isolated copy.
-4. Use **Restore selected copy** only after validating the destination.
-5. On the **Monitored versions** tab, select a row and use **Restore monitored version** to recover a tracked version.
-6. Prefer restoring to a review folder before overwriting files in use.
+1. Open the window and switch between the **Quarantine** and **Monitored versions** tabs.
+2. Tables utilize anti-flicker differential updates: row selection, scroll position, and sorting remain stable during updates.
+3. On the **Quarantine** tab, select a row and click **Open selected folder** to inspect the isolated file in Windows Explorer.
+4. Click **Restore selected copy** to open the destination chooser: restore to the original path or select an alternative safe directory.
+5. On the **Monitored versions** tab, select a row and click **Restore monitored version** to recover a previous baseline copy.
+6. The file integrity is verified via SHA-256 cryptographic hashes upon restoration, providing immediate confirmation.
 
 ### Evidence package
 
@@ -1065,8 +1131,8 @@ Before saving data, configure **Settings > Export Options**.
 
 # Manual del Usuario — Linceu Lighthouse
 
-Versión documentada: `2026.8.25.0`
-Fecha: `25 de agosto de 2026`
+Versión documentada: `2026.9.28.0`
+Fecha: `28 de septiembre de 2026`
 ---
 
 <details>
@@ -1387,6 +1453,39 @@ Esta sección complementa el manual con las funcionalidades más recientes del p
 2. Valores aceptados: **auto**, **desktop**, **angle**, **software**.
 3. Use **software** solo para diagnóstico de compatibilidad (puede reducir el rendimiento).
 
+## Recursos de la versión 2026.9.28.0
+
+Esta versión consolida mejoras estructurales de estabilidad, seguridad local y experiencia de usuario, incorporando carga asíncrona no bloqueante para sesiones en tiempo real, actualización diferencial sin parpadeo en cuarentena y restauración con validación criptográfica SHA-256.
+
+### Sesiones en tiempo real asíncronas
+1. Acceda a **Configuración > Seguridad > Sesiones en tiempo real**.
+2. El historial de sesiones se carga en segundo plano mediante un hilo de trabajo, manteniendo la interfaz ágil y receptiva incluso con miles de eventos.
+3. Observe el indicador de carga y examine las columnas de fecha/hora, etiqueta descriptiva, total de eventos, resumen de directorios e identificador único.
+4. Al colocar el cursor sobre el resumen de directorios, una sugerencia flotante muestra la lista completa de rutas monitoreadas.
+5. Haga clic en **Actualizar** para obtener sesiones incrementales sin cerrar la ventana.
+
+### Cuarentena y restauración inteligente
+1. Acceda a **Configuración > Seguridad > Cuarentena y restauración**.
+2. Alterne entre las pestañas **Cuarentena** (archivos aislados) y **Versiones monitorizadas** (historial criptográfico).
+3. La sincronización de la tabla es estrictamente diferencial: las actualizaciones automáticas no restablecen la selección de fila, la barra de desplazamiento ni el orden de columnas.
+4. Seleccione una fila y haga clic en **Abrir carpeta seleccionada** para inspeccionar el archivo en el Explorador de Windows.
+5. Haga clic en **Restaurar copia seleccionada** (o **Restaurar versión monitorizada**) para abrir el diálogo de elección de destino: restaure en la ruta original o seleccione una carpeta segura de prueba.
+6. La integridad del archivo se comprueba automáticamente mediante el cálculo de hash SHA-256, mostrando una confirmación inmediata de éxito.
+
+### Centro de alertas en tiempo real
+1. Acceda a **Configuración > Seguridad > Centro de alertas**.
+2. Revise los incidentes clasificados por niveles de riesgo objetivos: Bajo, Medio, Alto y Crítico.
+3. Identifique inmediatamente las reglas infringidas, la ruta afectada y la referencia de paquete de evidencia forense vinculada.
+4. Priorice los incidentes de riesgo Alto o Crítico antes de revisar modificaciones rutinarias del sistema de archivos.
+5. Use **Actualizar** para consultar nuevas alertas detectadas sin interrumpir el monitoreo activo.
+
+### Gestión de perfiles multidirectorio
+1. Acceda a **Configuración > Seguridad > Perfiles y multi-directorio**.
+2. Haga clic en **Añadir directorio** para incluir carpetas adicionales en el perfil de auditoría.
+3. Para eliminar una carpeta, selecciónela en la lista y haga clic en **Eliminar seleccionado**.
+4. Modifique el **Nombre del perfil** y haga clic en **Guardar perfil** para registrar los cambios en la base de datos local.
+5. Haga clic en **Actualizar** para sincronizar el estado entre la ventana y el servicio de monitoreo.
+
 ## Recursos de la versión 2026.7.4.0
 
 Esta versión amplía el uso diario de la tabla y mejora la lectura de los metadatos mostrados. El objetivo es permitir al usuario trabajar con más tipos de archivos, comprender mejor el contenido listado y visualizar fechas completas también en estructuras de carpetas.
@@ -1467,47 +1566,47 @@ Después de abrir **Archivo > Estadísticas** o presionar **Ctrl+G**, use la ven
 
 ## 14) Menú Configuración > Seguridad
 
-El submenú **Configuración > Seguridad** concentra funciones de auditoría, evidencia, alertas y recuperación.
+El submenú **Configuración > Seguridad** concentra funciones de auditoría, evidencia, alertas, sesiones en tiempo real y recuperación.
 
 ### Perfiles y multi-directorio
 
-Use **Configuración > Seguridad > Perfiles y multi-directorio** para operar con varios directorios en el mismo perfil.
+Use **Configuración > Seguridad > Perfiles y multi-directorio** para operar con varios directorios simultáneamente.
 
 1. Abra la ventana de perfiles.
-2. Haga clic en **Agregar directorio** para incluir una nueva carpeta monitoreada.
-3. Seleccione una carpeta en la lista y haga clic en **Eliminar seleccionado** para quitarla del perfil.
-4. Modifique el **Nombre del perfil** para identificar mejor el conjunto monitoreado.
-5. Haga clic en **Guardar perfil**.
-6. Use **Actualizar** para recargar el resumen de directorio principal, total de directorios y perfil activo.
+2. Haga clic en **Añadir directorio** para incluir una nueva carpeta en el perfil activo.
+3. Seleccione una carpeta en la lista y haga clic en **Eliminar seleccionado** para quitarla.
+4. Modifique **Nombre del perfil** para identificar el conjunto auditado.
+5. Haga clic en **Guardar perfil** para almacenar los cambios en la base de datos local.
+6. Use **Actualizar** para recargar el resumen del directorio principal, total de directorios y perfil activo.
 
 ### Centro de alertas
 
-Use **Configuración > Seguridad > Centro de alertas** para priorizar incidentes por riesgo.
+Use **Configuración > Seguridad > Centro de alertas** para priorizar incidentes por riesgo determinístico.
 
 1. Abra el centro de alertas.
-2. Revise las columnas **Creado en**, **Nivel de riesgo**, **Resumen de la alerta**, **Reglas**, **Ruta**, **Nombre**, **Sesión** y **Evidencia**.
-3. Comience por alertas altas o críticas.
-4. Use **Actualizar** mientras el monitoreo esté activo para cargar registros nuevos.
+2. Revise las columnas: **Creado el**, **Nivel de riesgo** (Bajo, Medio, Alto, Crítico), **Resumen de la alerta**, **Reglas**, **Ruta**, **Nombre**, **Sesión** y **Evidencia**.
+3. Priorice el análisis de alertas de riesgo Alto o Crítico antes de evaluar modificaciones de rutina.
+4. Use **Actualizar** mientras el monitoreo esté activo para cargar nuevos registros sin interrupciones.
 
 ### Sesiones en tiempo real
 
-Use **Configuración > Seguridad > Sesiones en tiempo real** para seguir bloques de actividad.
+Use **Configuración > Seguridad > Sesiones en tiempo real** para seguir bloques de actividad del sistema de archivos.
 
-1. Abra la ventana de sesiones.
-2. Verifique la sesión, total de eventos y directorios involucrados.
-3. Use esta información para correlacionar picos de actividad con los directorios monitoreados.
-4. Haga clic en **Actualizar** cuando desee cargar nuevas sesiones sin cerrar la ventana.
+1. Abra la ventana de sesiones. El historial se carga de forma asíncrona en segundo plano, evitando bloqueos en la interfaz.
+2. Examine fecha y hora, nombre descriptivo, total de eventos y resumen de directorios.
+3. Pase el cursor sobre el resumen de directorios para consultar todas las rutas en la sugerencia flotante (tooltip).
+4. Haga clic en **Actualizar** para cargar sesiones incrementales sin cerrar la ventana.
 
 ### Cuarentena y restauración
 
-Use **Configuración > Seguridad > Cuarentena y restauración** para revisar elementos aislados y versiones monitoreadas.
+Use **Configuración > Seguridad > Cuarentena y restauración** para revisar elementos aislados y versiones históricas.
 
-1. Abra la ventana.
-2. En la pestaña **Cuarentena**, seleccione una fila.
-3. Use **Abrir carpeta seleccionada** para localizar la copia aislada.
-4. Use **Restaurar copia seleccionada** únicamente tras validar el destino.
-5. En la pestaña **Versiones monitoreadas**, seleccione una fila y use **Restaurar versión monitoreada** para recuperar una versión rastreada.
-6. Prefiera restaurar en una carpeta de revisión antes de reemplazar archivos en uso.
+1. Abra la ventana y navegue entre las pestañas **Cuarentena** y **Versiones monitorizadas**.
+2. Las tablas utilizan actualización diferencial sin parpadeos: la fila seleccionada, el desplazamiento y el orden permanecen intactos.
+3. En la pestaña **Cuarentena**, seleccione una fila y use **Abrir carpeta seleccionada** para ubicar el archivo en el Explorador de Windows.
+4. Haga clic en **Restaurar copia seleccionada** para abrir el diálogo de destino: elija restaurar en la ruta original o en una carpeta segura alternativa.
+5. En la pestaña **Versiones monitorizadas**, seleccione una versión y haga clic en **Restaurar versión monitorada**.
+6. La integridad de los datos recuperados se valida automáticamente mediante hash criptográfico SHA-256 antes de la confirmación final.
 
 ### Paquete de evidencia
 
@@ -1516,7 +1615,7 @@ Use **Configuración > Seguridad > Paquete de evidencia** para generar un paquet
 1. Abra la ventana.
 2. Haga clic en **Seleccionar destino** y elija la carpeta donde se creará el paquete.
 3. Haga clic en **Exportar ahora**.
-4. Tras la generación, haga clic en **Abrir carpeta seleccionada** para comprobar los archivos exportados.
+4. Tras la generación, haga clic en **Abrir carpeta seleccionada** para revisar los archivos exportados.
 5. Guarde el paquete antes de limpiar el historial o cerrar un análisis crítico.
 
 ### Limpiar base de datos de seguridad
@@ -1525,7 +1624,7 @@ Use **Limpiar base de datos de seguridad** con precaución.
 
 - Exporte evidencias antes de limpiar.
 - Confirme que el historial antiguo ya no será necesario.
-- Evite limpiar durante el monitoreo activo o antes de concluir una auditoría.
+- Evite limpiar durante el monitoreo activo o antes de concluir una auditoria.
 
 ## 15) Notificaciones de seguridad
 
@@ -1597,8 +1696,8 @@ Antes de guardar datos, configure **Configuración > Opciones de exportación**.
 
 # Manuel de l'Utilisateur — Linceu Lighthouse
 
-Version documentée : `2026.8.25.0`
-Date: `25 août 2026`
+Version documentée : `2026.9.28.0`
+Date: `28 septembre 2026`
 ---
 
 <details>
@@ -1919,6 +2018,39 @@ Cette section complète le manuel avec les fonctionnalités les plus récentes d
 2. Valeurs acceptées : **auto**, **desktop**, **angle**, **software**.
 3. Utilisez **software** uniquement pour le diagnostic de compatibilité (peut réduire les performances).
 
+## Fonctionnalités de la version 2026.9.28.0
+
+Cette version consolide des améliorations structurelles en matière de stabilité, de sécurité locale et de confort d'utilisation, intégrant un chargement asynchrone non bloquant pour les sessions en temps réel, une mise à jour différentielle sans scintillement pour la quarantaine et une restauration sécurisée avec validation cryptographique SHA-256.
+
+### Sessions en temps réel asynchrones
+1. Accédez à **Paramètres > Sécurité > Sessions en temps réel**.
+2. L'historique des sessions est chargé en arrière-plan via un thread de travail, garantissant une réactivité fluide de l'interface même avec des milliers d'événements.
+3. Observez l'indicateur de chargement et consultez l'horodatage, l'intitulé convivial, le nombre total d'événements, le résumé des répertoires et l'identifiant unique.
+4. Survolez le résumé des répertoires avec le curseur pour afficher l'infobulle détaillant l'ensemble des chemins surveillés.
+5. Cliquez sur **Actualiser** pour charger les nouvelles sessions sans fermer la boîte de dialogue.
+
+### Quarantaine et restauration intelligente
+1. Accédez à **Paramètres > Sécurité > Quarantaine et restauration**.
+2. Basculez entre les onglets **Quarantaine** (fichiers isolés) et **Versions surveillées** (historique de la ligne de base cryptographique).
+3. La synchronisation du tableau est strictement différentielle : les actualisations automatiques ne réinitialisent ni la ligne sélectionnée, ni la position de défilement, ni le tri.
+4. Sélectionnez une ligne et cliquez sur **Ouvrir le dossier sélectionné** pour localiser le fichier dans l'Explorateur Windows.
+5. Cliquez sur **Restaurer la copie sélectionnée** (ou **Restaurer la version surveillée**) pour ouvrir la boîte de dialogue de choix de destination : restaurez vers l'emplacement d'origine ou sélectionnez un dossier sécurisé de test.
+6. L'intégrité du fichier est validée automatiquement par hachage cryptographique SHA-256 lors de la restauration avec notification immédiate.
+
+### Centre d'alertes en temps réel
+1. Accédez à **Paramètres > Sécurité > Centre d'alertes**.
+2. Examinez les événements classés par niveaux de risque objectifs : Faible, Moyen, Élevé et Critique.
+3. Identifiez immédiatement les règles enfreintes, le chemin affecté et la référence du package de preuves associé.
+4. Traitez en priorité les alertes de risque Élevé ou Critique avant d'examiner les événements système courants.
+5. Cliquez sur **Actualiser** pour suivre les nouvelles alertes en temps réel sans interrompre la surveillance active.
+
+### Gestion des profils multi-répertoires
+1. Accédez à **Paramètres > Sécurité > Profils et multi-répertoires**.
+2. Cliquez sur **Ajouter un répertoire** pour ajouter de nouveaux dossiers au profil d'audit.
+3. Pour retirer un dossier, sélectionnez-le dans la liste et cliquez sur **Supprimer la sélection**.
+4. Modifiez le **Nom du profil** et cliquez sur **Enregistrer le profil** pour enregistrer la configuration dans la base locale.
+5. Cliquez sur **Actualiser** pour synchroniser l'état entre la fenêtre et le service de surveillance.
+
 ## Fonctionnalités de la version 2026.7.4.0
 
 Cette version enrichit l'utilisation quotidienne du tableau et améliore la lecture des métadonnées affichées. L'objectif est de permettre à l'utilisateur de travailler avec davantage de types de fichiers, de mieux comprendre le contenu répertorié et de visualiser des dates complètes également pour les structures de dossiers.
@@ -1999,65 +2131,65 @@ Après avoir ouvert **Fichier > Statistiques** ou pressé **Ctrl+G**, utilisez l
 
 ## 14) Menu Paramètres > Sécurité
 
-Le sous-menu **Paramètres > Sécurité** regroupe les fonctions d'audit, de preuves, d'alertes et de récupération.
+Le sous-menu **Paramètres > Sécurité** regroupe les fonctions d'audit, de preuves, d'alertes, de sessions en temps réel et de récupération.
 
 ### Profils et multi-répertoires
 
-Utilisez **Paramètres > Sécurité > Profils et multi-répertoires** pour gérer plusieurs répertoires au sein d'un même profil.
+Utilisez **Paramètres > Sécurité > Profils et multi-répertoires** pour gérer plusieurs répertoires surveillés simultanément.
 
 1. Ouvrez la fenêtre des profils.
-2. Cliquez sur **Ajouter un répertoire** pour inclure un nouveau dossier surveillé.
-3. Sélectionnez un dossier dans la liste et cliquez sur **Supprimer la sélection** pour le retirer du profil.
-4. Modifiez le **Nom du profil** pour mieux identifier l'ensemble surveillé.
-5. Cliquez sur **Enregistrer le profil**.
-6. Utilisez **Actualiser** pour recharger le récapitulatif du répertoire principal, total des dossiers et profil actif.
+2. Cliquez sur **Ajouter un répertoire** pour inclure un nouveau dossier dans le profil actif.
+3. Sélectionnez un dossier dans la liste et cliquez sur **Supprimer la sélection** pour le retirer.
+4. Modifiez **Nom du profil** pour personnaliser le nom de l'ensemble surveillé.
+5. Cliquez sur **Enregistrer le profil** pour sauvegarder la configuration dans la base locale.
+6. Utilisez **Actualiser** pour recharger le résumé du répertoire principal, le nombre total de dossiers et le profil actif.
 
 ### Centre d'alertes
 
-Utilisez **Paramètres > Sécurité > Centre d'alertes** pour hiérarchiser les événements par niveau de risque.
+Utilisez **Paramètres > Sécurité > Centre d'alertes** pour hiérarchiser les événements par risque déterministe.
 
 1. Ouvrez le centre d'alertes.
-2. Examinez les colonnes **Créé le**, **Niveau de risque**, **Résumé de l'alerte**, **Règles**, **Chemin**, **Nom**, **Session** et **Preuve**.
-3. Commencez par traiter les alertes de niveau élevé ou critique.
-4. Utilisez **Actualiser** pendant la surveillance active pour charger les nouveaux enregistrements.
+2. Vérifiez les colonnes : **Créé le**, **Niveau de risque** (Faible, Moyen, Élevé, Critique), **Résumé de l'alerte**, **Règles**, **Chemin**, **Nom**, **Session** et **Preuve**.
+3. Traitez d'abord les alertes de risque Élevé ou Critique avant d'examiner les événements habituels.
+4. Utilisez **Actualiser** pendant la surveillance active pour charger de nouveaux enregistrements sans interruption.
 
 ### Sessions en temps réel
 
-Utilisez **Paramètres > Sécurité > Sessions en temps réel** pour suivre les blocs d'activité.
+Utilisez **Paramètres > Sécurité > Sessions en temps réel** pour suivre les blocs d'activité du système de fichiers.
 
-1. Ouvrez la fenêtre des sessions.
-2. Vérifiez la session, le total des événements et les répertoires concernés.
-3. Utilisez ces informations pour corréler les pics d'activité avec les dossiers surveillés.
-4. Cliquez sur **Actualiser** lorsque vous souhaitez charger de nouvelles sessions sans fermer la fenêtre.
+1. Ouvrez la fenêtre des sessions. Le chargement s'effectue de manière asynchrone en arrière-plan, garantissant une fluidité parfaite de l'interface.
+2. Vérifiez l'horodatage, l'intitulé convivial, le total des événements et le résumé des répertoires.
+3. Survolez le résumé des répertoires pour afficher l'infobulle complète des chemins surveillés.
+4. Cliquez sur **Actualiser** pour charger de nouvelles sessions sans fermer la fenêtre.
 
 ### Quarantaine et restauration
 
-Utilisez **Paramètres > Sécurité > Quarantaine et restauration** pour examiner les éléments isolés et les versions suivies.
+Utilisez **Paramètres > Sécurité > Quarantaine et restauration** pour examiner les éléments isolés et les versions surveillées.
 
-1. Ouvrez la fenêtre.
-2. Dans l'onglet **Quarantaine**, sélectionnez une ligne.
-3. Utilisez **Ouvrir le dossier sélectionné** pour localiser la copie isolée.
-4. Utilisez **Restaurer la copie sélectionnée** uniquement après avoir validé l'emplacement cible.
-5. Dans l'onglet **Versions surveillées**, sélectionnez une ligne et utilisez **Restaurer la version surveillée** pour récupérer la version archivée.
-6. Privilégiez une restauration vers un dossier temporaire avant d'écraser des fichiers en cours d'utilisation.
+1. Ouvrez la fenêtre et naviguez entre les onglets **Quarantaine** et **Versions surveillées**.
+2. Les tableaux utilisent une mise à jour différentielle stable : la sélection, le défilement et le tri demeurent inchangés.
+3. Dans l'onglet **Quarantaine**, sélectionnez une ligne et utilisez **Ouvrir le dossier sélectionné** pour inspecter le fichier dans l'Explorateur Windows.
+4. Cliquez sur **Restaurer la copie sélectionnée** pour ouvrir la boîte de dialogue de choix de destination : restaurez à l'emplacement d'origine ou choisissez un dossier de test sécurisé.
+5. Dans l'onglet **Versions surveillées**, sélectionnez une version et cliquez sur **Restaurer la version surveillée**.
+6. L'intégrité des données restaurées est validée automatiquement par hachage cryptographique SHA-256 avant la confirmation finale.
 
 ### Package de preuves
 
 Utilisez **Paramètres > Sécurité > Package de preuves** pour générer un ensemble auditable.
 
 1. Ouvrez la fenêtre.
-2. Cliquez sur **Sélectionner la destination** et choisissez le dossier de création.
+2. Cliquez sur **Sélectionner la destination** et choisissez le dossier où le package sera créé.
 3. Cliquez sur **Exporter maintenant**.
-4. Après la génération, cliquez sur **Ouvrir le dossier sélectionné** pour vérifier les fichiers exportés.
-5. Archivez le package avant d'effacer l'historique ou de clore une analyse critique.
+4. Après génération, cliquez sur **Ouvrir le dossier sélectionné** pour inspecter les fichiers exportés.
+5. Conservez le package avant de nettoyer l'historique ou de clore une analyse critique.
 
-### Effacer la base de sécurité
+### Effacer la base de données de sécurité
 
-Utilisez **Effacer la base de sécurité** avec précaution.
+Utilisez **Effacer la base de données de sécurité** avec précaution.
 
 - Exportez les preuves avant d'effacer.
-- Confirmez que l'ancien historique n'est plus requis.
-- Évitez d'effacer pendant une surveillance active ou avant de conclure un audit.
+- Confirmez que l'ancien historique ne sera plus nécessaire.
+- Évitez d'effacer pendant la surveillance active ou avant de finaliser un audit.
 
 ## 15) Notifications de sécurité
 
@@ -2129,8 +2261,8 @@ Avant d'enregistrer des données, configurez **Paramètres > Options d'exportati
 
 # Manuale dell'Utente — Linceu Lighthouse
 
-Versione documentata: `2026.8.25.0`
-Data: `25 agosto 2026`
+Versione documentata: `2026.9.28.0`
+Data: `28 settembre 2026`
 ---
 
 <details>
@@ -2451,6 +2583,39 @@ Questa sezione integra il manuale con le funzionalità più recenti del progetto
 2. Valori accettati: **auto**, **desktop**, **angle**, **software**.
 3. Usa **software** solo per la diagnosi di compatibilità (può ridurre le prestazioni).
 
+## Funzionalità della versione 2026.9.28.0
+
+Questa versione consolida importanti miglioramenti strutturali di stabilità, sicurezza locale ed esperienza utente, introducendo il caricamento asincrono non bloccante per le sessioni in tempo reale, l'aggiornamento differenziale anti-sfarfallio per la quarantena e il ripristino sicuro con convalida crittografica SHA-256.
+
+### Sessioni in tempo reale asincrone
+1. Accedi a **Impostazioni > Sicurezza > Sessioni in tempo reale**.
+2. Lo storico delle sessioni viene caricato in background tramite un thread di lavoro, garantendo una perfetta reattività dell'interfaccia anche con migliaia di eventi.
+3. Osserva l'indicatore di caricamento e controlla data e ora, etichetta descrittiva, totale eventi, riepilogo directory e identificatore univoco.
+4. Posiziona il cursore sul riepilogo delle directory per visualizzare il tooltip fluttuante con l'elenco completo dei percorsi monitorati.
+5. Fai clic su **Aggiorna** per caricare sessioni incrementali senza chiudere la finestra.
+
+### Quarantena e ripristino intelligente
+1. Accedi a **Impostazioni > Sicurezza > Quarantena e ripristino**.
+2. Passa tra le schede **Quarantena** (file isolati) e **Versioni monitorate** (storico della baseline crittografica).
+3. La sincronizzazione della tabella è strettamente differenziale: gli aggiornamenti non reimpostano la riga selezionata, la posizione di scorrimento né l'ordinamento delle colonne.
+4. Seleziona una riga e fai clic su **Apri cartella selezionata** per ispezionare il file in Esplora file di Windows.
+5. Fai clic su **Ripristina copia selezionata** (o **Ripristina versione monitorata**) per aprire la finestra di scelta della destinazione: ripristina nel percorso originale o seleziona una cartella sicura di test.
+6. L'integrità del file viene verificata automaticamente tramite calcolo dell'hash SHA-256 al momento del ripristino con conferma immediata.
+
+### Centro avvisi in tempo reale
+1. Accedi a **Impostazioni > Sicurezza > Centro avvisi**.
+2. Esamina gli eventi classificati in base a livelli di rischio oggettivi: Basso, Medio, Alto e Critico.
+3. Individua tempestivamente le regole violate dal motore locale, il percorso interessato e il riferimento al pacchetto di prove forensi collegato.
+4. Dai priorità agli avvisi di rischio Alto o Critico prima di valutare le normali modifiche al file system.
+5. Usa **Aggiorna** per monitorare nuovi avvisi rilevati in tempo reale senza interrompere la sorveglianza attiva.
+
+### Gestione profili multi-directory
+1. Accedi a **Impostazioni > Sicurezza > Profili e multi-directory**.
+2. Fai clic su **Aggiungi directory** per includere nuove cartelle nel profilo di audit.
+3. Per rimuovere una cartella, selezionala dall'elenco e fai clic su **Rimuovi selezionato**.
+4. Modifica il **Nome profilo** e fai clic su **Salva profilo** per memorizzare le impostazioni nel database locale.
+5. Fai clic su **Aggiorna** per sincronizzare lo stato tra la finestra e il motore di monitoraggio.
+
 ## Funzionalità della versione 2026.7.4.0
 
 Questa versione amplia l'uso quotidiano della tabella e migliora la lettura dei metadati visualizzati. L'obiettivo è consentire all'utente di lavorare con più tipi di file, comprendere meglio il contenuto elencato e visualizzare date complete anche nelle strutture di cartelle.
@@ -2531,65 +2696,65 @@ Dopo aver aperto **File > Statistiche** o premuto **Ctrl+G**, usa la finestra st
 
 ## 14) Menu Impostazioni > Sicurezza
 
-Il sottomenu **Impostazioni > Sicurezza** raggruppa funzionalità di audit, prove, avvisi e recupero.
+Il sottomenu **Impostazioni > Sicurezza** raggruppa funzionalità di audit, prove forensi, avvisi, sessioni in tempo reale e recupero.
 
 ### Profili e multi-directory
 
-Usa **Impostazioni > Sicurezza > Profili e multi-directory** per gestire più cartelle nello stesso profilo.
+Usa **Impostazioni > Sicurezza > Profili e multi-directory** per gestire più cartelle monitorate simultaneamente.
 
 1. Apri la finestra dei profili.
-2. Fai clic su **Aggiungi directory** per includere una nuova cartella monitorata.
-3. Seleziona una cartella nell'elenco e fai clic su **Rimuovi selezionato** per toglierla dal profilo.
-4. Modifica il **Nome profilo** per identificare meglio il gruppo monitorato.
-5. Fai clic su **Salva profilo**.
-6. Usa **Aggiorna** per ricaricare il riepilogo di directory principale, totale directory e profilo attivo.
+2. Fai clic su **Aggiungi directory** per includere una nuova cartella nel profilo attivo.
+3. Seleziona una cartella nell'elenco e fai clic su **Rimuovi selezionato** per rimuoverla.
+4. Modifica **Nome profilo** per personalizzare l'etichetta del gruppo monitorato.
+5. Fai clic su **Salva profilo** per memorizzare le impostazioni nel database locale.
+6. Usa **Aggiorna** per ricaricare il riepilogo della directory principale, il totale delle cartelle e il profilo attivo.
 
 ### Centro avvisi
 
-Usa **Impostazioni > Sicurezza > Centro avvisi** per dare priorità agli eventi in base al rischio.
+Usa **Impostazioni > Sicurezza > Centro avvisi** per dare priorità agli eventi in base al rischio deterministico.
 
 1. Apri il centro avvisi.
-2. Esamina le colonne **Creato il**, **Livello di rischio**, **Riepilogo avviso**, **Regole**, **Percorso**, **Nome**, **Sessione** e **Prova**.
-3. Inizia dagli avvisi di livello alto o critico.
-4. Usa **Aggiorna** mentre il monitoraggio è attivo per caricare i nuovi record.
+2. Controlla le colonne: **Creato il**, **Livello di rischio** (Basso, Medio, Alto, Critico), **Riepilogo avviso**, **Regole**, **Percorso**, **Nome**, **Sessione** e **Prova**.
+3. Inizia dagli avvisi di rischio Alto o Critico prima di valutare gli eventi di routine.
+4. Usa **Aggiorna** durante il monitoraggio attivo per caricare nuovi record senza interruzioni.
 
 ### Sessioni in tempo reale
 
-Usa **Impostazioni > Sicurezza > Sessioni in tempo reale** per monitorare i blocchi di attività.
+Usa **Impostazioni > Sicurezza > Sessioni in tempo reale** per monitorare i blocchi di attività del file system.
 
-1. Apri la finestra delle sessioni.
-2. Controlla la sessione, il totale degli eventi e le directory coinvolte.
-3. Usa queste informazioni per correlare i picchi di attività alle directory monitorate.
-4. Fai clic su **Aggiorna** quando desideri caricare nuove sessioni senza chiudere la finestra.
+1. Apri la finestra delle sessioni. Lo storico viene caricato in modo asincrono in background, evitando rallentamenti dell'interfaccia.
+2. Controlla data e ora, etichetta descrittiva, totale eventi e riepilogo directory.
+3. Passa il cursore sul riepilogo per visualizzare l'elenco completo dei percorsi monitorati nel tooltip.
+4. Fai clic su **Aggiorna** per caricare sessioni incrementali senza chiudere la finestra.
 
 ### Quarantena e ripristino
 
-Usa **Impostazioni > Sicurezza > Quarantena e ripristino** per esaminare elementi isolati e versioni monitorate.
+Usa **Impostazioni > Sicurezza > Quarantena e ripristino** per esaminare elementi isolati e versioni storiche.
 
-1. Apri la finestra.
-2. Nella scheda **Quarantena**, seleziona una riga.
-3. Usa **Apri cartella selezionata** per individuare la copia isolata.
-4. Usa **Ripristina copia selezionata** solo dopo aver convalidato la destinazione.
-5. Nella scheda **Versioni monitorate**, seleziona una riga e usa **Ripristina versione monitorata** per recuperare la versione archiviata.
-6. È consigliabile ripristinare in una cartella di verifica prima di sovrascrivere file in uso.
+1. Apri la finestra e naviga tra le schede **Quarantena** e **Versioni monitorate**.
+2. Le tabelle utilizzano una sincronizzazione differenziale stabile: selezione, posizione di scorrimento e ordinamento non vengono alterati.
+3. Nella scheda **Quarantena**, seleziona una riga e usa **Apri cartella selezionata** per individuare il file in Esplora file.
+4. Fai clic su **Ripristina copia selezionata** per aprire il dialogo di scelta destinazione: ripristina nel percorso originale o scegli una cartella sicura di verifica.
+5. Nella scheda **Versioni monitorate**, seleziona una versione e fai clic su **Ripristina versione monitorata**.
+6. L'integrità dei dati ripristinati viene verificata automaticamente tramite hash SHA-256 prima della conferma finale.
 
 ### Pacchetto di prove
 
 Usa **Impostazioni > Sicurezza > Pacchetto di prove** per generare un pacchetto verificabile.
 
 1. Apri la finestra.
-2. Fai clic su **Seleziona destinazione** e scegli la cartella in cui creare il pacchetto.
+2. Fai clic su **Seleziona destinazione** e scegli la cartella in cui verrà creato il pacchetto.
 3. Fai clic su **Esporta ora**.
-4. Dopo la generazione, fai clic su **Apri cartella selezionata** per verificare i file esportati.
+4. Dopo la generazione, fai clic su **Apri cartella selezionata** per esaminare i file esportati.
 5. Conserva il pacchetto prima di cancellare la cronologia o chiudere un'analisi critica.
 
 ### Cancella database di sicurezza
 
 Usa **Cancella database di sicurezza** con cautela.
 
-- Esporta le prove prima della cancellazione.
-- Conferma che la cronologia precedente non sia più necessaria.
-- Evita di cancellare durante il monitoraggio attivo o prima di aver concluso l'audit.
+- Esporta le prove prima di cancellare.
+- Conferma che la vecchia cronologia non sia più necessaria.
+- Evita di cancellare durante il monitoraggio attivo o prima di concludere un audit.
 
 ## 15) Notifiche di sicurezza
 
@@ -2661,8 +2826,8 @@ Prima di salvare i dati, configura **Impostazioni > Opzioni di esportazione**.
 
 # Benutzerhandbuch — Linceu Lighthouse
 
-Dokumentierte Version: `2026.8.25.0`
-Datum: `25. August 2026`
+Dokumentierte Version: `2026.9.28.0`
+Datum: `28. September 2026`
 ---
 
 <details>
@@ -2983,6 +3148,39 @@ Dieser Abschnitt ergänzt das Handbuch um die neuesten Projektfunktionen und dem
 2. Gültige Werte: **auto**, **desktop**, **angle**, **software**.
 3. **software** nur zur Fehlerdiagnose verwenden (kann Leistung mindern).
 
+## Funktionen der Version 2026.9.28.0
+
+Diese Version bietet wesentliche strukturelle Verbesserungen bei Stabilität, lokaler Sicherheit und Bedienkomfort, darunter nicht-blockierendes asynchrones Laden für Echtzeitsitzungen, flimmerfreie differenzielle Tabellenaktualisierung in der Quarantäne und sichere Wiederherstellung mit kryptografischer SHA-256-Prüfung.
+
+### Asynchrone Echtzeitsitzungen
+1. Öffnen Sie **Einstellungen > Sicherheit > Echtzeitsitzungen**.
+2. Der Sitzungsverlauf wird im Hintergrund über einen Arbeitsthread geladen, sodass die Benutzeroberfläche selbst bei Tausenden von Ereignissen vollkommen reaktionsfähig bleibt.
+3. Verfolgen Sie die Ladeanzeige und prüfen Sie Zeitstempel, benutzerfreundliche Sitzungsbezeichnung, Gesamtereignisse, Verzeichnisübersicht und eindeutige ID.
+4. Bewegen Sie den Mauszeiger über die Verzeichnisübersicht, um im Tooltip die vollständige Liste aller überwachten Pfade anzuzeigen.
+5. Klicken Sie auf **Aktualisieren**, um neu aufgezeichnete Sitzungen ohne Schließen des Dialogs nachzuladen.
+
+### Intelligente Quarantäne und Wiederherstellung
+1. Öffnen Sie **Einstellungen > Sicherheit > Quarantäne und Wiederherstellung**.
+2. Wechseln Sie zwischen den Reitern **Quarantäne** (isolierte Dateien) und **Überwachte Versionen** (Verlauf der kryptografischen Baseline).
+3. Die Tabellensynchronisation erfolgt strikt differenziell: Automatische Aktualisierungen setzen weder die ausgewählte Zeile noch Bildlaufleiste oder Sortierung zurück.
+4. Wählen Sie eine Zeile aus und klicken Sie auf **Ausgewählten Ordner öffnen**, um die Datei im Windows-Explorer zu prüfen.
+5. Klicken Sie auf **Ausgewählte Kopie wiederherstellen** (oder **Überwachte Version wiederherstellen**), um den Zielordner-Auswahldialog zu öffnen: Stellen Sie am Originalpfad wieder her oder wählen Sie einen sicheren Prüfordner.
+6. Die Dateiintegrität wird bei der Wiederherstellung automatisch über SHA-256-Hashes validiert, gefolgt von einer sofortigen Erfolgsmeldung.
+
+### Echtzeit-Warnzentrale
+1. Öffnen Sie **Einstellungen > Sicherheit > Warnzentrale**.
+2. Prüfen Sie Vorfälle geordnet nach objektiven Risikostufen: Niedrig, Mittel, Hoch und Kritisch.
+3. Erkennen Sie umgehend verletzte lokale Regeln, betroffene Pfade und verknüpfte forensische Beweispaket-Referenzen.
+4. Priorisieren Sie Warnungen der Stufen Hoch und Kritisch vor der Analyse routinemäßiger Dateisystemänderungen.
+5. Nutzen Sie **Aktualisieren**, um neu erkannte Warnungen während der aktiven Überwachung ohne Unterbrechung nachzuladen.
+
+### Verwaltung von Multi-Verzeichnis-Profilen
+1. Öffnen Sie **Einstellungen > Sicherheit > Profile und Multi-Verzeichnis**.
+2. Klicken Sie auf **Verzeichnis hinzufügen**, um weitere Ordner in das Auditprofil aufzunehmen.
+3. Um einen Ordner zu entfernen, wählen Sie ihn in der Liste aus und klicken Sie auf **Ausgewählte entfernen**.
+4. Passen Sie den **Profilnamen** an und klicken Sie auf **Profil speichern**, um die Einstellungen in der lokalen Datenbank zu sichern.
+5. Klicken Sie auf **Aktualisieren**, um den Status zwischen dem Fenster und dem Überwachungsdienst zu synchronisieren.
+
 ## Funktionen der Version 2026.7.4.0
 
 Diese Version erweitert die tägliche Nutzung der Tabelle und optimiert die Lesbarkeit der Metadaten für zahlreiche Dateitypen sowie vollständige Ordnerzeitstempel.
@@ -3063,65 +3261,65 @@ Nach dem Öffnen von **Datei > Statistiken** oder **Strg+G** nutzen Sie das Fens
 
 ## 14) Menü Einstellungen > Sicherheit
 
-Das Untermenü **Einstellungen > Sicherheit** bündelt Funktionen für Audit, Beweissicherung, Warnungen und Wiederherstellung.
+Das Untermenü **Einstellungen > Sicherheit** bündelt Funktionen für Audit, Beweissicherung, Warnungen, Echtzeitsitzungen und Wiederherstellung.
 
 ### Profile und Multi-Verzeichnis
 
-Nutzen Sie **Einstellungen > Sicherheit > Profile und Multi-Verzeichnis** zur Verwaltung mehrerer Ordner in einem Profil.
+Nutzen Sie **Einstellungen > Sicherheit > Profile und Multi-Verzeichnis** zur simultanen Überwachung mehrerer Verzeichnisse.
 
-1. Profilfenster öffnen.
-2. **Verzeichnis hinzufügen** klicken, um neuen Ordner einzubinden.
-3. Ordner in der Liste wählen und **Ausgewählte entfernen** klicken.
-4. **Profilname** zur klaren Kennzeichnung anpassen.
-5. **Profil speichern** klicken.
-6. **Aktualisieren** nutzen, um Hauptverzeichnis, Ordneranzahl und aktives Profil neu zu laden.
+1. Öffnen Sie das Profilfenster.
+2. Klicken Sie auf **Verzeichnis hinzufügen**, um einen neuen überwachten Ordner in das aktive Profil aufzunehmen.
+3. Wählen Sie einen Ordner in der Liste aus und klicken Sie auf **Ausgewählte entfernen**, um ihn aus dem Profil zu löschen.
+4. Passen Sie den **Profilnamen** an, um den überwachten Verbund eindeutig zu kennzeichnen.
+5. Klicken Sie auf **Profil speichern**, um die Einstellungen in der lokalen Datenbank zu sichern.
+6. Nutzen Sie **Aktualisieren**, um die Zusammenfassung von Hauptverzeichnis, Ordneranzahl und aktivem Profil neu zu laden.
 
 ### Warnzentrale
 
-Nutzen Sie **Einstellungen > Sicherheit > Warnzentrale** zur risikobasierten Priorisierung.
+Nutzen Sie **Einstellungen > Sicherheit > Warnzentrale** zur deterministischen risikobasierten Priorisierung von Vorfällen.
 
-1. Warnzentrale öffnen.
-2. Spalten **Erstellt am**, **Risikostufe**, **Warnungsübersicht**, **Regeln**, **Pfad**, **Name**, **Sitzung** und **Beweis** prüfen.
-3. Mit hohen oder kritischen Warnungen beginnen.
-4. **Aktualisieren** bei aktiver Überwachung zur Erfassung neuer Einträge nutzen.
+1. Öffnen Sie die Warnzentrale.
+2. Prüfen Sie die Spalten: **Erstellt am**, **Risikostufe** (Niedrig, Mittel, Hoch, Kritisch), **Warnungszusammenfassung**, **Regeln**, **Pfad**, **Name**, **Sitzung** und **Beweis**.
+3. Priorisieren Sie Warnungen der Stufen Hoch und Kritisch vor der Prüfung von Routineereignissen.
+4. Nutzen Sie **Aktualisieren** während der aktiven Überwachung, um neue Einträge ohne Unterbrechung zu laden.
 
 ### Echtzeitsitzungen
 
-Nutzen Sie **Einstellungen > Sicherheit > Echtzeitsitzungen** zur Verfolgung von Aktivitätsblöcken.
+Nutzen Sie **Einstellungen > Sicherheit > Echtzeitsitzungen** zur Verfolgung von Dateisystemaktivitätsblöcken.
 
-1. Sitzungsfenster öffnen.
-2. Sitzung, Gesamtereignisse und beteiligte Ordner prüfen.
-3. Aktivitätsspitzen mit überwachten Verzeichnissen abgleichen.
-4. **Aktualisieren** klicken, um neue Sitzungen ohne Fensterschließen zu laden.
+1. Öffnen Sie das Sitzungsfenster. Der Verlauf wird asynchron im Hintergrund geladen, wodurch die Benutzeroberfläche flüssig bleibt.
+2. Prüfen Sie Zeitstempel, benutzerfreundliche Sitzungsbezeichnung, Gesamtereignisse und Verzeichnisübersicht.
+3. Bewegen Sie den Mauszeiger über die Verzeichnisübersicht, um im Tooltip die vollständigen Pfade anzuzeigen.
+4. Klicken Sie auf **Aktualisieren**, um neue Sitzungen ohne Schließen des Fensters nachzuladen.
 
 ### Quarantäne und Wiederherstellung
 
-Nutzen Sie **Einstellungen > Sicherheit > Quarantäne und Wiederherstellung** zur Prüfung isolierter Elemente und Versionen.
+Nutzen Sie **Einstellungen > Sicherheit > Quarantäne und Wiederherstellung** zur Prüfung isolierter Elemente und überwachter Versionen.
 
-1. Fenster öffnen.
-2. Im Reiter **Quarantäne** eine Zeile wählen.
-3. **Ausgewählten Ordner öffnen** zur Lokalisierung der Kopie.
-4. **Ausgewählte Kopie wiederherstellen** erst nach Zielprüfung ausführen.
-5. Im Reiter **Überwachte Versionen** eine Version wählen und **Überwachte Version wiederherstellen** klicken.
-6. Vor dem Überschreiben produktiver Dateien Wiederherstellung in Prüfordner bevorzugen.
+1. Öffnen Sie das Fenster und wechseln Sie zwischen den Reitern **Quarantäne** und **Überwachte Versionen**.
+2. Die Tabellen nutzen eine stabile differenzielle Aktualisierung: Auswahl, Bildlaufposition und Sortierung bleiben erhalten.
+3. Wählen Sie im Reiter **Quarantäne** eine Zeile aus und nutzen Sie **Ausgewählten Ordner öffnen**, um die Datei im Windows-Explorer zu prüfen.
+4. Klicken Sie auf **Ausgewählte Kopie wiederherstellen**, um den Zielordner-Auswahldialog zu öffnen: Stellen Sie am Originalpfad wieder her oder wählen Sie einen sicheren Alternativordner.
+5. Wählen Sie im Reiter **Überwachte Versionen** eine Version aus und klicken Sie auf **Überwachte Version wiederherstellen**.
+6. Die Integrität der wiederhergestellten Daten wird vor der finalen Bestätigung automatisch über SHA-256-Hashes geprüft.
 
 ### Beweispaket
 
 Nutzen Sie **Einstellungen > Sicherheit > Beweispaket** zur Erstellung eines auditierbaren Archivs.
 
-1. Fenster öffnen.
-2. **Ziel auswählen** klicken und Zielordner bestimmen.
-3. **Jetzt exportieren** klicken.
-4. Nach Generierung **Ausgewählten Ordner öffnen** zur Prüfung der Dateien.
-5. Paket vor Bereinigung oder Abschluss kritischer Audits sichern.
+1. Öffnen Sie das Fenster.
+2. Klicken Sie auf **Ziel auswählen** und bestimmen Sie den Ordner für das Paket.
+3. Klicken Sie auf **Jetzt exportieren**.
+4. Nach der Erstellung klicken Sie auf **Ausgewählten Ordner öffnen**, um die exportierten Dateien zu prüfen.
+5. Sichern Sie das Paket, bevor Sie den Verlauf bereinigen oder ein kritisches Audit abschließen.
 
 ### Sicherheitsdatenbank bereinigen
 
 Nutzen Sie **Sicherheitsdatenbank bereinigen** mit Vorsicht.
 
-- Beweise vor dem Bereinigen exportieren.
-- Sicherstellen, dass alte Verlaufsdaten nicht mehr benötigt werden.
-- Bereinigung während aktiver Überwachung oder vor Abschluss des Audits vermeiden.
+- Exportieren Sie vor der Bereinigung stets Beweispakete.
+- Stellen Sie sicher, dass der alte Verlauf nicht mehr benötigt wird.
+- Vermeiden Sie Bereinigungen während einer aktiven Überwachung oder vor Abschluss eines Audits.
 
 ## 15) Sicherheitsbenachrichtigungen
 

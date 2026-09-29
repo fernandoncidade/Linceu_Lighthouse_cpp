@@ -1,4 +1,53 @@
-VERÖFFENTLICHUNGSNOTIZEN: Version 2026.8.25.0
+RELEASE-HINWEISE: Version 2026.9.28.0
+
+HIGHLIGHTS DIESER VERSION
+
+Diese Version von Linceu Lighthouse bringt bedeutende Verbesserungen bei Stabilität, lokaler Sicherheit und Bedienungskomfort für eine reibungslose und zuverlässige Überwachung Ihrer Dateien und Ordner.
+
+Der Sitzungsverlauf wird nun im Hintergrund geladen, wodurch jedes Einfrieren oder Verzögern der Benutzeroberfläche selbst bei zehntausenden aufgezeichneten Ereignissen zuverlässig verhindert wird. Der Bereich für Quarantäne und Dateiwiederherstellung wurde grundlegend optimiert: Tabellen aktualisieren sich flimmerfrei und behalten die ausgewählte Zeile sowie die Bildlaufposition exakt bei.
+
+Zudem ermöglicht die Dateiwiederherstellung nun die freie Wahl des Zielordners und führt eine automatische Integritätsprüfung durch, um sicherzustellen, dass wiederhergestellte Dateien unversehrt bleiben. Die Warnzentrale ordnet Sicherheitsmeldungen in transparente Prioritätsstufen ein und erleichtert so schnelles und zielgerichtetes Handeln.
+
+
+NEUE FUNKTIONEN UND VERBESSERUNGEN
+
+1. Schnellere und Flüssigere Echtzeitsitzungen
+- Das Laden des Sitzungsverlaufs erfolgt im Hintergrund, sodass die Anwendung stets flüssig bedienbar bleibt.
+- Eine dezente visuelle Fortschrittsanzeige informiert über den Abruf der Sitzungsdaten.
+- Hilfreiche Tooltips beim Überfahren der Verzeichnisübersichten mit der Maus zeigen alle überwachten Pfade einer Sitzung übersichtlich an.
+- Schnelle Aktualisierungstaste zum Nachladen neuer Sitzungsblöcke, ohne das Dialogfenster schließen zu müssen.
+
+2. Intelligente Quarantäne mit Flimmerfreier Aktualisierung
+- Die Quarantäne- und Versionslisten aktualisieren sich ruhig und ohne störendes Bildschirmflackern.
+- Zeilenauswahl, Scrollleiste und Spaltensortierung bleiben bei eingehenden Ereignissen stabil erhalten.
+- Direkte Schaltfläche zum Öffnen des Speicherorts isolierter Dateien im Windows-Explorer für eine zügige Überprüfung.
+
+3. Sichere Dateiwiederherstellung mit Automatischer Integritätsprüfung
+- Freie Zielordnerwahl: Stellen Sie Dateien am ursprünglichen Pfad oder in einem sicheren Prüfordner wieder her.
+- Automatische Integritätsprüfung bei jeder Wiederherstellung zur Bestätigung der exakten Übereinstimmung mit der gesicherten Kopie.
+- Klare Rückmeldungen zur erfolgreichen Durchführung des Wiederherstellungsvorgangs.
+
+4. Warnzentrale nach Dringlichkeitsstufen Geordnet
+- Sicherheitsmeldungen sind in vier leicht verständliche Stufen unterteilt: Niedrig, Mittel, Hoch und Kritisch.
+- Sofortige Sichtbarkeit dringlicher Ereignisse ermöglicht eine schnelle Konzentration auf wesentliche Meldungen.
+- Nachvollziehbare Erläuterung der Auslösegründe zusammen mit dem betroffenen Dateinamen und Pfad.
+- Unterbrechungsfreie Live-Aktualisierung während der laufenden Dateiüberwachung.
+
+5. Komfortable Verwaltung Mehrerer Verzeichnisse
+- Einfaches Hinzufügen und Organisieren überwachter Ordner in lokal auf Ihrem Computer gespeicherten Profilen.
+- Zeitgleiche Überwachung und Absicherung mehrerer Ordner und Laufwerke.
+- Transparente Statusübersicht mit Anzahl aktiver Ordner und dem primären Überwachungspfad.
+
+6. Integriertes Handbuch und Hilfe in 6 Sprachen
+- Das in die Anwendung integrierte Benutzerhandbuch wurde um ausführliche Schritt-für-Schritt-Anleitungen für alle Werkzeuge erweitert.
+- Vollständige und sorgfältige Übersetzung in sechs Sprachen: Portugiesisch, Englisch, Spanisch, Französisch, Italiano und Deutsch.
+- Verbesserte Navigation mit Direktlinks zu einzelnen Themen und empfohlenen Arbeitsabläufen.
+
+
+_________________________________________________
+
+
+RELEASE-HINWEISE: Version 2026.8.25.0
 
 HÖHEPUNKTE DIESER VERSION
 

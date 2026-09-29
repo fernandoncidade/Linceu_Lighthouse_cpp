@@ -700,6 +700,30 @@
         <translation>Clear UI Table, Security Database, and Data Database</translation>
     </message>
     <message>
+        <source>wait</source>
+        <translation>Please wait...</translation>
+    </message>
+    <message>
+        <source>clearing_data</source>
+        <translation>Clearing data, please wait...</translation>
+    </message>
+    <message>
+        <source>clear_security_db_failed</source>
+        <translation>Failed to clear security database.</translation>
+    </message>
+    <message>
+        <source>clear_main_db_failed</source>
+        <translation>Failed to clear main database.</translation>
+    </message>
+    <message>
+        <source>clear_unknown_error</source>
+        <translation>Unknown error during cleanup.</translation>
+    </message>
+    <message>
+        <source>security_database_cleared</source>
+        <translation>Security database cleared successfully.</translation>
+    </message>
+    <message>
         <source>import_saved_db_prompt</source>
         <translation>There is data saved in the last database; do you want to import it?</translation>
     </message>
@@ -6601,6 +6625,18 @@ pip install plotly</translation>
     <message>
         <source>security_export_success</source>
         <translation>Evidence package exported successfully.</translation>
+    </message>
+    <message>
+        <source>security_active_backend</source>
+        <translation>Active backend: %1</translation>
+    </message>
+    <message>
+        <source>security_no_evidence_recorded</source>
+        <translation>No evidence recorded in this session.</translation>
+    </message>
+    <message>
+        <source>security_recent_records</source>
+        <translation>Recent records:</translation>
     </message>
     <message>
         <source>security_alert_popup_title</source>

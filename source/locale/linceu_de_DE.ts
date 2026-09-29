@@ -700,6 +700,30 @@
         <translation>UI-Tabelle, Sicherheitsdatenbank und Datenbank löschen</translation>
     </message>
     <message>
+        <source>wait</source>
+        <translation>Bitte warten...</translation>
+    </message>
+    <message>
+        <source>clearing_data</source>
+        <translation>Daten werden bereinigt, bitte warten...</translation>
+    </message>
+    <message>
+        <source>clear_security_db_failed</source>
+        <translation>Fehler beim Bereinigen der Sicherheitsdatenbank.</translation>
+    </message>
+    <message>
+        <source>clear_main_db_failed</source>
+        <translation>Fehler beim Bereinigen der Hauptdatenbank.</translation>
+    </message>
+    <message>
+        <source>clear_unknown_error</source>
+        <translation>Unbekannter Fehler bei der Bereinigung.</translation>
+    </message>
+    <message>
+        <source>security_database_cleared</source>
+        <translation>Sicherheitsdatenbank erfolgreich bereinigt.</translation>
+    </message>
+    <message>
         <source>import_saved_db_prompt</source>
         <translation>In der letzten Datenbank sind Daten gespeichert; möchten Sie diese importieren?</translation>
     </message>
@@ -6601,6 +6625,18 @@ pip install plotly</translation>
     <message>
         <source>security_export_success</source>
         <translation>Beweispaket erfolgreich exportiert.</translation>
+    </message>
+    <message>
+        <source>security_active_backend</source>
+        <translation>Aktives Backend: %1</translation>
+    </message>
+    <message>
+        <source>security_no_evidence_recorded</source>
+        <translation>In dieser Sitzung wurden keine Beweise aufgezeichnet.</translation>
+    </message>
+    <message>
+        <source>security_recent_records</source>
+        <translation>Kürzliche Datensätze:</translation>
     </message>
     <message>
         <source>security_alert_popup_title</source>

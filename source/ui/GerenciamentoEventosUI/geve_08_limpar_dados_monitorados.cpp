@@ -129,8 +129,6 @@ void limpar_dados_monitorados(source::ui::GerenciadorEventosUI* self) {
                     QSqlQuery checkpoint(db);
                     checkpoint.exec(QStringLiteral("PRAGMA wal_checkpoint(TRUNCATE)"));
                     checkpoint.exec(QStringLiteral("PRAGMA optimize"));
-                    checkpoint.exec(QStringLiteral("VACUUM"));
-                    checkpoint.exec(QStringLiteral("PRAGMA wal_checkpoint(TRUNCATE)"));
 
                     db.close();
                 }

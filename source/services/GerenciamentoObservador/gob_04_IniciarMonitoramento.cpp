@@ -20,6 +20,7 @@ void iniciar_monitoramento(source::services::Observador* self) {
             // Evite reler tudo do banco aqui para nao travar a GUI na transicao 99%->100%.
             QMetaObject::invokeMethod(self->interface, "atualizar_status", Qt::QueuedConnection);
 
+            self->interface->setProperty("_resultado_chave", QVariant());
             QObject* rotulo = self->interface->property("rotulo_resultado").value<QObject*>();
             if (rotulo && self->loc) {
                 QMetaObject::invokeMethod(rotulo, "setText", Qt::QueuedConnection, Q_ARG(QString, self->loc->get_text("monitoring_started")));

@@ -332,12 +332,18 @@ add_executable(Linceu_Lighthouse_cpp ${LINCEU_APP_KIND}
         source/assets/images/icons/clear.ico
         source/assets/images/icons/clear_button3.ico
         source/assets/images/icons/filtro.ico
-        source/assets/images/icons/linceu_com_fundo.ico
-        source/assets/images/icons/linceu_com_fundo_71_71.ico
-        source/assets/images/icons/linceu_com_fundo_150_150.ico
-        source/assets/images/icons/linceu_com_fundo_300_300.ico
-        source/assets/images/icons/linceu_com_fundo_1440_2160.ico
-        source/assets/images/icons/linceu_com_fundo_2160_2160.ico
+        source/assets/images/icons/old/linceu_com_fundo.ico
+        source/assets/images/icons/old/linceu_com_fundo_71_71.ico
+        source/assets/images/icons/old/linceu_com_fundo_150_150.ico
+        source/assets/images/icons/old/linceu_com_fundo_300_300.ico
+        source/assets/images/icons/old/linceu_com_fundo_1440_2160.ico
+        source/assets/images/icons/old/linceu_com_fundo_2160_2160.ico
+        source/assets/images/icons/old/linceu_sem_fundo.ico
+        source/assets/images/icons/old/linceu_sem_fundo_71_71.ico
+        source/assets/images/icons/old/linceu_sem_fundo_150_150.ico
+        source/assets/images/icons/old/linceu_sem_fundo_300_300.ico
+        source/assets/images/icons/old/linceu_sem_fundo_1440_2160.ico
+        source/assets/images/icons/old/linceu_sem_fundo_2160_2160.ico
         source/assets/images/icons/linceu_sem_fundo.ico
         source/assets/images/icons/linceu_sem_fundo_71_71.ico
         source/assets/images/icons/linceu_sem_fundo_150_150.ico
@@ -364,12 +370,18 @@ add_executable(Linceu_Lighthouse_cpp ${LINCEU_APP_KIND}
         source/assets/images/imgs/clear.png
         source/assets/images/imgs/clear_button3.png
         source/assets/images/imgs/filtro.png
-        source/assets/images/imgs/linceu_com_fundo.png
-        source/assets/images/imgs/linceu_com_fundo_71_71.png
-        source/assets/images/imgs/linceu_com_fundo_150_150.png
-        source/assets/images/imgs/linceu_com_fundo_300_300.png
-        source/assets/images/imgs/linceu_com_fundo_1440_2160.png
-        source/assets/images/imgs/linceu_com_fundo_2160_2160.png
+        source/assets/images/imgs/old/linceu_com_fundo.png
+        source/assets/images/imgs/old/linceu_com_fundo_71_71.png
+        source/assets/images/imgs/old/linceu_com_fundo_150_150.png
+        source/assets/images/imgs/old/linceu_com_fundo_300_300.png
+        source/assets/images/imgs/old/linceu_com_fundo_1440_2160.png
+        source/assets/images/imgs/old/linceu_com_fundo_2160_2160.png
+        source/assets/images/imgs/old/linceu_sem_fundo.png
+        source/assets/images/imgs/old/linceu_sem_fundo_71_71.png
+        source/assets/images/imgs/old/linceu_sem_fundo_150_150.png
+        source/assets/images/imgs/old/linceu_sem_fundo_300_300.png
+        source/assets/images/imgs/old/linceu_sem_fundo_1440_2160.png
+        source/assets/images/imgs/old/linceu_sem_fundo_2160_2160.png
         source/assets/images/imgs/linceu_sem_fundo.png
         source/assets/images/imgs/linceu_sem_fundo_71_71.png
         source/assets/images/imgs/linceu_sem_fundo_150_150.png
@@ -1146,12 +1158,10 @@ add_custom_command(TARGET Linceu_Lighthouse_cpp POST_BUILD
 if(MSVC)
     target_compile_options(Linceu_Lighthouse_cpp PRIVATE
         $<$<CONFIG:Release>:/Ox>
-        $<$<CONFIG:Release>:/arch:AVX2>
         $<$<CONFIG:Release>:/fp:fast>
         $<$<CONFIG:Release>:/Gw>
         $<$<CONFIG:Release>:/Zc:inline>
         $<$<CONFIG:RelWithDebInfo>:/Ox>
-        $<$<CONFIG:RelWithDebInfo>:/arch:AVX2>
         $<$<CONFIG:RelWithDebInfo>:/fp:fast>
         $<$<CONFIG:RelWithDebInfo>:/Gw>
         $<$<CONFIG:RelWithDebInfo>:/Zc:inline>

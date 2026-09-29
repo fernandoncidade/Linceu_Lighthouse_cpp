@@ -700,6 +700,30 @@
         <translation>Limpar Tabela, Banco de Segurança e de Dados</translation>
     </message>
     <message>
+        <source>wait</source>
+        <translation>Aguarde...</translation>
+    </message>
+    <message>
+        <source>clearing_data</source>
+        <translation>Limpando dados, por favor aguarde...</translation>
+    </message>
+    <message>
+        <source>clear_security_db_failed</source>
+        <translation>Falha ao limpar banco de segurança.</translation>
+    </message>
+    <message>
+        <source>clear_main_db_failed</source>
+        <translation>Falha ao limpar banco de dados principal.</translation>
+    </message>
+    <message>
+        <source>clear_unknown_error</source>
+        <translation>Erro desconhecido durante limpeza.</translation>
+    </message>
+    <message>
+        <source>security_database_cleared</source>
+        <translation>Banco de segurança limpo com sucesso.</translation>
+    </message>
+    <message>
         <source>import_saved_db_prompt</source>
         <translation>Constam dados salvos no último Banco de Dados, deseja importá-los?</translation>
     </message>
@@ -6601,6 +6625,18 @@ pip install plotly</translation>
     <message>
         <source>security_export_success</source>
         <translation>Pacote de evidência exportado com sucesso.</translation>
+    </message>
+    <message>
+        <source>security_active_backend</source>
+        <translation>Backend ativo: %1</translation>
+    </message>
+    <message>
+        <source>security_no_evidence_recorded</source>
+        <translation>Nenhuma evidência registrada nesta sessão.</translation>
+    </message>
+    <message>
+        <source>security_recent_records</source>
+        <translation>Registros recentes:</translation>
     </message>
     <message>
         <source>security_alert_popup_title</source>

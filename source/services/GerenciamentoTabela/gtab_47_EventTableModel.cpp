@@ -1352,8 +1352,8 @@ void EventTableModel::flush_pending_prepend() {
 
     if (!ordenacao_dinamica_ativa()) {
         beginInsertRows(QModelIndex(), 0, lote.size() - 1);
-        for (QVariantMap& evento : lote) {
-            data_.push_front(std::move(evento));
+        for (auto it = lote.rbegin(); it != lote.rend(); ++it) {
+            data_.push_front(std::move(*it));
         }
         endInsertRows();
         if (possui_mais_lotes) {
@@ -1377,7 +1377,7 @@ void EventTableModel::flush_pending_prepend() {
                          return ordem_ordenacao_ativa_ == Qt::AscendingOrder ? (cmp < 0) : (cmp > 0);
                      });
 
-    beginResetModel();
+    emit layoutAboutToBeChanged();
     std::deque<QVariantMap> mesclado;
     auto it_existente = data_.cbegin();
     auto it_lote = lote.cbegin();
@@ -1402,7 +1402,7 @@ void EventTableModel::flush_pending_prepend() {
         ++it_lote;
     }
     data_ = std::move(mesclado);
-    endResetModel();
+    emit layoutChanged();
 
     if (possui_mais_lotes) {
         agendar_flush_pendente(0);

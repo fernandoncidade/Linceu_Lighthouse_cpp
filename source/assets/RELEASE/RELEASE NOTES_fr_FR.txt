@@ -1,3 +1,52 @@
+NOTES DE VERSION : Version 2026.9.28.0
+
+POINTS FORTS DE CETTE VERSION
+
+Cette version de Linceu Lighthouse apporte des améliorations majeures en matière de stabilité, de sécurité locale et de simplicité d'utilisation, assurant une expérience plus fluide et plus sûre lors de la surveillance quotidienne de vos fichiers et dossiers.
+
+L'historique des sessions se charge désormais en arrière-plan, évitant tout ralentissement ou blocage de la fenêtre, même face à des dizaines de milliers d'événements enregistrés. L'espace de quarantaine et de récupération de fichiers a été entièrement perfectionné : les tableaux se mettent à jour en douceur sans scintillement d'écran, tout en conservant la ligne sélectionnée et la position de défilement exactement là où l'utilisateur les a laissées.
+
+De plus, la restauration de fichiers permet désormais de sélectionner le dossier de destination souhaité et procède à une vérification automatique d'intégrité pour garantir que les fichiers restaurés sont parfaits et non corrompus. Le centre d'alertes classe les notifications selon des niveaux d'attention limpides, simplifiant ainsi une prise de décision rapide.
+
+
+NOUVELLES FONCTIONNALITÉS ET AMÉLIORATIONS
+
+1. Sessions en Temps Réel Plus Rapides et Fluides
+- Le chargement de l'historique des sessions s'effectue en arrière-plan, garantissant une réactivité permanente de l'application.
+- Indicateur visuel informant précisément de l'état de chargement des données.
+- Infobulles pratiques au survol des résumés de dossiers pour consulter l'ensemble des chemins surveillés au cours d'une même session.
+- Bouton d'actualisation rapide pour afficher les nouveaux blocs de sessions sans fermer la fenêtre.
+
+2. Quarantaine Intelligente et Affichage Sans Scintillement
+- Les listes de quarantaine et des versions protégées se mettent à jour de manière silencieuse et sans à-coups visuels.
+- La ligne sélectionnée, la position de défilement et l'ordre des colonnes demeurent stables lors de l'arrivée de nouveaux éléments.
+- Bouton direct pour ouvrir l'emplacement du fichier isolé dans l'Explorateur Windows pour une vérification rapide.
+
+3. Restauration Sécurisée avec Contrôle Automatique d'Intégrité
+- Choix du dossier de destination : restaurez le fichier à son emplacement d'origine ou choisissez un dossier de contrôle sécurisé.
+- Vérification automatique de l'intégrité lors de la restauration, assurant la conformité parfaite avec la copie de sauvegarde.
+- Messages clairs et rassurants confirmant le succès de l'opération de restauration.
+
+4. Centre d'Alertes Hiérarchisé par Niveau d'Urgence
+- Notifications organisées en quatre niveaux simples : Faible, Moyen, Élevé et Critique.
+- Identification immédiate des événements prioritaires nécessitant une attention particulière.
+- Présentation claire des motifs de l'alerte, du fichier concerné et du dossier associé.
+- Mises à jour continues sans interrompre la surveillance en cours.
+
+5. Gestion Pratique de Plusieurs Dossiers Simultanément
+- Ajout et retrait simples de dossiers surveillés au sein de profils enregistrés localement sur votre ordinateur.
+- Surveillance et protection simultanées de multiples répertoires et disques.
+- Vue d'ensemble avec le nombre de dossiers actifs et le chemin principal en cours d'utilisation.
+
+6. Manuel et Aide Intégrés en 6 Langues
+- Le manuel d'utilisation intégré à l'application a été enrichi d'instructions détaillées pas à pas pour chaque fonctionnalité.
+- Traduction intégrale et soignée en six langues : portugais, anglais, espagnol, français, italien et allemand.
+- Navigation intuitive avec accès direct aux différentes rubriques et conseils d'utilisation quotidienne.
+
+
+_________________________________________________
+
+
 NOTES DE VERSION : Version 2026.8.25.0
 
 POINTS FORTS DE CETTE VERSION

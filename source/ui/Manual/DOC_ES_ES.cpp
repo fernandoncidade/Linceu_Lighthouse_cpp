@@ -9,13 +9,15 @@ std::vector<ManualSection> doc_es_es() {
             QStringLiteral("nuevos-recursos-funcionalidades"),
             QStringLiteral("Nuevos recursos y funcionalidades"),
             {
-                QStringLiteral("Se implementaron mejoras en la confiabilidad del monitoreo en tiempo real, el control de pausar/reanudar/detener y la actualización de la tabla en escenarios con alto volumen de eventos."),
-                QStringLiteral("Las instrucciones siguientes explican cómo usar estos cambios de forma segura en la operación diaria."),
+                QStringLiteral("La versión 2026.9.28.0 introduce mejoras estructurales de confiabilidad en el monitoreo en tiempo real, carga asíncrona no bloqueante para sesiones en tiempo real, sincronización diferencial de tablas sin parpadeo en cuarentena y restauración con verificación criptográfica SHA-256."),
+                QStringLiteral("Las siguientes instrucciones detallan cómo utilizar estas capacidades de manera segura, predecible y eficiente en la operación diaria."),
             },
             {
-                QStringLiteral("Detección más precisa para operaciones de agregar, modificar, eliminar, renombrar y mover archivos."),
-                QStringLiteral("Actualización visual más estable en listas grandes, con menor riesgo de inconsistencias temporales durante picos."),
-                QStringLiteral("Cambio de idioma más consistente en menús, tabla, manual, ayuda y estadísticas sin reiniciar la aplicación."),
+                QStringLiteral("Sesiones en tiempo real no bloqueantes: carga en segundo plano con indicadores de progreso y cancelación segura."),
+                QStringLiteral("Cuarentena y restauración inteligente: actualización diferencial de tablas que preserva selección, orden y posición de desplazamiento."),
+                QStringLiteral("Restauración segura con selector de carpeta de destino y validación criptográfica de integridad SHA-256."),
+                QStringLiteral("Centro de alertas con clasificación por niveles objetivos de riesgo y evaluación determinista de reglas de seguridad."),
+                QStringLiteral("Gestión multidirectorio mejorada con perfiles persistentes de monitoreo simultáneo."),
             },
             {
                 {
@@ -34,6 +36,28 @@ std::vector<ManualSection> doc_es_es() {
                         QStringLiteral("En operaciones largas, pause el monitoreo para una revisión intermedia."),
                         QStringLiteral("Reanude solo después de validar el conjunto de datos visible."),
                         QStringLiteral("Antes de cerrar, detenga monitoreo/escaneo explícitamente y espere la actualización final de estado."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Cómo utilizar las Sesiones en Tiempo Real Asíncronas"),
+                    {
+                        QStringLiteral("Abra Configuraciones > Seguridad > Sesiones en tiempo real."),
+                        QStringLiteral("El historial se carga en segundo plano mediante un hilo de trabajo dedicado, manteniendo la interfaz ágil incluso con miles de eventos."),
+                        QStringLiteral("Revise las columnas: Actualizado en, Etiqueta de sesión, Total de eventos, Directorios monitorizados e Identificador de evidencia."),
+                        QStringLiteral("Pase el cursor sobre los directorios para ver la lista completa de rutas cuando existan múltiples carpetas monitorizadas."),
+                        QStringLiteral("Haga clic en Actualizar en cualquier momento para consultar nuevos bloques de eventos sin cerrar el diálogo."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Cómo utilizar la Cuarentena y Restauración Inteligente"),
+                    {
+                        QStringLiteral("Abra Configuraciones > Seguridad > Cuarentena y restauración."),
+                        QStringLiteral("Navegue entre las pestañas Cuarentena (archivos sospechosos aislados) y Versiones monitorizadas (instantáneas de línea de base criptográfica)."),
+                        QStringLiteral("La actualización de la tabla es diferencial: los nuevos registros no alteran su selección activa ni la posición de desplazamiento."),
+                        QStringLiteral("Seleccione un archivo y use Abrir carpeta seleccionada para localizarlo en el Explorador de archivos de Windows."),
+                        QStringLiteral("Pulse Restaurar copia seleccionada (o Restaurar versión monitorada) para elegir una carpeta segura de destino y recuperar el archivo verificado con integridad criptográfica."),
                     },
                     {}
                 },
@@ -245,7 +269,7 @@ std::vector<ManualSection> doc_es_es() {
             QStringLiteral("uso-menu-seguridad"),
             QStringLiteral("Cómo usar Configuraciones > Seguridad"),
             {
-                QStringLiteral("El submenú Seguridad agrupa auditoría, sesiones en tiempo real, cuarentena, restauración y paquetes de evidencia. Úselo después de configurar directorios y preferiblemente tras un escaneo inicial."),
+                QStringLiteral("El submenú Seguridad reúne recursos de auditoría, seguimiento de sesiones en tiempo real, cuarentena, restauración, líneas de base criptográficas y paquetes de evidencia. Úselo después de configurar directorios y preferiblemente tras un escaneo inicial."),
             },
             {},
             {
@@ -260,23 +284,44 @@ std::vector<ManualSection> doc_es_es() {
                     {}
                 },
                 {
-                    QStringLiteral("Centro de alertas y sesiones en tiempo real"),
+                    QStringLiteral("Centro de alertas en tiempo real"),
                     {
-                        QStringLiteral("Abra Centro de alertas para revisar hora, nivel de riesgo, resumen, reglas activadas, ruta, nombre, sesión y evidencia."),
-                        QStringLiteral("Priorice alertas críticas o altas antes de revisar eventos comunes en la tabla principal."),
-                        QStringLiteral("Abra Sesiones en tiempo real para inspeccionar sesiones recientes, total de eventos y directorios involucrados."),
-                        QStringLiteral("Use Actualizar en cada ventana mientras el monitoreo esté activo para cargar nuevos registros sin cerrar el diálogo."),
+                        QStringLiteral("Abra Configuraciones > Seguridad > Centro de alertas para revisar incidencias clasificadas por niveles de riesgo: Bajo, Medio, Alto y Crítico."),
+                        QStringLiteral("Consulte el resumen de la alerta, reglas activadas, ruta, nombre de archivo, sesión asociada e identificador de evidencia."),
+                        QStringLiteral("Priorice la investigación de alertas Críticas o Altas antes de revisar eventos comunes en la tabla principal."),
+                        QStringLiteral("Pulse Actualizar para consultar nuevos eventos detectados sin interrumpir la monitorización activa."),
                     },
                     {}
                 },
                 {
-                    QStringLiteral("Cuarentena, restauración y evidencia"),
+                    QStringLiteral("Sesiones en tiempo real asíncronas"),
                     {
-                        QStringLiteral("Abra Cuarentena y restauración para revisar las pestañas Cuarentena y Versiones monitorizadas."),
-                        QStringLiteral("En Cuarentena, seleccione una fila y use Abrir carpeta seleccionada para ubicar la copia aislada; restaure solo después de verificar el destino."),
-                        QStringLiteral("En Versiones monitorizadas, seleccione una fila y use Restaurar versión monitorizada para recuperar una versión registrada."),
-                        QStringLiteral("Abra Paquete de evidencia, elija destino, pulse Exportar ahora e inspeccione la carpeta generada."),
-                        QStringLiteral("Use Limpiar base de seguridad solo después de exportar evidencia o confirmar que el historial antiguo ya no es necesario."),
+                        QStringLiteral("Abra Configuraciones > Seguridad > Sesiones en tiempo real para supervisar bloques de actividad del sistema de archivos."),
+                        QStringLiteral("La carga se realiza en segundo plano mediante un hilo dedicado, evitando bloqueos o demoras visuales incluso con grandes volúmenes de historial."),
+                        QStringLiteral("Compruebe la marca temporal, la etiqueta legible de sesión, el total de eventos registrados, el resumen de directorios y el identificador de sesión."),
+                        QStringLiteral("Pase el cursor sobre los directorios para ver la lista completa de rutas cuando la sesión abarque múltiples carpetas."),
+                        QStringLiteral("Use Actualizar para cargar nuevas sesiones incrementales mientras el monitoreo permanece activo."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Cuarentena y restauración inteligente"),
+                    {
+                        QStringLiteral("Abra Configuraciones > Seguridad > Cuarentena y restauración para acceder a las pestañas Cuarentena y Versiones monitorizadas."),
+                        QStringLiteral("Las tablas utilizan sincronización diferencial sin parpadeos: su selección activa, ordenación y posición de desplazamiento permanecen intactas."),
+                        QStringLiteral("En la pestaña Cuarentena, seleccione un archivo aislado y use Abrir carpeta seleccionada para examinar su ubicación en el Explorador de Windows."),
+                        QStringLiteral("Pulse Restaurar copia seleccionada para abrir el cuadro de diálogo de destino: restaure en la ruta original o elija una carpeta segura para análisis."),
+                        QStringLiteral("En la pestaña Versiones monitorizadas, seleccione una instantánea de la línea de base criptográfica y use Restaurar versión monitorizada para recuperarla."),
+                        QStringLiteral("El sistema valida la integridad criptográfica SHA-256 y muestra una confirmación inmediata de éxito tras el restablecimiento."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Paquete de evidencia y auditoría"),
+                    {
+                        QStringLiteral("Abra Configuraciones > Seguridad > Paquete de evidencia para generar un conjunto de auditoría estructurado."),
+                        QStringLiteral("Elija la carpeta de destino, pulse Exportar ahora y examine el paquete generado con líneas de base criptográficas y registros de eventos."),
+                        QStringLiteral("Use Limpiar base de seguridad únicamente tras haber exportado evidencias y confirmar que el historial anterior ya no es necesario."),
                     },
                     {}
                 },

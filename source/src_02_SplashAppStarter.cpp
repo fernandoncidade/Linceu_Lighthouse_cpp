@@ -16,8 +16,10 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "source/data/Charts/ch_04_QmlRegistration.h"
 #include "source/gui/ic_01_InterfaceMonitor.h"
 #include "source/gui/ic_08_Internacionalizador.h"
+#include "source/security/secore_01_postgres_utils.h"
 #include "source/services/GerenciamentoBaseEvento/gbank_20_db_writer.h"
 #include "source/utils/IconUtils.h"
 #include "source/utils/LogManager.h"
@@ -25,6 +27,7 @@
 #ifdef _WIN32
 #include <Windows.h>
 #include <shellapi.h>
+#include <shobjidl.h>
 #endif
 
 namespace source {
@@ -76,6 +79,16 @@ void configurar_backend_grafico() {
 #endif
 }
 
+void definir_appusermodelid() {
+#ifdef _WIN32
+    try {
+        ::SetCurrentProcessExplicitAppUserModelID(L"LinceuLighthouse.App");
+    } catch (...) {
+        source::utils::LogManager::get_logger().warning("Falha ao definir AppUserModelID");
+    }
+#endif
+}
+
 }  // namespace
 
 SplashAppStarter::SplashAppStarter()
@@ -123,6 +136,10 @@ void SplashAppStarter::create_app(int argc, char* argv[]) {
     app_ = new QApplication(argc, argv);
     app_->setQuitOnLastWindowClosed(false);
     source::utils::LogManager::get_logger().debug("SplashAppStarter: QApplication criada");
+
+    source::charts_lgpl::register_qml_types();
+    source::security::pg::prepare_runtime();
+    definir_appusermodelid();
 
     QObject::connect(app_, &QCoreApplication::aboutToQuit, []() {
         source::utils::LogManager::get_logger().warning("SplashAppStarter: aboutToQuit emitido");

@@ -9,13 +9,15 @@ std::vector<ManualSection> doc_en_us() {
             QStringLiteral("new-features-and-capabilities"),
             QStringLiteral("New features and capabilities"),
             {
-                QStringLiteral("Key improvements focus on real-time monitoring reliability, pause/resume/stop control, and table updates under high event volume."),
-                QStringLiteral("The instructions below explain how to use these improvements safely in daily operation."),
+                QStringLiteral("Version 2026.9.28.0 introduces core structural reliability improvements to real-time monitoring, non-blocking asynchronous background loading for real-time sessions, flicker-free differential table synchronization in quarantine, and safe restoration with cryptographic SHA-256 validation."),
+                QStringLiteral("The instructions below guide you through using these capabilities safely, predictably, and efficiently during daily operations."),
             },
             {
-                QStringLiteral("More accurate detection for file add, modify, delete, rename, and move operations."),
-                QStringLiteral("More stable visual updates for large lists with lower risk of temporary inconsistencies during bursts."),
-                QStringLiteral("More consistent language switching across menus, table, manual, help, and statistics without restart."),
+                QStringLiteral("Non-blocking real-time sessions: asynchronous background loading with progress indicators and cancellation support."),
+                QStringLiteral("Smart quarantine & recovery: differential table updates that preserve selections, sorting order, and scroll position."),
+                QStringLiteral("Safe file restoration with target directory picker and cryptographic SHA-256 integrity verification."),
+                QStringLiteral("Real-time alert center with deterministic risk triage and correlated security rule evaluation."),
+                QStringLiteral("Enhanced multi-directory management with persistent profiles for simultaneous monitoring."),
             },
             {
                 {
@@ -34,6 +36,28 @@ std::vector<ManualSection> doc_en_us() {
                         QStringLiteral("During long operations, pause monitoring to perform an intermediate review."),
                         QStringLiteral("Resume only after validating the current visible dataset."),
                         QStringLiteral("Before shutdown, stop monitoring/scanning explicitly and wait for final status update."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("How to use Asynchronous Real-Time Sessions"),
+                    {
+                        QStringLiteral("Open Settings > Security > Real-time sessions."),
+                        QStringLiteral("The session history loads in a background worker thread, keeping the user interface smooth and responsive even across thousands of records."),
+                        QStringLiteral("Review the table columns: Updated at, Session label, Total events, Monitored directories, and Evidence ID."),
+                        QStringLiteral("Hover over the directories column to view the complete list of monitored paths when multiple directories are present."),
+                        QStringLiteral("Click Refresh at any time to query new incremental event blocks without closing the window."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("How to use Smart Quarantine & Recovery"),
+                    {
+                        QStringLiteral("Open Settings > Security > Quarantine and restoration."),
+                        QStringLiteral("Navigate between the Quarantine tab (isolated suspect files) and Monitored versions tab (cryptographic baseline snapshots)."),
+                        QStringLiteral("Table polling is differential: newly arrived records will not disrupt your active row selection or scroll position."),
+                        QStringLiteral("Select any item and click Open selected folder to view the isolated file directly in Windows Explorer."),
+                        QStringLiteral("Click Restore selected copy (or Restore monitored version) to choose a safe destination folder and recover the verified file with cryptographic integrity validation."),
                     },
                     {}
                 },
@@ -245,7 +269,7 @@ std::vector<ManualSection> doc_en_us() {
             QStringLiteral("using-security-menu"),
             QStringLiteral("Using Settings > Security"),
             {
-                QStringLiteral("The Security submenu groups audit resources, live sessions, quarantine, restoration and evidence packages. Use it after configuring directories and preferably after an initial scan."),
+                QStringLiteral("The Security submenu brings together audit resources, real-time session tracking, quarantine, restoration, cryptographic baselines, and evidence packages. Use it after configuring directories and preferably after an initial scan."),
             },
             {},
             {
@@ -260,23 +284,44 @@ std::vector<ManualSection> doc_en_us() {
                     {}
                 },
                 {
-                    QStringLiteral("Alert center and real-time sessions"),
+                    QStringLiteral("Real-time alert center"),
                     {
-                        QStringLiteral("Open Alert center to review time, risk level, summary, triggered rules, path, name, session and evidence."),
-                        QStringLiteral("Prioritize critical or high-risk alerts before reviewing common events in the main table."),
-                        QStringLiteral("Open Real-time sessions to inspect recent sessions, total events and involved directories."),
-                        QStringLiteral("Use Refresh in each window while monitoring is active to load new records without closing the dialog."),
+                        QStringLiteral("Open Settings > Security > Alert center to review security occurrences triaged by risk levels: Low, Medium, High, and Critical."),
+                        QStringLiteral("Inspect the alert summary, triggered rules, target path, filename, associated session, and evidence ID."),
+                        QStringLiteral("Prioritize investigating Critical or High alerts before reviewing routine events in the main table."),
+                        QStringLiteral("Click Refresh to query newly detected alerts without disrupting active file monitoring."),
                     },
                     {}
                 },
                 {
-                    QStringLiteral("Quarantine, restoration and evidence"),
+                    QStringLiteral("Asynchronous real-time sessions"),
                     {
-                        QStringLiteral("Open Quarantine and restoration to review the Quarantine and Monitored versions tabs."),
-                        QStringLiteral("In Quarantine, select a row and use Open selected folder to locate the isolated copy; restore only after checking the destination."),
-                        QStringLiteral("In Monitored versions, select a row and use Restore monitored version to recover a tracked version."),
-                        QStringLiteral("Open Evidence package, choose the destination, click Export now and inspect the generated folder."),
-                        QStringLiteral("Use Clear security database only after exporting evidence or confirming the old audit history is no longer needed."),
+                        QStringLiteral("Open Settings > Security > Real-time sessions to track filesystem activity blocks."),
+                        QStringLiteral("Loading occurs in a dedicated background worker, avoiding visual freezes or lag even with large historical databases."),
+                        QStringLiteral("Inspect the timestamp, user-friendly session label, total event count, monitored directories summary, and unique session ID."),
+                        QStringLiteral("Hover over the directories column to view the full path list when a session spans multiple folders."),
+                        QStringLiteral("Use Refresh to load newly recorded incremental sessions while monitoring remains active."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Smart quarantine and recovery"),
+                    {
+                        QStringLiteral("Open Settings > Security > Quarantine and restoration to access the Quarantine and Monitored versions tabs."),
+                        QStringLiteral("Tables use flicker-free differential synchronization: your active selection, scroll position, and sorting order stay intact during automatic updates."),
+                        QStringLiteral("Under the Quarantine tab, select an isolated file and click Open selected folder to view its directory in Windows Explorer."),
+                        QStringLiteral("Click Restore selected copy to open a target destination dialog: restore to the original path or choose an alternative safe folder for analysis."),
+                        QStringLiteral("Under the Monitored versions tab, select a baseline snapshot version and click Restore monitored version to recover it."),
+                        QStringLiteral("The system validates cryptographic SHA-256 integrity and displays an immediate success confirmation upon restoration."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Evidence package and audit"),
+                    {
+                        QStringLiteral("Open Settings > Security > Evidence package to generate a structured, auditable export."),
+                        QStringLiteral("Choose a destination folder, click Export now, and inspect the generated package containing cryptographic baseline reports and structured logs."),
+                        QStringLiteral("Use Clear security database exclusively after saving evidence packages and verifying that historical audit logs are no longer needed."),
                     },
                     {}
                 },

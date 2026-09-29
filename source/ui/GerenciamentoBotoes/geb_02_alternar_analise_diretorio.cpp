@@ -18,6 +18,7 @@
 #include "source/security/secore_02_SecurityManager.h"
 #include "source/security/secui_00_helpers.h"
 #include "source/services/GerenciamentoEventoMovido/gevmov_10_PendenciasMovimentacao.h"
+#include "source/services/GerenciamentoObservador/ObserverRegistry.h"
 #include "source/services/ob_01_Observador.h"
 #include "source/services/ob_08_EventoMovido.h"
 #include "source/ui/ui_01_GerenciadorBotoes.h"
@@ -83,17 +84,8 @@ void drenar_exclusoes_pendentes(QObject* interface_obj) {
     source::services::GerenciamentoEventoMovido::limpar_pendencias_movimentacao(interface_obj);
 }
 
-using ObservadorMap = std::unordered_map<QObject*, std::unique_ptr<source::services::Observador>>;
-ObservadorMap g_observadores_cpp;
-std::mutex g_observadores_cpp_mutex;
-
 source::services::Observador* obter_observador_cpp_mapa(QObject* interface_obj) {
-    std::lock_guard<std::mutex> lock(g_observadores_cpp_mutex);
-    const auto it = g_observadores_cpp.find(interface_obj);
-    if (it == g_observadores_cpp.end()) {
-        return nullptr;
-    }
-    return it->second.get();
+    return source::services::GerenciamentoObservador::ObserverRegistry::instance().obter(interface_obj);
 }
 
 source::services::Observador* obter_observador_cpp_prop(QObject* interface_obj) {
@@ -136,15 +128,7 @@ void remover_observador_cpp(QObject* interface_obj) {
         return;
     }
 
-    std::unique_ptr<source::services::Observador> removido;
-    {
-        std::lock_guard<std::mutex> lock(g_observadores_cpp_mutex);
-        const auto it = g_observadores_cpp.find(interface_obj);
-        if (it != g_observadores_cpp.end()) {
-            removido = std::move(it->second);
-            g_observadores_cpp.erase(it);
-        }
-    }
+    auto removido = source::services::GerenciamentoObservador::ObserverRegistry::instance().remover(interface_obj);
 
     if (removido != nullptr) {
         try {
@@ -191,10 +175,7 @@ source::services::Observador* criar_observador_cpp(QObject* interface_obj, const
     sincronizar_idioma_observador(novo_observador.get(), interface_obj);
 
     source::services::Observador* observador_raw = novo_observador.get();
-    {
-        std::lock_guard<std::mutex> lock(g_observadores_cpp_mutex);
-        g_observadores_cpp[interface_obj] = std::move(novo_observador);
-    }
+    source::services::GerenciamentoObservador::ObserverRegistry::instance().registrar(interface_obj, std::move(novo_observador));
 
     interface_obj->setProperty("_observador_cpp_ptr",
                                QVariant::fromValue<qulonglong>(reinterpret_cast<qulonglong>(observador_raw)));
@@ -283,6 +264,7 @@ void alternar_analise_diretorio(source::ui::GerenciadorBotoes* self) {
         }
 
         auto* rotulo = get_label_property(interface_obj, "rotulo_resultado");
+        interface_obj->setProperty("_resultado_chave", QVariant());
 
         if (observador_qt != nullptr) {
             const bool scan_running = interface_obj->property("_scan_em_execucao").toBool();

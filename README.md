@@ -14,7 +14,7 @@
 
 <h2 id="ptbr">🇧🇷 Português (BR)</h2>
 
-> **Observação:** Este repositório refere-se à versão **v2026.8.25.0** do Projeto Linceu Lighthouse. Apoie o projeto e adquira a versão paga através do link: [Instalar via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
+> **Observação:** Este repositório refere-se à versão **v2026.9.28.0** do Projeto Linceu Lighthouse. Apoie o projeto e adquira a versão paga através do link: [Instalar via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
 
 <details>
 <summary>Clique para expandir o README em português</summary>
@@ -33,7 +33,7 @@
 </p>
 
 Projeto: LINCEU LIGHTHOUSE  
-Versão: v2026.8.25.0<br>
+Versão: v2026.9.28.0<br>
 Autor: Fernando Nillsson Cidade<br>
 
 Descrição: Plataforma Local de Inteligência, Histórico e Auditoria de Atividades de Arquivos
@@ -916,7 +916,7 @@ Logs são gravados com timestamp em:
 ### 📄 Licença e Autoria
 
 **Autores:** Fernando Nillsson Cidade<br>
-**Versão:** v2026.8.25.0<br>
+**Versão:** v2026.9.28.0<br>
 **Licença:** [GNU Lesser General Public License v3.0 (LGPL-3.0)](https://github.com/fernandoncidade/Linceu_Lighthouse_cpp/blob/main/LICENSE)
 
 Para mais informações, consulte também `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.md`, os assets embarcados e a documentação específica nos módulos do código-fonte.
@@ -929,7 +929,7 @@ Para mais informações, consulte também `OBSERVACAO.md`, `ARCHITECTURE.md`, `M
 
 <h2 id="enus">🇺🇸 English (US)</h2>
 
-> **Note:** This repository refers to version **v2026.8.25.0** of the Linceu Lighthouse Project. Support the project and get the store release via: [Install via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
+> **Note:** This repository refers to version **v2026.9.28.0** of the Linceu Lighthouse Project. Support the project and get the store release via: [Install via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
 
 <details>
 <summary>Click to expand the README in English</summary>
@@ -948,7 +948,7 @@ Para mais informações, consulte também `OBSERVACAO.md`, `ARCHITECTURE.md`, `M
 </p>
 
 Project: LINCEU LIGHTHOUSE  
-Version: v2026.8.25.0<br>
+Version: v2026.9.28.0<br>
 Author: Fernando Nillsson Cidade<br>
 
 Description: Local File Activity Intelligence, History & Audit Platform
@@ -1832,7 +1832,7 @@ Logs are written with timestamps to:
 ### 📄 License and Authorship
 
 **Authors:** Fernando Nillsson Cidade<br>
-**Version:** v2026.8.25.0<br>
+**Version:** v2026.9.28.0<br>
 **License:** [GNU Lesser General Public License v3.0 (LGPL-3.0)](https://github.com/fernandoncidade/Linceu_Lighthouse_cpp/blob/main/LICENSE)
 
 For more information, also consult `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.md`, embedded assets and module-specific source documentation.
@@ -1845,7 +1845,7 @@ For more information, also consult `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.m
 
 <h2 id="eses">🇪🇸 Español (ES)</h2>
 
-> **Nota:** Este repositorio se refiere a la versión **v2026.8.25.0** del Proyecto Linceu Lighthouse. Apoye el proyecto y adquiera la versión de pago a través del enlace: [Instalar vía Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
+> **Nota:** Este repositorio se refiere a la versión **v2026.9.28.0** del Proyecto Linceu Lighthouse. Apoye el proyecto y adquiera la versión de pago a través del enlace: [Instalar vía Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
 
 <details>
 <summary>Haga clic para expandir el README en español</summary>
@@ -1864,7 +1864,7 @@ For more information, also consult `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.m
 </p>
 
 Proyecto: LINCEU LIGHTHOUSE  
-Versión: v2026.8.25.0<br>
+Versión: v2026.9.28.0<br>
 Autor: Fernando Nillsson Cidade<br>
 
 Descripción: Plataforma Local de Inteligencia, Historial y Auditoría de Actividades de Archivos
@@ -2747,7 +2747,7 @@ Los registros se guardan con marca temporal en:
 ### 📄 Licencia y Autoría
 
 **Autor:** Fernando Nillsson Cidade<br>
-**Versión:** v2026.8.25.0<br>
+**Versión:** v2026.9.28.0<br>
 **Licencia:** [GNU Lesser General Public License v3.0 (LGPL-3.0)](https://github.com/fernandoncidade/Linceu_Lighthouse_cpp/blob/main/LICENSE)
 
 Para más información, consulte también `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.md`, los assets integrados y la documentación específica en los módulos del código fuente.
@@ -2760,7 +2760,7 @@ Para más información, consulte también `OBSERVACAO.md`, `ARCHITECTURE.md`, `M
 
 <h2 id="frfr">🇫🇷 Français (FR)</h2>
 
-> **Remarque :** Ce dépôt fait référence à la version **v2026.8.25.0** du Projet Linceu Lighthouse. Soutenez le projet et procurez-vous la version payante via le lien : [Installer via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
+> **Remarque :** Ce dépôt fait référence à la version **v2026.9.28.0** du Projet Linceu Lighthouse. Soutenez le projet et procurez-vous la version payante via le lien : [Installer via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
 
 <details>
 <summary>Cliquez pour développer le README en français</summary>
@@ -2779,7 +2779,7 @@ Para más información, consulte también `OBSERVACAO.md`, `ARCHITECTURE.md`, `M
 </p>
 
 Projet : LINCEU LIGHTHOUSE  
-Version : v2026.8.25.0<br>
+Version : v2026.9.28.0<br>
 Auteur : Fernando Nillsson Cidade<br>
 
 Description : Plateforme Locale d'Intelligence, d'Historique et d'Audit d'Activités de Fichiers
@@ -3662,7 +3662,7 @@ Les journaux sont enregistrés avec horodatage dans :
 ### 📄 Licence et Auteurs
 
 **Auteur :** Fernando Nillsson Cidade<br>
-**Version :** v2026.8.25.0<br>
+**Version :** v2026.9.28.0<br>
 **Licence :** [GNU Lesser General Public License v3.0 (LGPL-3.0)](https://github.com/fernandoncidade/Linceu_Lighthouse_cpp/blob/main/LICENSE)
 
 Pour plus d'informations, consultez également `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.md`, les assets intégrés et la documentation spécifique dans les modules du code source.
@@ -3675,7 +3675,7 @@ Pour plus d'informations, consultez également `OBSERVACAO.md`, `ARCHITECTURE.md
 
 <h2 id="itit">🇮🇹 Italiano (IT)</h2>
 
-> **Nota:** Questo repository fa riferimento alla versione **v2026.8.25.0** del Progetto Linceu Lighthouse. Sostieni il progetto e acquista la versione a pagamento tramite il link: [Installa via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
+> **Nota:** Questo repository fa riferimento alla versione **v2026.9.28.0** del Progetto Linceu Lighthouse. Sostieni il progetto e acquista la versione a pagamento tramite il link: [Installa via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
 
 <details>
 <summary>Fai clic per espandere il README in italiano</summary>
@@ -3694,7 +3694,7 @@ Pour plus d'informations, consultez également `OBSERVACAO.md`, `ARCHITECTURE.md
 </p>
 
 Progetto: LINCEU LIGHTHOUSE  
-Versione: v2026.8.25.0<br>
+Versione: v2026.9.28.0<br>
 Autore: Fernando Nillsson Cidade<br>
 
 Descrizione: Piattaforma Locale di Intelligence, Cronologia e Audit delle Attività sui File
@@ -4577,7 +4577,7 @@ I log vengono registrati con timestamp in:
 ### 📄 Licenza e Autori
 
 **Autore:** Fernando Nillsson Cidade<br>
-**Versione:** v2026.8.25.0<br>
+**Versione:** v2026.9.28.0<br>
 **Licence:** [GNU Lesser General Public License v3.0 (LGPL-3.0)](https://github.com/fernandoncidade/Linceu_Lighthouse_cpp/blob/main/LICENSE)
 
 Per ulteriori informazioni, consultare anche `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.md`, gli asset integrati e la documentazione specifica nei moduli del codice sorgente.
@@ -4590,7 +4590,7 @@ Per ulteriori informazioni, consultare anche `OBSERVACAO.md`, `ARCHITECTURE.md`,
 
 <h2 id="dede">🇩🇪 Deutsch (DE)</h2>
 
-> **Hinweis:** Dieses Repository bezieht sich auf die Version **v2026.8.25.0** des Projekts Linceu Lighthouse. Unterstützen Sie das Projekt und erwerben Sie die kostenpflichtige Version über den Link: [Über Microsoft Store installieren](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
+> **Hinweis:** Dieses Repository bezieht sich auf die Version **v2026.9.28.0** des Projekts Linceu Lighthouse. Unterstützen Sie das Projekt und erwerben Sie die kostenpflichtige Version über den Link: [Über Microsoft Store installieren](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
 
 <details>
 <summary>Klicken Sie hier, um die README auf Deutsch zu erweitern</summary>
@@ -4609,7 +4609,7 @@ Per ulteriori informazioni, consultare anche `OBSERVACAO.md`, `ARCHITECTURE.md`,
 </p>
 
 Projekt: LINCEU LIGHTHOUSE  
-Version: v2026.8.25.0<br>
+Version: v2026.9.28.0<br>
 Autor: Fernando Nillsson Cidade<br>
 
 Beschreibung: Lokale Plattform für Datei-Intelligenz, Verlauf und Dateiaktivitäts-Audit
@@ -5492,7 +5492,7 @@ Protokolle werden mit Zeitstempel gespeichert unter:
 ### 📄 Lizenz und Autoren
 
 **Autor:** Fernando Nillsson Cidade<br>
-**Version:** v2026.8.25.0<br>
+**Version:** v2026.9.28.0<br>
 **Lizenz:** [GNU Lesser General Public License v3.0 (LGPL-3.0)](https://github.com/fernandoncidade/Linceu_Lighthouse_cpp/blob/main/LICENSE)
 
 Weitere Informationen finden Sie auch in `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.md`, den integrierten Assets und der spezifischen Dokumentation in den Quellcodemodulen.

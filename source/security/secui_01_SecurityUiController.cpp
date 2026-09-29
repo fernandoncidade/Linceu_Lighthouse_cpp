@@ -152,10 +152,19 @@ public:
         layout->addWidget(details_edit, 1);
 
         auto* buttons = new QDialogButtonBox(QDialogButtonBox::Close, this);
-        if (auto* close_button =
-                qobject_cast<QPushButton*>(buttons->button(QDialogButtonBox::Close))) {
+        auto* close_button = qobject_cast<QPushButton*>(buttons->button(QDialogButtonBox::Close));
+        if (close_button != nullptr) {
             close_button->setText(
                 get_text(loc, QStringLiteral("close"), QStringLiteral("Fechar")));
+        }
+        if (auto* loc_qt = qobject_cast<source::ui::LocalizadorQt*>(loc)) {
+            QObject::connect(loc_qt, &source::ui::LocalizadorQt::idioma_alterado, this,
+                             [close_button, loc_qt](const QString&) {
+                                 if (close_button != nullptr) {
+                                     close_button->setText(
+                                         get_text(loc_qt, QStringLiteral("close"), QStringLiteral("Fechar")));
+                                 }
+                             });
         }
         QObject::connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::close);
         QObject::connect(buttons, &QDialogButtonBox::accepted, this, &QDialog::close);
@@ -366,8 +375,14 @@ bool SecurityUiController::clear_security_database(bool ask_confirmation,
                                  ? get_text(loc, QStringLiteral("security_operation_failed"),
                                             QStringLiteral("Operação não concluída."))
                                  : local_error_message;
-        set_security_result_label(interface_, text);
-        show_status_message(interface_, text);
+        show_translated_security_feedback(
+            interface_,
+            QStringLiteral("security_operation_failed"),
+            local_error_message.isEmpty() ? QStringLiteral("Operação não concluída.") : local_error_message);
+        show_translated_status_message(
+            interface_,
+            QStringLiteral("security_operation_failed"),
+            local_error_message.isEmpty() ? QStringLiteral("Operação não concluída.") : local_error_message);
         exec_translated_message_box(
             parent,
             loc,
@@ -392,9 +407,15 @@ bool SecurityUiController::clear_security_database(bool ask_confirmation,
         QStringLiteral("security_clear_database_success"),
         QStringLiteral("Todos os dados persistidos em security.db foram removidos."));
     if (show_feedback) {
-        clear_security_result_label(interface_);
-        set_result_label(interface_, success);
-        show_status_message(interface_, success, 3000);
+        show_translated_security_feedback(
+            interface_,
+            QStringLiteral("security_clear_database_success"),
+            QStringLiteral("Todos os dados persistidos em security.db foram removidos."));
+        show_translated_status_message(
+            interface_,
+            QStringLiteral("security_clear_database_success"),
+            QStringLiteral("Todos os dados persistidos em security.db foram removidos."),
+            3000);
         exec_translated_message_box(
             parent,
             loc,

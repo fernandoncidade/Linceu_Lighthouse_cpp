@@ -31,16 +31,25 @@ Sua proposta de valor central responde diretamente à pergunta mais frequente de
 O produto atua como uma solução soberana **100% Local-First** (sem nuvem, sem telemetria, sem contas e sem IA externa), estruturada em 3 camadas integradas (Monitoramento Contínuo com detecção correta de Move/Rename, Histórico Pesquisável com 17 gráficos nativos e Segurança/Auditoria Local).
 
 Versão consolidada observada nos assets e na documentação embarcada:
-- `v2026.8.25.0`
+- `v2026.9.28.0`
 Autor identificado no projeto:
 - `Fernando Nillsson Cidade`
 
 Licença do repositório:
 - `GNU Lesser General Public License v3.0 (LGPL-3.0)`
 
-## Atualização funcional observada na versão 2026.7.4.0
+## Atualização funcional observada na versão 2026.9.28.0
 
-Além da base C++/Qt6 já consolidada, esta versão acrescenta e corrige pontos diretamente ligados à experiência de uso da tabela principal:
+Esta versão consolida avanços estruturais na estabilidade, segurança e usabilidade do sistema:
+
+- **Sessões em tempo real assíncronas (`SessionCenterDialog`):** Carregamento em segundo plano via thread de trabalho (`run_on_security_runtime_thread`), mantendo a interface perfeitamente responsiva mesmo em bancos com grandes volumes históricos, com indicador de progresso e dicas de ferramentas (tooltips) para múltiplos caminhos monitorados;
+- **Quarentena e restauração inteligente (`RecoveryDialog`):** Atualização diferencial sem tremulação (`find_row_by_text`), mantendo a seleção da linha, ordenação de colunas e posição de rolagem ativas durante o monitoramento em tempo real;
+- **Restauração segura com validação SHA-256:** Diálogo de escolha de diretório de destino (restauração no caminho original ou em pasta alternativa de teste) com verificação criptográfica estrita de integridade via hash SHA-256;
+- **Central de alertas em tempo real (`AlertCenterDialog`):** Classificação determinística em 4 níveis objetivos de risco (Baixo, Médio, Alto e Crítico) e correlação direta com regras violadas e pacotes de evidência;
+- **Gerenciamento de perfis multi-diretório (`MultiDirectoryDialog`):** Perfis persistentes em SQLite para auditoria simultânea de múltiplos diretórios e raízes de monitoramento;
+- **Documentação e manual interativo integrados:** Atualização detalhada do passo a passo operacional em todos os seis idiomas suportados (Português, Inglês, Espanhol, Francês, Italiano e Alemão).
+
+## Histórico de atualização da versão 2026.7.4.0
 
 - abertura de arquivos reportados na tabela com suporte a diferentes tipos de arquivo, usando a associação do Windows e uma janela de escolha quando houver alternativas;
 - coluna `MIME` persistida, exibida e traduzida dinamicamente, com preservação do identificador original para auditoria;
@@ -834,16 +843,25 @@ Its core value proposition directly answers the most frequent question of any us
 The product operates as a sovereign **100% Local-First** solution (no cloud, no telemetry, no accounts, and no external AI), structured around 3 integrated layers (Continuous Monitoring with accurate Move/Rename detection, Searchable History with 17 native charts, and Local Security/Auditing).
 
 Consolidated version observed in assets and embedded documentation:
-- `v2026.8.25.0`
+- `v2026.9.28.0`
 Identified author in the project:
 - `Fernando Nillsson Cidade`
 
 Repository license:
 - `GNU Lesser General Public License v3.0 (LGPL-3.0)`
 
-## Functional Update Observed in Version 2026.7.4.0
+## Functional Update Observed in Version 2026.9.28.0
 
-Beyond the established C++/Qt6 foundation, this version adds and refines aspects directly tied to the primary event table user experience:
+This release consolidates major architectural advancements in stability, local security, and user experience:
+
+- **Asynchronous Real-Time Sessions (`SessionCenterDialog`):** Background loading worker thread (`run_on_security_runtime_thread`) preventing UI freeze when handling large historical database sessions, equipped with progress indicators and formatted tooltips for multi-directory paths;
+- **Smart Quarantine and Recovery (`RecoveryDialog`):** Anti-flicker differential row synchronization (`find_row_by_text`), preserving active row selection, column sorting, and scroll position during live polling;
+- **Safe Recovery with SHA-256 Validation:** Target destination chooser dialog (restore to original path or safe review folder) with strict cryptographic SHA-256 integrity hash verification;
+- **Real-Time Alert Center (`AlertCenterDialog`):** Deterministic incident triage across 4 objective risk levels (Low, Medium, High, Critical) with direct correlation to triggered rules and evidence packages;
+- **Multi-Directory Profile Management (`MultiDirectoryDialog`):** Persistent SQLite profile storage allowing simultaneous auditing and monitoring across multiple root directories;
+- **Integrated Interactive Documentation:** Comprehensive operational step-by-step user manuals across all six supported languages (Portuguese, English, Spanish, French, Italian, German).
+
+## Version 2026.7.4.0 Historical Notes
 
 - opening files reported in the table across different file formats, leveraging Windows shell file association and an application chooser dialog when alternatives exist;
 - `MIME` column persisted, displayed, and dynamically translated, preserving the raw identifier for audit purposes;
@@ -1632,16 +1650,25 @@ Su propuesta de valor central responde directamente a la pregunta más frecuente
 El producto actúa como una solución soberana **100% Local-First** (sin nube, sin telemetría, sin cuentas y sin IA externa), estructurada en 3 capas integradas (Monitorización Continua con detección correcta de Move/Rename, Historial Consultable con 17 gráficos nativos y Seguridad/Auditoría Local).
 
 Versión consolidada observada en los recursos y en la documentación integrada:
-- `v2026.8.25.0`
+- `v2026.9.28.0`
 Autor identificado en el proyecto:
 - `Fernando Nillsson Cidade`
 
 Licencia del repositorio:
 - `GNU Lesser General Public License v3.0 (LGPL-3.0)`
 
-## Actualización funcional observada en la versión 2026.7.4.0
+## Actualización funcional observada en la versión 2026.9.28.0
 
-Además de la base consolidada en C++/Qt6, esta versión añade y corrige aspectos directamente vinculados con la experiencia de uso de la tabla principal:
+Esta versión consolida mejoras estructurales esenciales en estabilidad, seguridad local y experiencia de usuario:
+
+- **Sesiones en tiempo real asíncronas (`SessionCenterDialog`):** Carga en segundo plano mediante hilo de trabajo (`run_on_security_runtime_thread`), evitando bloqueos en la interfaz incluso con bases de datos voluminosas, con indicador de progreso y sugerencias emergentes formateadas para múltiples rutas;
+- **Cuarentena y restauración inteligente (`RecoveryDialog`):** Actualización diferencial sin parpadeos (`find_row_by_text`), preservando la selección activa, el orden de columnas y la barra de desplazamiento durante la supervisión activa;
+- **Restauración segura con validación SHA-256:** Diálogo de selección de carpeta de destino (restaurar en ruta original o carpeta alternativa de prueba) con verificación criptográfica estricta mediante hash SHA-256;
+- **Centro de alertas en tiempo real (`AlertCenterDialog`):** Clasificación determinista en 4 niveles objetivos de riesgo (Bajo, Medio, Alto y Crítico) y vinculación con reglas infringidas y paquetes de evidencias;
+- **Gestión de perfiles multidirectorio (`MultiDirectoryDialog`):** Perfiles persistentes en SQLite para auditoría simultánea de múltiples directorios;
+- **Documentación y manual interactivo integrados:** Actualización exhaustiva paso a paso en los seis idiomas disponibles (portugués, inglés, español, francés, italiano y alemán).
+
+## Historial de actualización de la versión 2026.7.4.0
 
 - apertura de archivos reportados en la tabla con soporte para múltiples formatos, utilizando las asociaciones de Windows y un diálogo de selección cuando existan alternativas;
 - columna `MIME` guardada, mostrada y traducida dinámicamente, preservando el identificador original para fines de auditoría;
@@ -2390,16 +2417,25 @@ Sa proposition de valeur fondamentale répond directement à la question la plus
 Le produit fonctionne comme une solution souveraine **100% Local-First** (sans cloud, sans télémétrie, sans comptes et sans IA externe), structurée en 3 couches intégrées (Surveillance Continue avec détection précise des opérations Move/Rename, Historique Consultable avec 17 graphiques natifs et Sécurité/Audit Local).
 
 Version consolidée observée dans les ressources et la documentation intégrée :
-- `v2026.8.25.0`
+- `v2026.9.28.0`
 Auteur identifié dans le projet :
 - `Fernando Nillsson Cidade`
 
 Licence du référentiel :
 - `GNU Lesser General Public License v3.0 (LGPL-3.0)`
 
-## Mise à jour fonctionnelle observée dans la version 2026.7.4.0
+## Mise à jour fonctionnelle observée dans la version 2026.9.28.0
 
-Au-delà du socle C++/Qt6 consolidé, cette version apporte des améliorations directement liées à l'expérience utilisateur du tableau d'événements :
+Cette version consolide des avancées architecturales majeures en matière de stabilité, de sécurité locale et d'ergonomie :
+
+- **Sessions en temps réel asynchrones (`SessionCenterDialog`) :** Chargement en arrière-plan via thread de travail (`run_on_security_runtime_thread`), assurant une fluidité totale de l'interface même avec des dizaines de milliers d'événements, avec indicateur de progression et infobulles détaillées pour chemins multiples ;
+- **Quarantaine et restauration intelligente (`RecoveryDialog`) :** Synchronisation différentielle anti-scintillement (`find_row_by_text`), conservant la ligne sélectionnée, le tri des colonnes et le défilement actif pendant la surveillance en temps réel ;
+- **Restauration sécurisée avec validation SHA-256 :** Boîte de dialogue de choix du dossier de destination (restauration à l'emplacement d'origine ou dans un dossier de test) avec vérification cryptographique rigoureuse par hachage SHA-256 ;
+- **Centre d'alertes en temps réel (`AlertCenterDialog`) :** Triage déterministe sur 4 niveaux objectifs de risque (Faible, Moyen, Élevé, Critique) avec corrélation directe aux règles enfreintes et packages de preuves ;
+- **Gestion des profils multi-répertoires (`MultiDirectoryDialog`) :** Profils persistants en SQLite permettant l'audit simultané de plusieurs arborescences de répertoires ;
+- **Documentation et manuel intégrés :** Mise à jour détaillée étape par étape dans l'ensemble des six langues prises en charge (portugais, anglais, espagnol, français, italien et allemand).
+
+## Historique des mises à jour de la version 2026.7.4.0
 
 - ouverture des fichiers listés dans le tableau avec prise en charge de nombreux formats, via l'association système Windows et un dialogue de choix en cas d'alternatives multiples ;
 - colonne `MIME` persistée, affichée et traduite dynamiquement, préservant l'identifiant brut pour les besoins d'audit ;
@@ -3052,16 +3088,25 @@ La sua proposta di valore fondamentale risponde in modo diretto alla domanda pi�
 Il prodotto opera come soluzione sovrana **100% Local-First** (senza cloud, senza telemetria, senza account e senza IA esterna), articolata in 3 livelli integrati (Monitoraggio Continuo con rilevamento corretto di Move/Rename, Cronologia Consultabile con 17 grafici nativi e Sicurezza/Audit Locale).
 
 Versione consolidata presente negli asset e nella documentazione integrata:
-- `v2026.8.25.0`
+- `v2026.9.28.0`
 Autore identificato nel progetto:
 - `Fernando Nillsson Cidade`
 
 Licenza del repository:
 - `GNU Lesser General Public License v3.0 (LGPL-3.0)`
 
-## Aggiornamento funzionale osservato nella versione 2026.7.4.0
+## Aggiornamento funzionale osservato nella versione 2026.9.28.0
 
-Oltre alla solida base C++/Qt6 già consolidata, questa versione introduce miglioramenti direttamente legati all'esperienza d'uso della tabella principale:
+Questa versione consolida importanti progressi architetturali in termini di stabilità, sicurezza locale ed esperienza utente:
+
+- **Sessioni in tempo reale asincrone (`SessionCenterDialog`):** Caricamento in background tramite thread di lavoro (`run_on_security_runtime_thread`), evitando qualsiasi rallentamento dell'interfaccia anche con grandi volumi storici, con indicatore di avanzamento e tooltip formattati per percorsi multipli;
+- **Quarantena e ripristino intelligente (`RecoveryDialog`):** Aggiornamento differenziale anti-sfarfallio (`find_row_by_text`), mantenendo attiva la selezione della riga, l'ordinamento delle colonne e la barra di scorrimento durante il monitoraggio;
+- **Ripristino sicuro con convalida SHA-256:** Finestra di dialogo per la scelta della cartella di destinazione (ripristino nel percorso originale o in una cartella di test) con verifica crittografica rigorosa dell'integrità tramite hash SHA-256;
+- **Centro avvisi in tempo reale (`AlertCenterDialog`):** Valutazione deterministica su 4 livelli oggettivi di rischio (Basso, Medio, Alto e Critico) con collegamento diretto alle regole violate e ai pacchetti di prove;
+- **Gestione profili multi-directory (`MultiDirectoryDialog`):** Profili persistenti in SQLite per l'audit simultaneo di più directory monitorate;
+- **Documentazione e manuale interattivo integrati:** Aggiornamento completo delle istruzioni dettagliate in tutte le sei lingue supportate (portoghese, inglese, spagnolo, francese, italiano e tedesco).
+
+## Cronologia aggiornamenti della versione 2026.7.4.0
 
 - apertura dei file riportati nella tabella con supporto a diversi formati, sfruttando le associazioni native di Windows e una finestra di scelta in caso di molteplici applicazioni disponibili;
 - colonna `MIME` salvata, visualizzata e tradotta dinamicamente, preservando l'identificativo originale per finalità di audit;
@@ -3715,16 +3760,25 @@ Sein zentrales Wertversprechen beantwortet direkt die häufigste Frage jedes Ben
 Das Produkt fungiert als souveräne **100% Local-First**-Lösung (ohne Cloud, ohne Telemetrie, ohne Konten und ohne externe KI), gegliedert in 3 integrierte Schichten (Kontinuierliche Überwachung mit präziser Move/Rename-Erkennung, Durchsuchbarer Verlauf mit 17 nativen Diagrammen und Lokale Sicherheit/Audit).
 
 Konsolidierte Version gemäß Assets und integrierter Dokumentation:
-- `v2026.8.25.0`
+- `v2026.9.28.0`
 Identifizierter Autor im Projekt:
 - `Fernando Nillsson Cidade`
 
 Lizenz des Repositorys:
 - `GNU Lesser General Public License v3.0 (LGPL-3.0)`
 
-## Funktionale Aktualisierungen der Version 2026.7.4.0
+## Funktionale Aktualisierungen der Version 2026.9.28.0
 
-Über das etablierte C++/Qt6-Fundament hinaus führt diese Version Verbesserungen ein, die direkt das Benutzererlebnis der Haupttabelle betreffen:
+Diese Version konsolidiert bedeutende architektonische Fortschritte bei Stabilität, lokaler Sicherheit und Bedienung:
+
+- **Asynchrone Echtzeitsitzungen (`SessionCenterDialog`):** Hintergrundladen über einen Arbeitsthread (`run_on_security_runtime_thread`), wodurch die Benutzeroberfläche selbst bei umfangreichen Verlaufsdatenbanken vollständig flüssig bleibt, ergänzt durch Ladeanzeigen und formatierte Tooltips für Mehrpfad-Sitzungen;
+- **Intelligente Quarantäne und Wiederherstellung (`RecoveryDialog`):** Flimmerfreie differenzielle Tabellenaktualisierung (`find_row_by_text`), die aktive Zeilenauswahl, Spaltensortierung und Bildlaufposition bei Live-Updates beibehält;
+- **Sichere Wiederherstellung mit SHA-256-Validierung:** Dialog zur Zielordnerauswahl (Wiederherstellung am Originalpfad oder in einem Prüfordner) mit strikter kryptografischer SHA-256-Integritätsprüfung;
+- **Echtzeit-Warnzentrale (`AlertCenterDialog`):** Deterministische Triage in 4 objektiven Risikostufen (Niedrig, Mittel, Hoch, Kritisch) mit direkter Verknüpfung zu verletzten Regeln und Beweispaketen;
+- **Multi-Verzeichnis-Profilverwaltung (`MultiDirectoryDialog`):** Persistente SQLite-Profile zur simultanen Überwachung und Auditierung mehrerer Wurzelverzeichnisse;
+- **Integrierte interaktive Dokumentation:** Vollständige Aktualisierung der schrittweisen Anleitungen in allen sechs unterstützten Sprachen (Portugiesisch, Englisch, Spanisch, Französisch, Italienisch und Deutsch).
+
+## Historischer Versionsverlauf 2026.7.4.0
 
 - Öffnen von in der Tabelle gelisteten Dateien mit Unterstützung verschiedener Dateiformate unter Nutzung von Windows-Dateizuordnungen und einem Auswahl-Dialog bei mehreren Alternativen;
 - Gespeicherte, angezeigte und dynamisch übersetzte `MIME`-Spalte unter Beibehaltung der Roh-Kennung für Audit-Zwecke;
@@ -4439,6 +4493,27 @@ Das **Linceu Lighthouse** in diesem Workspace ist eine native Windows-Desktop-An
 │   │   └── 📄 RELEASE NOTES_pt_BR.txt
 │   └── 📁 images
 │       ├── 📁 icons
+│       │   ├── 📁 old
+│       │   │   ├── 📄 linceu_com_fundo.ico
+│       │   │   ├── 📄 linceu_com_fundo_1080_1080.ico
+│       │   │   ├── 📄 linceu_com_fundo_1440_2160.ico
+│       │   │   ├── 📄 linceu_com_fundo_150_150.ico
+│       │   │   ├── 📄 linceu_com_fundo_1920_1080.ico
+│       │   │   ├── 📄 linceu_com_fundo_2160_2160.ico
+│       │   │   ├── 📄 linceu_com_fundo_300_300.ico
+│       │   │   ├── 📄 linceu_com_fundo_3840_2160.ico
+│       │   │   ├── 📄 linceu_com_fundo_584_800.ico
+│       │   │   ├── 📄 linceu_com_fundo_71_71.ico
+│       │   │   ├── 📄 linceu_sem_fundo.ico
+│       │   │   ├── 📄 linceu_sem_fundo_1080_1080.ico
+│       │   │   ├── 📄 linceu_sem_fundo_1440_2160.ico
+│       │   │   ├── 📄 linceu_sem_fundo_150_150.ico
+│       │   │   ├── 📄 linceu_sem_fundo_1920_1080.ico
+│       │   │   ├── 📄 linceu_sem_fundo_2160_2160.ico
+│       │   │   ├── 📄 linceu_sem_fundo_300_300.ico
+│       │   │   ├── 📄 linceu_sem_fundo_3840_2160.ico
+│       │   │   ├── 📄 linceu_sem_fundo_584_800.ico
+│       │   │   └── 📄 linceu_sem_fundo_71_71.ico
 │       │   ├── 📄 analyze.ico
 │       │   ├── 📄 atualizar.ico
 │       │   ├── 📄 blocos-de-cores.ico
@@ -4446,16 +4521,6 @@ Das **Linceu Lighthouse** in diesem Workspace ist eine native Windows-Desktop-An
 │       │   ├── 📄 clear.ico
 │       │   ├── 📄 clear_button3.ico
 │       │   ├── 📄 filtro.ico
-│       │   ├── 📄 linceu_com_fundo.ico
-│       │   ├── 📄 linceu_com_fundo_1080_1080.ico
-│       │   ├── 📄 linceu_com_fundo_1440_2160.ico
-│       │   ├── 📄 linceu_com_fundo_150_150.ico
-│       │   ├── 📄 linceu_com_fundo_1920_1080.ico
-│       │   ├── 📄 linceu_com_fundo_2160_2160.ico
-│       │   ├── 📄 linceu_com_fundo_300_300.ico
-│       │   ├── 📄 linceu_com_fundo_3840_2160.ico
-│       │   ├── 📄 linceu_com_fundo_584_800.ico
-│       │   ├── 📄 linceu_com_fundo_71_71.ico
 │       │   ├── 📄 linceu_sem_fundo.ico
 │       │   ├── 📄 linceu_sem_fundo_1080_1080.ico
 │       │   ├── 📄 linceu_sem_fundo_1440_2160.ico
@@ -4479,6 +4544,27 @@ Das **Linceu Lighthouse** in diesem Workspace ist eine native Windows-Desktop-An
 │       │   ├── 📄 statistics.ico
 │       │   └── 📄 stop.ico
 │       └── 📁 imgs
+│           ├── 📁 old
+│           │   ├── 🖼️ linceu_com_fundo.png
+│           │   ├── 🖼️ linceu_com_fundo_1080_1080.png
+│           │   ├── 🖼️ linceu_com_fundo_1440_2160.png
+│           │   ├── 🖼️ linceu_com_fundo_150_150.png
+│           │   ├── 🖼️ linceu_com_fundo_1920_1080.png
+│           │   ├── 🖼️ linceu_com_fundo_2160_2160.png
+│           │   ├── 🖼️ linceu_com_fundo_300_300.png
+│           │   ├── 🖼️ linceu_com_fundo_3840_2160.png
+│           │   ├── 🖼️ linceu_com_fundo_584_800.png
+│           │   ├── 🖼️ linceu_com_fundo_71_71.png
+│           │   ├── 🖼️ linceu_sem_fundo.png
+│           │   ├── 🖼️ linceu_sem_fundo_1080_1080.png
+│           │   ├── 🖼️ linceu_sem_fundo_1440_2160.png
+│           │   ├── 🖼️ linceu_sem_fundo_150_150.png
+│           │   ├── 🖼️ linceu_sem_fundo_1920_1080.png
+│           │   ├── 🖼️ linceu_sem_fundo_2160_2160.png
+│           │   ├── 🖼️ linceu_sem_fundo_300_300.png
+│           │   ├── 🖼️ linceu_sem_fundo_3840_2160.png
+│           │   ├── 🖼️ linceu_sem_fundo_584_800.png
+│           │   └── 🖼️ linceu_sem_fundo_71_71.png
 │           ├── 🖼️ analyze.png
 │           ├── 🖼️ atualizar.png
 │           ├── 🖼️ blocos-de-cores.png
@@ -4486,16 +4572,6 @@ Das **Linceu Lighthouse** in diesem Workspace ist eine native Windows-Desktop-An
 │           ├── 🖼️ clear.png
 │           ├── 🖼️ clear_button3.png
 │           ├── 🖼️ filtro.png
-│           ├── 🖼️ linceu_com_fundo.png
-│           ├── 🖼️ linceu_com_fundo_1080_1080.png
-│           ├── 🖼️ linceu_com_fundo_1440_2160.png
-│           ├── 🖼️ linceu_com_fundo_150_150.png
-│           ├── 🖼️ linceu_com_fundo_1920_1080.png
-│           ├── 🖼️ linceu_com_fundo_2160_2160.png
-│           ├── 🖼️ linceu_com_fundo_300_300.png
-│           ├── 🖼️ linceu_com_fundo_3840_2160.png
-│           ├── 🖼️ linceu_com_fundo_584_800.png
-│           ├── 🖼️ linceu_com_fundo_71_71.png
 │           ├── 🖼️ linceu_sem_fundo.png
 │           ├── 🖼️ linceu_sem_fundo_1080_1080.png
 │           ├── 🖼️ linceu_sem_fundo_1440_2160.png
@@ -4846,6 +4922,7 @@ Das **Linceu Lighthouse** in diesem Workspace ist eine native Windows-Desktop-An
 │   │   ├── ⚡ gmet_47_GetTamanhoBytes.cpp
 │   │   └── ⚡ gmet_47_GetTamanhoBytes.h
 │   ├── 📁 GerenciamentoObservador
+│   │   ├── ⚡ ObserverRegistry.h
 │   │   ├── ⚡ gob_01_DetectarOperacaoMassiva.cpp
 │   │   ├── ⚡ gob_01_DetectarOperacaoMassiva.h
 │   │   ├── ⚡ gob_02_Iniciar.cpp
@@ -5315,6 +5392,7 @@ Das **Linceu Lighthouse** in diesem Workspace ist eine native Windows-Desktop-An
 ├── ⚡ src_02_SplashAppStarter.cpp
 └── ⚡ src_02_SplashAppStarter.h
 ```
+
 # LINCEU LIGHTHOUSE: .vscode
 
 **Root Path:** `c:\Users\ferna\APLICATIVOS\CPP\Linceu_Lighthouse_cpp\.vscode`
@@ -5325,6 +5403,7 @@ Das **Linceu Lighthouse** in diesem Workspace ist eine native Windows-Desktop-An
 ├── ⚙️ settings.json
 └── ⚙️ tasks.json
 ```
+
 # LINCEU LIGHTHOUSE: .github
 
 **Root Path:** `c:\Users\ferna\APLICATIVOS\CPP\Linceu_Lighthouse_cpp\.github`
@@ -5333,6 +5412,7 @@ Das **Linceu Lighthouse** in diesem Workspace ist eine native Windows-Desktop-An
 └── 📁 workflows
     └── ⚙️ update-readme-version.yml
 ```
+
 # LINCEU LIGHTHOUSE: mocks
 
 **Root Path:** `c:\Users\ferna\APLICATIVOS\CPP\Linceu_Lighthouse_cpp\mocks`
@@ -5346,6 +5426,7 @@ Das **Linceu Lighthouse** in diesem Workspace ist eine native Windows-Desktop-An
 ├── ⚡ find_VersionEditor.h
 └── 📄 limpar_build_qt6_regeneravel.ps1
 ```
+
 # LINCEU LIGHTHOUSE: repo
 
 **Root Path:** `c:\Users\ferna\APLICATIVOS\CPP\Linceu_Lighthouse_cpp\repo`

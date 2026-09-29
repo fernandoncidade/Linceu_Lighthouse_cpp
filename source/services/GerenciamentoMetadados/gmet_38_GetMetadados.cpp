@@ -361,17 +361,32 @@ QVariantMap get_metadados_gc(source::services::GerenciadorColunas* gc, const QVa
             bool stats_cache_pronto = false;
             {
                 QMutexLocker locker(&gc->lock_cache);
-                const QVariantMap cache_dir = gc->cache_metadados.value(caminho).toMap();
-                stats_cache_pronto = cache_dir.value(QStringLiteral("_dir_stats_ready")).toBool();
-                arquivos = cache_dir.value(QStringLiteral("arquivos")).toLongLong();
+                for (const QString& candidate : {caminho, QDir::cleanPath(caminho), QDir::toNativeSeparators(caminho)}) {
+                    if (gc->cache_metadados.contains(candidate)) {
+                        const QVariantMap cache_dir = gc->cache_metadados.value(candidate).toMap();
+                        if (cache_dir.value(QStringLiteral("_dir_stats_ready")).toBool()) {
+                            arquivos = cache_dir.value(QStringLiteral("arquivos")).toLongLong();
+                            stats_cache_pronto = true;
+                            break;
+                        }
+                    }
+                }
             }
 
             if (!stats_cache_pronto) {
+                qint64 total_bytes_calc = 0;
                 QDirIterator it(caminho, QDir::Files, QDirIterator::Subdirectories);
                 while (it.hasNext()) {
                     it.next();
                     ++arquivos;
+                    total_bytes_calc += it.fileInfo().size();
                 }
+                QMutexLocker locker(&gc->lock_cache);
+                QVariantMap cache_dir = gc->cache_metadados.value(caminho).toMap();
+                cache_dir.insert(QStringLiteral("arquivos"), arquivos);
+                cache_dir.insert(QStringLiteral("size_b"), total_bytes_calc);
+                cache_dir.insert(QStringLiteral("_dir_stats_ready"), true);
+                gc->cache_metadados.insert(caminho, cache_dir);
             }
             metadados.insert("arquivos", arquivos);
         }

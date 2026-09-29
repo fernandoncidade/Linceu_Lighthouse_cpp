@@ -9,13 +9,15 @@ std::vector<ManualSection> doc_fr_fr() {
             QStringLiteral("nouvelles-fonctionnalites"),
             QStringLiteral("Nouvelles fonctionnalités"),
             {
-                QStringLiteral("Des améliorations ont été apportées à la fiabilité de la surveillance en temps réel, au contrôle pause/reprise/arrêt et à la mise à jour du tableau sous forte charge d'événements."),
-                QStringLiteral("Les instructions ci-dessous expliquent comment utiliser ces améliorations de manière sûre au quotidien."),
+                QStringLiteral("La version 2026.9.28.0 apporte des améliorations majeures de fiabilité à la surveillance en temps réel, un chargement asynchrone non bloquant pour les sessions en temps réel, une synchronisation différentielle des tableaux sans scintillement en quarantaine et une restauration avec vérification cryptographique SHA-256."),
+                QStringLiteral("Les instructions ci-dessous vous guident pour exploiter ces nouvelles fonctionnalités de façon sûre, prévisible et efficace au quotidien."),
             },
             {
-                QStringLiteral("Détection plus précise des opérations d'ajout, modification, suppression, renommage et déplacement."),
-                QStringLiteral("Mise à jour visuelle plus stable sur les grandes listes, avec moins d'incohérences temporaires pendant les pics."),
-                QStringLiteral("Changement de langue plus cohérent dans les menus, le tableau, le manuel, l'aide et les statistiques sans redémarrage."),
+                QStringLiteral("Sessions en temps réel non bloquantes : chargement asynchrone en arrière-plan avec indicateur de progression et annulation sûre."),
+                QStringLiteral("Quarantaine et restauration intelligente : mise à jour différentielle des tableaux préservant sélection, tri et position de défilement."),
+                QStringLiteral("Restauration sécurisée avec sélecteur de dossier cible et contrôle cryptographique d'intégrité SHA-256."),
+                QStringLiteral("Centre d'alertes avec tri par niveaux objectifs de risque et évaluation déterministe des règles de sécurité."),
+                QStringLiteral("Gestion multi-répertoire optimisée avec profils persistants de surveillance simultanée."),
             },
             {
                 {
@@ -34,6 +36,28 @@ std::vector<ManualSection> doc_fr_fr() {
                         QStringLiteral("Pendant les opérations longues, mettez en pause pour effectuer une revue intermédiaire."),
                         QStringLiteral("Reprenez uniquement après validation du jeu de données visible."),
                         QStringLiteral("Avant de fermer, arrêtez explicitement la surveillance/l'analyse et attendez la mise à jour finale d'état."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Comment utiliser les Sessions en Temps Réel Asynchrones"),
+                    {
+                        QStringLiteral("Ouvrez Configuration > Sécurité > Sessions en temps réel."),
+                        QStringLiteral("L'historique se charge en arrière-plan via un thread de travail dédié, maintenant l'interface parfaitement fluide même avec des milliers d'événements."),
+                        QStringLiteral("Consultez les colonnes : Mis à jour le, Étiquette de session, Total d'événements, Répertoires surveillés et Identifiant de preuve."),
+                        QStringLiteral("Survolez la colonne des répertoires pour afficher la liste complète des chemins lorsque la session comprend plusieurs dossiers."),
+                        QStringLiteral("Cliquez sur Actualiser à tout moment pour interroger de nouveaux blocs d'événements sans fermer le dialogue."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Comment utiliser la Quarantaine et Restauration Intelligente"),
+                    {
+                        QStringLiteral("Ouvrez Configuration > Sécurité > Quarantaine et restauration."),
+                        QStringLiteral("Basculez entre les onglets Quarantaine (fichiers isolés par sécurité) et Versions surveillées (instantanés de référence cryptographique)."),
+                        QStringLiteral("La mise à jour du tableau est différentielle : l'arrivée de nouveaux éléments ne réinitialise ni votre sélection active ni votre défilement."),
+                        QStringLiteral("Sélectionnez un fichier et utilisez Ouvrir le dossier sélectionné pour localiser la copie isolée dans l'Explorateur Windows."),
+                        QStringLiteral("Cliquez sur Restaurer la copie sélectionnée (ou Restaurer la version surveillée) pour choisir un dossier de destination sûr et récupérer le fichier vérifié avec validation d'intégrité."),
                     },
                     {}
                 },
@@ -245,7 +269,7 @@ std::vector<ManualSection> doc_fr_fr() {
             QStringLiteral("utiliser-menu-securite"),
             QStringLiteral("Utiliser Configuration > Sécurité"),
             {
-                QStringLiteral("Le sous-menu Sécurité regroupe audit, sessions en temps réel, quarantaine, restauration et paquets de preuve. Utilisez-le après avoir configuré les répertoires et de préférence après une analyse initiale."),
+                QStringLiteral("Le sous-menu Sécurité réunit ressources d'audit, suivi des sessions en temps réel, quarantaine, restauration, références cryptographiques et paquets de preuve. Utilisez-le après avoir configuré les répertoires et de préférence après une analyse initiale."),
             },
             {},
             {
@@ -260,23 +284,44 @@ std::vector<ManualSection> doc_fr_fr() {
                     {}
                 },
                 {
-                    QStringLiteral("Centre d'alertes et sessions en temps réel"),
+                    QStringLiteral("Centre d'alertes en temps réel"),
                     {
-                        QStringLiteral("Ouvrez le Centre d'alertes pour examiner heure, niveau de risque, résumé, règles déclenchées, chemin, nom, session et preuve."),
-                        QStringLiteral("Traitez les alertes critiques ou élevées avant les événements courants du tableau principal."),
-                        QStringLiteral("Ouvrez Sessions en temps réel pour inspecter sessions récentes, total d'événements et répertoires impliqués."),
-                        QStringLiteral("Utilisez Actualiser dans chaque fenêtre pendant la surveillance active pour charger de nouveaux enregistrements sans fermer le dialogue."),
+                        QStringLiteral("Ouvrez Configuration > Sécurité > Centre d'alertes pour examiner les événements classés par niveaux de risque : Faible, Moyen, Élevé et Critique."),
+                        QStringLiteral("Consultez le résumé de l'alerte, les règles déclenchées, le chemin, le nom de fichier, la session associée et l'identifiant de preuve."),
+                        QStringLiteral("Traitez les alertes Critiques ou Élevées en priorité avant les événements courants dans le tableau principal."),
+                        QStringLiteral("Cliquez sur Actualiser pour interroger de nouvelles alertes sans interrompre la surveillance active."),
                     },
                     {}
                 },
                 {
-                    QStringLiteral("Quarantaine, restauration et preuves"),
+                    QStringLiteral("Sessions en temps réel asynchrones"),
                     {
-                        QStringLiteral("Ouvrez Quarantaine et restauration pour consulter les onglets Quarantaine et Versions surveillées."),
-                        QStringLiteral("Dans Quarantaine, sélectionnez une ligne et utilisez Ouvrir le dossier sélectionné pour localiser la copie isolée ; restaurez seulement après vérification de la destination."),
-                        QStringLiteral("Dans Versions surveillées, sélectionnez une ligne et utilisez Restaurer la version surveillée pour récupérer une version enregistrée."),
-                        QStringLiteral("Ouvrez Paquet de preuve, choisissez la destination, cliquez Exporter maintenant puis inspectez le dossier généré."),
-                        QStringLiteral("Utilisez Effacer la base de sécurité seulement après export des preuves ou confirmation que l'ancien historique n'est plus nécessaire."),
+                        QStringLiteral("Ouvrez Configuration > Sécurité > Sessions en temps réel pour inspecter les blocs d'activité du système de fichiers."),
+                        QStringLiteral("Le chargement s'exécute en arrière-plan via un thread de travail dédié, évitant tout gel ou ralentissement visuel même sur de volumineuses bases historiques."),
+                        QStringLiteral("Consultez l'horodatage, le libellé convivial de session, le total d'événements, le résumé des répertoires et l'identifiant unique."),
+                        QStringLiteral("Survolez la colonne des répertoires pour visualiser la liste complète des chemins lorsqu'une session implique plusieurs dossiers."),
+                        QStringLiteral("Utilisez Actualiser pour charger de nouvelles sessions incrémentales pendant la surveillance continue."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Quarantaine et restauration intelligente"),
+                    {
+                        QStringLiteral("Ouvrez Configuration > Sécurité > Quarantaine et restauration pour accéder aux onglets Quarantaine et Versions surveillées."),
+                        QStringLiteral("Les tableaux utilisent une synchronisation différentielle sans scintillement : votre sélection active, le tri et la position de défilement restent stables lors des actualisations."),
+                        QStringLiteral("Dans l'onglet Quarantaine, sélectionnez un fichier isolé et utilisez Ouvrir le dossier sélectionné pour inspecter son emplacement dans l'Explorateur Windows."),
+                        QStringLiteral("Cliquez sur Restaurer la copie sélectionnée pour ouvrir la boîte de dialogue de choix de destination : restaurez vers l'emplacement d'origine ou choisissez un dossier sécurisé pour analyse."),
+                        QStringLiteral("Dans l'onglet Versions surveillées, sélectionnez un instantané de référence cryptographique et cliquez sur Restaurer la version surveillée pour le récupérer."),
+                        QStringLiteral("Le système valide l'intégrité cryptographique SHA-256 et affiche une confirmation immédiate de succès après restauration."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Paquet de preuve et audit"),
+                    {
+                        QStringLiteral("Ouvrez Configuration > Sécurité > Paquet de preuve pour exporter un ensemble d'audit structuré."),
+                        QStringLiteral("Choisissez le dossier de destination, cliquez sur Exporter maintenant et examinez le paquet généré contenant les références cryptographiques et les journaux structurés."),
+                        QStringLiteral("Utilisez Effacer la base de sécurité uniquement après avoir exporté vos preuves et confirmé que l'historique antérieur n'est plus nécessaire."),
                     },
                     {}
                 },

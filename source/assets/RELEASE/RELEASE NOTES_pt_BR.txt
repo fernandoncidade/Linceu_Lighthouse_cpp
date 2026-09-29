@@ -1,3 +1,52 @@
+NOTAS DE LANÇAMENTO: Versão 2026.9.28.0
+
+DESTAQUES DESTA VERSÃO
+
+Esta versão do Linceu Lighthouse aprimora a estabilidade, a segurança local e a facilidade de uso do aplicativo, trazendo uma experiência mais ágil e segura no acompanhamento diário de arquivos e pastas.
+
+O histórico de sessões agora é carregado de forma suave em segundo plano, evitando qualquer travamento ou congelamento da janela mesmo quando houver dezenas de milhares de eventos registrados. A área de quarentena e recuperação de arquivos foi totalmente aprimorada: as tabelas são atualizadas sem piscar a tela e mantêm o item selecionado e a posição da barra de rolagem exatamente onde o usuário deixou.
+
+Além disso, a restauração de arquivos agora permite escolher a pasta de destino desejada e realiza uma verificação automática de integridade para assegurar que os arquivos recuperados estejam intactos. A central de alertas classifica as ocorrências por níveis claros de prioridade, facilitando a tomada de decisão rápida e segura.
+
+
+NOVOS RECURSOS E MELHORIAS
+
+1. Sessões em Tempo Real Mais Rápidas e Fluidas
+- O histórico de sessões de monitoramento é carregado diretamente em segundo plano, garantindo que o aplicativo permaneça responsivo e pronto para uso a qualquer instante.
+- Adição de indicador visual que informa quando a lista de sessões está sendo consultada.
+- Dicas flutuantes ao passar o mouse sobre os resumos de diretórios, permitindo visualizar com facilidade todos os caminhos monitorados na mesma sessão.
+- Botão de atualização rápida para conferir novos blocos de eventos sem precisar fechar a janela.
+
+2. Quarentena Inteligente e Atualização Suave
+- As tabelas de quarentena e versões protegidas foram aperfeiçoadas para atualizar de modo silencioso e sem tremulação visual na tela.
+- A seleção atual do usuário, a posição da barra de rolagem e a ordem das colunas são preservadas durante a chegada de novos eventos.
+- Botão direto para abrir a pasta onde o arquivo isolado se encontra, permitindo inspecioná-lo rapidamente no Explorador de Arquivos do Windows.
+
+3. Restauração Segura de Arquivos com Verificação Automática
+- Nova opção de escolha de destino na recuperação: o usuário pode restaurar o arquivo em sua pasta original ou selecionar uma pasta alternativa e segura para verificação.
+- Conferência automática de integridade no momento da restauração, confirmando que o conteúdo recuperado é idêntico à cópia de segurança guardada.
+- Mensagens claras e objetivas confirmando o sucesso da operação de restauração.
+
+4. Central de Alertas Organizada por Nível de Atenção
+- Apresentação dos alertas classificados em quatro níveis objetivos de atenção: Baixo, Médio, Alto e Crítico.
+- Identificação imediata das situações prioritárias, permitindo agir rapidamente sobre os avisos mais importantes.
+- Exibição clara dos motivos que geraram cada alerta, do nome do arquivo envolvido e da pasta correspondente.
+- Atualização contínua dos avisos sem interromper o monitoramento em andamento.
+
+5. Gerenciamento Prático de Múltiplos Diretórios
+- Facilidade para adicionar e remover pastas monitoradas em perfis organizados e salvos no próprio computador.
+- Possibilidade de auditar e proteger diferentes pastas e unidades de disco simultaneamente.
+- Resumo claro com total de pastas ativas e caminho principal em uso.
+
+6. Manual e Ajuda Integrados em 6 Idiomas
+- O Manual do Usuário presente dentro do aplicativo foi ampliado com instruções detalhadas, passo a passo, sobre como operar todas as novas ferramentas.
+- Conteúdo completamente traduzido e revisado em seis idiomas: Português, Inglês, Espanhol, Francês, Italiano e Alemão.
+- Navegação aprimorada com atalhos diretos para cada assunto e fluxo recomendado de utilização.
+
+
+_________________________________________________
+
+
 NOTAS DE LANÇAMENTO: Versão 2026.8.25.0
 
 DESTAQUES DESTA VERSÃO

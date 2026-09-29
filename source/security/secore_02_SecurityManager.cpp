@@ -73,11 +73,14 @@ QVariantList query_monitoramento_rows(const QString& db_path,
     }
 
     db.setDatabaseName(db_path);
+    db.setConnectOptions(QStringLiteral("QSQLITE_OPEN_READONLY;QSQLITE_BUSY_TIMEOUT=5000"));
     if (!db.isOpen() && !db.open()) {
         return rows;
     }
 
     QSqlQuery query(db);
+    query.exec(QStringLiteral("PRAGMA query_only = ON;"));
+    query.exec(QStringLiteral("PRAGMA busy_timeout = 5000;"));
     query.prepare(sql);
     for (const QVariant& bind : binds) {
         query.addBindValue(bind);
@@ -445,12 +448,14 @@ QVariantList SecurityManager::list_alerts(int limit) const {
         return query_monitoramento_rows(
             db_path_,
             QStringLiteral("alerts_monitoramento"),
-            QStringLiteral("SELECT rowid AS id, timestamp AS created_at, monitor_profile_id AS profile_id, nome, "
-                           "COALESCE(NULLIF(dir_atual, ''), dir_anterior) AS caminho, "
-                           "COALESCE(NULLIF(alerta_nivel, ''), risk_level) AS risk_level, "
-                           "alerta_regras AS rules, alerta_resumo AS summary, session_id, evidence_id "
-                           "FROM monitoramento WHERE monitor_profile_id = ? AND COALESCE(alerta_resumo, '') <> '' "
-                           "ORDER BY rowid DESC LIMIT ?"),
+            QStringLiteral("SELECT id, created_at, profile_id, nome, caminho, risk_level, rules, summary, session_id, evidence_id FROM ("
+                           "  SELECT rowid AS id, timestamp AS created_at, monitor_profile_id AS profile_id, nome, "
+                           "  COALESCE(NULLIF(dir_atual, ''), dir_anterior) AS caminho, "
+                           "  COALESCE(NULLIF(alerta_nivel, ''), risk_level) AS risk_level, "
+                           "  alerta_regras AS rules, alerta_resumo AS summary, session_id, evidence_id "
+                           "  FROM monitoramento WHERE monitor_profile_id = ? ORDER BY rowid DESC LIMIT 10000"
+                           ") WHERE COALESCE(summary, '') <> '' "
+                           "ORDER BY id DESC LIMIT ?"),
             {profile_id, safe_limit});
     }
     QVariantList rows = query_rows(
@@ -466,12 +471,14 @@ QVariantList SecurityManager::list_alerts(int limit) const {
     return query_monitoramento_rows(
         db_path_,
         QStringLiteral("alerts_monitoramento_all"),
-        QStringLiteral("SELECT rowid AS id, timestamp AS created_at, monitor_profile_id AS profile_id, nome, "
-                       "COALESCE(NULLIF(dir_atual, ''), dir_anterior) AS caminho, "
-                       "COALESCE(NULLIF(alerta_nivel, ''), risk_level) AS risk_level, "
-                       "alerta_regras AS rules, alerta_resumo AS summary, session_id, evidence_id "
-                       "FROM monitoramento WHERE COALESCE(alerta_resumo, '') <> '' "
-                       "ORDER BY rowid DESC LIMIT ?"),
+        QStringLiteral("SELECT id, created_at, profile_id, nome, caminho, risk_level, rules, summary, session_id, evidence_id FROM ("
+                       "  SELECT rowid AS id, timestamp AS created_at, monitor_profile_id AS profile_id, nome, "
+                       "  COALESCE(NULLIF(dir_atual, ''), dir_anterior) AS caminho, "
+                       "  COALESCE(NULLIF(alerta_nivel, ''), risk_level) AS risk_level, "
+                       "  alerta_regras AS rules, alerta_resumo AS summary, session_id, evidence_id "
+                       "  FROM monitoramento ORDER BY rowid DESC LIMIT 10000"
+                       ") WHERE COALESCE(summary, '') <> '' "
+                       "ORDER BY id DESC LIMIT ?"),
         {safe_limit});
 }
 
@@ -492,12 +499,14 @@ QVariantList SecurityManager::list_alerts_since(qint64 after_id, int limit) cons
         return query_monitoramento_rows(
             db_path_,
             QStringLiteral("alerts_monitoramento_since"),
-            QStringLiteral("SELECT rowid AS id, timestamp AS created_at, monitor_profile_id AS profile_id, nome, "
-                           "COALESCE(NULLIF(dir_atual, ''), dir_anterior) AS caminho, "
-                           "COALESCE(NULLIF(alerta_nivel, ''), risk_level) AS risk_level, "
-                           "alerta_regras AS rules, alerta_resumo AS summary, session_id, evidence_id "
-                           "FROM monitoramento WHERE monitor_profile_id = ? AND rowid > ? AND COALESCE(alerta_resumo, '') <> '' "
-                           "ORDER BY rowid ASC LIMIT ?"),
+            QStringLiteral("SELECT id, created_at, profile_id, nome, caminho, risk_level, rules, summary, session_id, evidence_id FROM ("
+                           "  SELECT rowid AS id, timestamp AS created_at, monitor_profile_id AS profile_id, nome, "
+                           "  COALESCE(NULLIF(dir_atual, ''), dir_anterior) AS caminho, "
+                           "  COALESCE(NULLIF(alerta_nivel, ''), risk_level) AS risk_level, "
+                           "  alerta_regras AS rules, alerta_resumo AS summary, session_id, evidence_id "
+                           "  FROM monitoramento WHERE monitor_profile_id = ? AND rowid > ? ORDER BY rowid ASC LIMIT 10000"
+                           ") WHERE COALESCE(summary, '') <> '' "
+                           "ORDER BY id ASC LIMIT ?"),
             {profile_id, after_id, safe_limit});
     }
 
@@ -514,12 +523,14 @@ QVariantList SecurityManager::list_alerts_since(qint64 after_id, int limit) cons
     return query_monitoramento_rows(
         db_path_,
         QStringLiteral("alerts_monitoramento_since_all"),
-        QStringLiteral("SELECT rowid AS id, timestamp AS created_at, monitor_profile_id AS profile_id, nome, "
-                       "COALESCE(NULLIF(dir_atual, ''), dir_anterior) AS caminho, "
-                       "COALESCE(NULLIF(alerta_nivel, ''), risk_level) AS risk_level, "
-                       "alerta_regras AS rules, alerta_resumo AS summary, session_id, evidence_id "
-                       "FROM monitoramento WHERE rowid > ? AND COALESCE(alerta_resumo, '') <> '' "
-                       "ORDER BY rowid ASC LIMIT ?"),
+        QStringLiteral("SELECT id, created_at, profile_id, nome, caminho, risk_level, rules, summary, session_id, evidence_id FROM ("
+                       "  SELECT rowid AS id, timestamp AS created_at, monitor_profile_id AS profile_id, nome, "
+                       "  COALESCE(NULLIF(dir_atual, ''), dir_anterior) AS caminho, "
+                       "  COALESCE(NULLIF(alerta_nivel, ''), risk_level) AS risk_level, "
+                       "  alerta_regras AS rules, alerta_resumo AS summary, session_id, evidence_id "
+                       "  FROM monitoramento WHERE rowid > ? ORDER BY rowid ASC LIMIT 10000"
+                       ") WHERE COALESCE(summary, '') <> '' "
+                       "ORDER BY id ASC LIMIT ?"),
         {after_id, safe_limit});
 }
 
@@ -542,8 +553,8 @@ QVariantList SecurityManager::list_sessions(int limit) const {
             QStringLiteral("sessions_monitoramento"),
             QStringLiteral("SELECT session_id, monitor_profile_id AS profile_id, "
                            "MAX(session_label) AS label, MIN(timestamp) AS started_at, MAX(timestamp) AS updated_at, "
-                           "COUNT(*) AS total_eventos, GROUP_CONCAT(DISTINCT COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
-                           "FROM monitoramento WHERE monitor_profile_id = ? AND COALESCE(session_id, '') <> '' "
+                           "COUNT(*) AS total_eventos, MAX(COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
+                           "FROM (SELECT rowid, session_id, monitor_profile_id, session_label, timestamp, dir_atual, dir_anterior FROM monitoramento WHERE monitor_profile_id = ? AND COALESCE(session_id, '') <> '' ORDER BY rowid DESC LIMIT 10000) "
                            "GROUP BY session_id ORDER BY MAX(rowid) DESC LIMIT ?"),
             {profile_id, safe_limit});
     }
@@ -562,8 +573,8 @@ QVariantList SecurityManager::list_sessions(int limit) const {
         QStringLiteral("sessions_monitoramento_all"),
         QStringLiteral("SELECT session_id, monitor_profile_id AS profile_id, "
                        "MAX(session_label) AS label, MIN(timestamp) AS started_at, MAX(timestamp) AS updated_at, "
-                       "COUNT(*) AS total_eventos, GROUP_CONCAT(DISTINCT COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
-                       "FROM monitoramento WHERE COALESCE(session_id, '') <> '' "
+                       "COUNT(*) AS total_eventos, MAX(COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
+                       "FROM (SELECT rowid, session_id, monitor_profile_id, session_label, timestamp, dir_atual, dir_anterior FROM monitoramento WHERE COALESCE(session_id, '') <> '' ORDER BY rowid DESC LIMIT 10000) "
                        "GROUP BY session_id ORDER BY MAX(rowid) DESC LIMIT ?"),
         {safe_limit});
 }
@@ -592,8 +603,8 @@ QVariantList SecurityManager::list_sessions_updated_after(const QString& after_u
             QStringLiteral("sessions_monitoramento_since"),
             QStringLiteral("SELECT session_id, monitor_profile_id AS profile_id, "
                            "MAX(session_label) AS label, MIN(timestamp) AS started_at, MAX(timestamp) AS updated_at, "
-                           "COUNT(*) AS total_eventos, GROUP_CONCAT(DISTINCT COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
-                           "FROM monitoramento WHERE monitor_profile_id = ? AND COALESCE(session_id, '') <> '' "
+                           "COUNT(*) AS total_eventos, MAX(COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
+                           "FROM (SELECT rowid, session_id, monitor_profile_id, session_label, timestamp, dir_atual, dir_anterior FROM monitoramento WHERE monitor_profile_id = ? AND COALESCE(session_id, '') <> '' ORDER BY rowid DESC LIMIT 10000) "
                            "GROUP BY session_id HAVING MAX(timestamp) > ? "
                            "ORDER BY MAX(timestamp) ASC LIMIT ?"),
             {profile_id, after_updated_at, safe_limit});
@@ -614,8 +625,8 @@ QVariantList SecurityManager::list_sessions_updated_after(const QString& after_u
         QStringLiteral("sessions_monitoramento_since_all"),
         QStringLiteral("SELECT session_id, monitor_profile_id AS profile_id, "
                        "MAX(session_label) AS label, MIN(timestamp) AS started_at, MAX(timestamp) AS updated_at, "
-                       "COUNT(*) AS total_eventos, GROUP_CONCAT(DISTINCT COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
-                       "FROM monitoramento WHERE COALESCE(session_id, '') <> '' "
+                       "COUNT(*) AS total_eventos, MAX(COALESCE(NULLIF(dir_atual, ''), dir_anterior)) AS diretorios "
+                       "FROM (SELECT rowid, session_id, monitor_profile_id, session_label, timestamp, dir_atual, dir_anterior FROM monitoramento WHERE COALESCE(session_id, '') <> '' ORDER BY rowid DESC LIMIT 10000) "
                        "GROUP BY session_id HAVING MAX(timestamp) > ? ORDER BY MAX(timestamp) ASC LIMIT ?"),
         {after_updated_at, safe_limit});
 }
@@ -704,7 +715,7 @@ QVariantList SecurityManager::list_evidence_entries(int limit) const {
             QStringLiteral("evidence_monitoramento"),
             QStringLiteral("SELECT evidence_id, timestamp AS created_at, monitor_profile_id AS profile_id, nome, "
                            "COALESCE(NULLIF(dir_atual, ''), dir_anterior) AS caminho, tipo_operacao, risk_level "
-                           "FROM monitoramento WHERE monitor_profile_id = ? AND COALESCE(evidence_id, '') <> '' "
+                           "FROM (SELECT rowid, evidence_id, timestamp, monitor_profile_id, nome, dir_atual, dir_anterior, tipo_operacao, risk_level FROM monitoramento WHERE monitor_profile_id = ? AND COALESCE(evidence_id, '') <> '' ORDER BY rowid DESC LIMIT 10000) "
                            "ORDER BY rowid DESC LIMIT ?"),
             {profile_id, safe_limit});
     }
@@ -724,7 +735,8 @@ QVariantList SecurityManager::list_evidence_entries(int limit) const {
         QStringLiteral("evidence_monitoramento_all"),
         QStringLiteral("SELECT evidence_id, timestamp AS created_at, monitor_profile_id AS profile_id, nome, "
                        "COALESCE(NULLIF(dir_atual, ''), dir_anterior) AS caminho, tipo_operacao, risk_level "
-                       "FROM monitoramento WHERE COALESCE(evidence_id, '') <> '' ORDER BY rowid DESC LIMIT ?"),
+                       "FROM (SELECT rowid, evidence_id, timestamp, monitor_profile_id, nome, dir_atual, dir_anterior, tipo_operacao, risk_level FROM monitoramento WHERE COALESCE(evidence_id, '') <> '' ORDER BY rowid DESC LIMIT 10000) "
+                       "ORDER BY rowid DESC LIMIT ?"),
         {safe_limit});
 }
 
@@ -798,7 +810,6 @@ bool SecurityManager::clear_security_database(QString* error_message) {
                                                .arg(sql_error);
                 } else {
                     query.exec(QStringLiteral("PRAGMA wal_checkpoint(TRUNCATE)"));
-                    query.exec(QStringLiteral("VACUUM"));
                     clear_ok = true;
                 }
             }

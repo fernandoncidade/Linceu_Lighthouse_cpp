@@ -193,6 +193,20 @@ RecoveryDialog::RecoveryDialog(QWidget* parent, QObject* interface_obj)
     baseline_layout->addLayout(baseline_buttons);
     tabs_->addTab(baseline_tab, QString());
 
+    quarantine_table_->setColumnWidth(0, 150);
+    quarantine_table_->setColumnWidth(1, 120);
+    quarantine_table_->setColumnWidth(2, 220);
+    quarantine_table_->setColumnWidth(3, 200);
+    quarantine_table_->setColumnWidth(4, 120);
+    quarantine_table_->setColumnWidth(5, 90);
+
+    baseline_table_->setColumnWidth(0, 150);
+    baseline_table_->setColumnWidth(1, 240);
+    baseline_table_->setColumnWidth(2, 120);
+    baseline_table_->setColumnWidth(3, 130);
+    baseline_table_->setColumnWidth(4, 90);
+    baseline_table_->setColumnWidth(5, 180);
+
     auto* footer_buttons = new QHBoxLayout();
     refresh_button_ = new QPushButton(this);
     close_button_ = new QPushButton(this);
@@ -215,10 +229,13 @@ RecoveryDialog::RecoveryDialog(QWidget* parent, QObject* interface_obj)
                      &QFutureWatcher<QPair<QVariantList, QVariantList>>::finished,
                      this,
                      [this]() {
+                         const bool replace_all = !initialized_;
                          const QPair<QVariantList, QVariantList> result = refresh_watcher_->result();
-                         apply_quarantine_rows(result.first, false);
-                         apply_baseline_rows(result.second, false);
+                         apply_quarantine_rows(result.first, replace_all);
+                         apply_baseline_rows(result.second, replace_all);
+                         initialized_ = true;
                          refresh_button_->setEnabled(true);
+                         update_summary();
 
                          if (refresh_pending_) {
                              refresh_pending_ = false;
@@ -239,6 +256,12 @@ RecoveryDialog::RecoveryDialog(QWidget* parent, QObject* interface_obj)
 
     refresh_texts();
     refresh_data();
+}
+
+RecoveryDialog::~RecoveryDialog() {
+    if (refresh_watcher_ != nullptr && refresh_watcher_->isRunning()) {
+        refresh_watcher_->waitForFinished();
+    }
 }
 
 void RecoveryDialog::refresh_texts() {
@@ -301,29 +324,29 @@ void RecoveryDialog::refresh_data() {
         return;
     }
 
-    if (!initialized_) {
-        apply_quarantine_rows(security_manager->list_quarantine_items(300), true);
-        apply_baseline_rows(security_manager->list_baseline_entries(300), true);
-        initialized_ = true;
-        refresh_button_->setEnabled(true);
-        return;
-    }
-
     if (refresh_watcher_ != nullptr && refresh_watcher_->isRunning()) {
         refresh_pending_ = true;
         return;
     }
 
+    const bool replace_all = !initialized_;
     const QString db_path = security_manager->db_path();
     const QString profile_id =
         security_manager->profile_summary().value(QStringLiteral("monitor_profile_id")).toString();
     const qint64 last_quarantine_id = last_quarantine_id_;
     const QString last_baseline_updated_at = last_baseline_updated_at_;
 
-    refresh_button_->setEnabled(false);
-    summary_label_->setText(
-        get_text(loc_, QStringLiteral("security_refresh"), QStringLiteral("Atualizar")) + QStringLiteral("..."));
-    refresh_watcher_->setFuture(QtConcurrent::run([db_path, profile_id, last_quarantine_id, last_baseline_updated_at]() {
+    if (replace_all) {
+        refresh_button_->setEnabled(false);
+        summary_label_->setText(
+            get_text(loc_, QStringLiteral("loading"), QStringLiteral("Carregando")) +
+            QStringLiteral("..."));
+    }
+    refresh_watcher_->setFuture(QtConcurrent::run([security_manager, db_path, profile_id, last_quarantine_id, last_baseline_updated_at, replace_all]() {
+        if (replace_all) {
+            return qMakePair(security_manager->list_quarantine_items(300),
+                             security_manager->list_baseline_entries(300));
+        }
         return qMakePair(fetch_quarantine_delta(db_path, last_quarantine_id, 120),
                          fetch_baseline_delta(db_path, profile_id, last_baseline_updated_at, 120));
     }));
@@ -383,10 +406,16 @@ void RecoveryDialog::restore_selected_quarantine_copy() {
         return;
     }
 
+    show_translated_security_feedback(
+        interface_,
+        QStringLiteral("security_restore_success"),
+        QStringLiteral("Arquivo restaurado com sucesso."));
+    show_translated_status_message(
+        interface_,
+        QStringLiteral("security_restore_success"),
+        QStringLiteral("Arquivo restaurado com sucesso."));
     const QString success = get_text(loc_, QStringLiteral("security_restore_success"),
                                      QStringLiteral("Arquivo restaurado com sucesso."));
-    set_security_result_label(interface_, success);
-    show_status_message(interface_, success);
     QMessageBox::information(this,
                              get_text(loc_, QStringLiteral("security_operation_completed"),
                                       QStringLiteral("Operação concluída")),
@@ -443,10 +472,16 @@ void RecoveryDialog::restore_selected_baseline_version() {
         return;
     }
 
+    show_translated_security_feedback(
+        interface_,
+        QStringLiteral("security_restore_success"),
+        QStringLiteral("Arquivo restaurado com sucesso."));
+    show_translated_status_message(
+        interface_,
+        QStringLiteral("security_restore_success"),
+        QStringLiteral("Arquivo restaurado com sucesso."));
     const QString success = get_text(loc_, QStringLiteral("security_restore_success"),
                                      QStringLiteral("Arquivo restaurado com sucesso."));
-    set_security_result_label(interface_, success);
-    show_status_message(interface_, success);
     QMessageBox::information(this,
                              get_text(loc_, QStringLiteral("security_operation_completed"),
                                       QStringLiteral("Operação concluída")),
@@ -462,6 +497,9 @@ int RecoveryDialog::selected_row(QTableWidget* table) const {
 }
 
 void RecoveryDialog::apply_quarantine_rows(const QVariantList& rows, bool replace_all) {
+    if (!replace_all && rows.isEmpty()) {
+        return;
+    }
     auto* localizador = get_localizador(interface_);
     const QSignalBlocker blocker(quarantine_table_);
     quarantine_table_->setUpdatesEnabled(false);
@@ -497,12 +535,13 @@ void RecoveryDialog::apply_quarantine_rows(const QVariantList& rows, bool replac
         last_quarantine_id_ = qMax(last_quarantine_id_, row.value(QStringLiteral("id")).toLongLong());
     }
     quarantine_table_->setUpdatesEnabled(true);
-    quarantine_table_->resizeColumnsToContents();
     quarantine_table_->viewport()->update();
-    update_summary();
 }
 
 void RecoveryDialog::apply_baseline_rows(const QVariantList& rows, bool replace_all) {
+    if (!replace_all && rows.isEmpty()) {
+        return;
+    }
     const QSignalBlocker blocker(baseline_table_);
     baseline_table_->setUpdatesEnabled(false);
     if (replace_all) {
@@ -532,23 +571,24 @@ void RecoveryDialog::apply_baseline_rows(const QVariantList& rows, bool replace_
         }
     }
     baseline_table_->setUpdatesEnabled(true);
-    baseline_table_->resizeColumnsToContents();
     baseline_table_->viewport()->update();
-    update_summary();
 }
 
 void RecoveryDialog::update_summary() {
     const QString backend = interface_ != nullptr
                                 ? interface_->property("security_storage_backend").toString()
                                 : QString();
-    summary_label_->setText(
+    const QString new_text =
         QStringLiteral("%1: %2 | %3: %4 | Backend: %5")
             .arg(get_text(loc_, QStringLiteral("security_quarantine_status"), QStringLiteral("Quarentena")),
                  QString::number(quarantine_table_->rowCount()),
                  get_text(loc_, QStringLiteral("security_baseline_status"),
                           QStringLiteral("Versões monitoradas")),
                  QString::number(baseline_table_->rowCount()),
-                 backend.isEmpty() ? QStringLiteral("sqlite") : backend));
+                 backend.isEmpty() ? QStringLiteral("sqlite") : backend);
+    if (summary_label_->text() != new_text) {
+        summary_label_->setText(new_text);
+    }
 }
 
 }  // namespace source::security::ui
