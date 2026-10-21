@@ -1,3 +1,36 @@
+RELEASE NOTES: Version 2026.10.21.0
+
+RELEASE HIGHLIGHTS
+
+This release of Linceu Lighthouse introduces a dedicated command-line tool for terminal-based audits, optimizes visual assets with lighter and faster high-resolution graphics, enhances overall monitoring stability, and establishes crystal-clear open-source licensing guidelines.
+
+The new console tool makes it effortless to audit directories, monitor file activities, and verify data integrity headlessly, making it the perfect companion for automated scheduled tasks and background scripts. In addition, the distribution package has been streamlined by retiring obsolete graphic files, resulting in faster startup times and crisp visuals across all modern displays.
+
+
+NEW FEATURES AND ENHANCEMENTS
+
+1. Standalone Command-Line Tool (Terminal)
+- Run comprehensive file audits, directory inspections, and live activity tracking directly from the command prompt or terminal without opening the graphical window.
+- Tailored for automated system workflows, scheduled maintenance routines, and headless auditing scripts.
+- Clean and structured console reporting with customizable output detail and filtering options.
+
+2. Visual Optimization and Faster Startup
+- Modernized asset library, discarding redundant low-resolution graphics while preserving sharp, high-definition icons and visual elements.
+- Reduced overall application footprint, leading to faster startup times and optimized memory efficiency.
+- Flawless visual clarity and high-DPI scaling across modern high-resolution monitors.
+
+3. Clear Licensing and Distribution Protection
+- Full transparency regarding open-source rights, giving users complete freedom to use, study, and customize the software.
+- Explicit protective guidance safeguarding users against unauthorized commercial redistribution of official binaries by third parties.
+
+4. Enhanced Stability and Continuous Folder Monitoring
+- Improved resilience during extended monitoring sessions across complex directory structures.
+- Refined background synchronization routines, ensuring system state and operational information remain consistently up to date.
+
+
+_________________________________________________
+
+
 RELEASE NOTES: Version 2026.9.28.0
 
 RELEASE HIGHLIGHTS

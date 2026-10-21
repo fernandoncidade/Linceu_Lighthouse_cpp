@@ -1,5 +1,5 @@
 #define MyAppName "Linceu Lighthouse"
-#define MyAppVersion "2026.9.28.0"
+#define MyAppVersion "2026.10.21.0"
 #define MyAppPublisher "Fernando Nillsson Cidade"
 #define MyAppURL "https://github.com/fernandoncidade"
 #define MyAppExeName "Linceu_Lighthouse.exe"

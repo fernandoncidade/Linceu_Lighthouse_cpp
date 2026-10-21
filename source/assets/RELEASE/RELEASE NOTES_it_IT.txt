@@ -1,3 +1,36 @@
+NOTE DI RILASCIO: Versione 2026.10.21.0
+
+PUNTI PRINCIPALI DI QUESTA VERSIONE
+
+Questa versione di Linceu Lighthouse introduce un nuovo strumento a riga di comando per eseguire verifiche direttamente dal terminale, ottimizza le risorse grafiche con elementi ad alta definizione più leggeri e veloci, incrementa la stabilità generale del monitoraggio e stabilisce linee guida chiare di licenza open source.
+
+Il nuovo strumento da console consente di verificare cartelle, tracciare le attività dei file e controllarne l'integrità in modo completamente automatizzato, risultando ideale per operazioni pianificate e script eseguiti senza interfaccia grafica. Inoltre, il pacchetto dell'applicazione è stato alleggerito eliminando risorse grafiche obsolete, garantendo un avvio più rapido e immagini nitide su tutti i monitor moderni.
+
+
+NUOVE FUNZIONALITÀ E MIGLIORAMENTI
+
+1. Strumento Autonomo a Riga di Comando (Terminale)
+- Esegui audit approfonditi, ispezioni di cartelle e monitoraggio in tempo reale direttamente dal prompt dei comandi o dal terminale, senza necessità di aprire la finestra grafica.
+- Ideale per automazioni di sistema, processi pianificati e reportistica periodica di integrità.
+- Risultati chiari e ordinati a schermo, con parametri di filtraggio e livelli di dettaglio personalizzabili.
+
+2. Ottimizzazione Grafica e Avvio Più Rapido
+- Modernizzazione delle risorse visive, con la rimozione di grafiche obsolete a bassa risoluzione a favore di icone e illustrazioni ad alta definizione.
+- Riduzione dello spazio occupato e avvio più scattante dell'applicazione con minore utilizzo di memoria.
+- Resa visiva eccellente e proporzioni perfette su schermi moderni ad alta densità di pixel.
+
+3. Trasparenza sulle Licenze e Protezione per gli Utenti
+- Massima chiarezza sui diritti garantiti dalla licenza open source per utilizzare, analizzare e adattare liberamente il software.
+- Avviso esplicito a tutela degli utenti contro la ridistribuzione commerciale non autorizzata delle versioni binarie ufficiali da parte di terzi.
+
+4. Maggiore Stabilità nel Monitoraggio Continuo
+- Affidabilità elevata durante sessioni prolungate di osservazione su strutture complesse di directory.
+- Sincronizzazione perfezionata per mantenere le informazioni di sistema costantemente aggiornate e coerenti.
+
+
+_________________________________________________
+
+
 NOTE DI RILASCIO: Versione 2026.9.28.0
 
 PUNTI PRINCIPALI DI QUESTA VERSIONE

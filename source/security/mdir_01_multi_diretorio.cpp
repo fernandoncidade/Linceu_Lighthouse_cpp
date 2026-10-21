@@ -19,9 +19,11 @@
 #include <QThread>
 
 #include "source/security/secore_01_postgres_utils.h"
+#if !defined(LINCEU_CLI_HEADLESS)
 #include "source/services/ob_01_Observador.h"
 #include "source/services/ob_03_DiretorioScanner.h"
 #include "source/ui/ui_12_LocalizadorQt.h"
+#endif
 #include "source/utils/CaminhoPersistenteUtils.h"
 
 namespace source::security {
@@ -39,7 +41,9 @@ struct RuntimeState {
     QString profile_name;
     QString primary_directory;
     QStringList directories;
+#if !defined(LINCEU_CLI_HEADLESS)
     std::vector<std::unique_ptr<source::services::Observador>> observers;
+#endif
 };
 
 std::recursive_mutex& runtimes_mutex() {
@@ -355,6 +359,7 @@ bool thread_is_running(QThread* thread) {
     return thread != nullptr && thread->isRunning();
 }
 
+#if !defined(LINCEU_CLI_HEADLESS)
 bool observer_has_runtime_activity(const source::services::Observador* observer) {
     if (observer == nullptr) {
         return false;
@@ -389,6 +394,7 @@ void sincronizar_idioma_observador(source::services::Observador* observer, const
     }
     observer->loc->set_idioma(language);
 }
+#endif
 
 }  // namespace
 
@@ -536,6 +542,7 @@ QVariantMap MultiDiretorioCoordinator::runtime_scan_summary(QObject* interface_o
     bool scan_em_execucao = false;
     bool scan_pausado = false;
 
+#if !defined(LINCEU_CLI_HEADLESS)
     for (const auto& observer_ptr : runtime->observers) {
         const auto* observer = observer_ptr.get();
         if (observer == nullptr) {
@@ -563,6 +570,7 @@ QVariantMap MultiDiretorioCoordinator::runtime_scan_summary(QObject* interface_o
                                     : processados_local;
         scan_pausado = scan_pausado || scanner->pausado.load();
     }
+#endif
 
     const int progresso =
         total_arquivos > 0
@@ -581,6 +589,32 @@ QVariantMap MultiDiretorioCoordinator::runtime_scan_summary(QObject* interface_o
     return summary;
 }
 
+#if defined(LINCEU_CLI_HEADLESS)
+source::services::Observador* MultiDiretorioCoordinator::configure_observers(
+    QObject*, const std::function<void(const QVariantMap&)>&) {
+    return nullptr;
+}
+
+void MultiDiretorioCoordinator::stop_interface(QObject*) {}
+
+void MultiDiretorioCoordinator::start_interface(QObject*) {}
+
+void MultiDiretorioCoordinator::stop_scan_interface(QObject*) {}
+
+void MultiDiretorioCoordinator::sync_interface_language(QObject*, const QString&) const {}
+
+bool MultiDiretorioCoordinator::any_scan_running(QObject*) const {
+    return false;
+}
+
+bool MultiDiretorioCoordinator::any_active(QObject*) const {
+    return false;
+}
+
+source::services::Observador* MultiDiretorioCoordinator::primary_observer(QObject*) const {
+    return nullptr;
+}
+#else
 source::services::Observador* MultiDiretorioCoordinator::configure_observers(
     QObject* interface_obj,
     const std::function<void(const QVariantMap&)>& callback) {
@@ -725,5 +759,6 @@ source::services::Observador* MultiDiretorioCoordinator::primary_observer(QObjec
     }
     return runtime->observers.front().get();
 }
+#endif
 
 }  // namespace source::security

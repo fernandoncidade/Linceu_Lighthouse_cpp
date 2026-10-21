@@ -7,6 +7,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 set(LINCEU_OUTPUT_NAME "Linceu_Lighthouse" CACHE STRING "Output executable base name")
+option(BUILD_CLI "Compilar utilitario de linha de comando linceu-lighthouse-cli" ON)
 set(LINCEU_DEFAULT_DEPLOY_DIR "D:/MISCELANEAS/VSCode/LinceuLighthouse/Linceu_Lighthouse")
 if(WIN32)
         if(MSVC)
@@ -332,24 +333,16 @@ add_executable(Linceu_Lighthouse_cpp ${LINCEU_APP_KIND}
         source/assets/images/icons/clear.ico
         source/assets/images/icons/clear_button3.ico
         source/assets/images/icons/filtro.ico
-        source/assets/images/icons/old/linceu_com_fundo.ico
-        source/assets/images/icons/old/linceu_com_fundo_71_71.ico
-        source/assets/images/icons/old/linceu_com_fundo_150_150.ico
-        source/assets/images/icons/old/linceu_com_fundo_300_300.ico
-        source/assets/images/icons/old/linceu_com_fundo_1440_2160.ico
-        source/assets/images/icons/old/linceu_com_fundo_2160_2160.ico
-        source/assets/images/icons/old/linceu_sem_fundo.ico
-        source/assets/images/icons/old/linceu_sem_fundo_71_71.ico
-        source/assets/images/icons/old/linceu_sem_fundo_150_150.ico
-        source/assets/images/icons/old/linceu_sem_fundo_300_300.ico
-        source/assets/images/icons/old/linceu_sem_fundo_1440_2160.ico
-        source/assets/images/icons/old/linceu_sem_fundo_2160_2160.ico
         source/assets/images/icons/linceu_sem_fundo.ico
         source/assets/images/icons/linceu_sem_fundo_71_71.ico
         source/assets/images/icons/linceu_sem_fundo_150_150.ico
         source/assets/images/icons/linceu_sem_fundo_300_300.ico
+        source/assets/images/icons/linceu_sem_fundo_584_800.ico
+        source/assets/images/icons/linceu_sem_fundo_1080_1080.ico
         source/assets/images/icons/linceu_sem_fundo_1440_2160.ico
+        source/assets/images/icons/linceu_sem_fundo_1920_1080.ico
         source/assets/images/icons/linceu_sem_fundo_2160_2160.ico
+        source/assets/images/icons/linceu_sem_fundo_3840_2160.ico
         source/assets/images/icons/paleta-de-cores.ico
         source/assets/images/icons/pause1.ico
         source/assets/images/icons/pause2.ico
@@ -362,7 +355,6 @@ add_executable(Linceu_Lighthouse_cpp ${LINCEU_APP_KIND}
         source/assets/images/icons/start.ico
         source/assets/images/icons/statistics.ico
         source/assets/images/icons/stop.ico
-        source/assets/images/imgs/stop.png
         source/assets/images/imgs/analyze.png
         source/assets/images/imgs/atualizar.png
         source/assets/images/imgs/blocos-de-cores.png
@@ -370,24 +362,16 @@ add_executable(Linceu_Lighthouse_cpp ${LINCEU_APP_KIND}
         source/assets/images/imgs/clear.png
         source/assets/images/imgs/clear_button3.png
         source/assets/images/imgs/filtro.png
-        source/assets/images/imgs/old/linceu_com_fundo.png
-        source/assets/images/imgs/old/linceu_com_fundo_71_71.png
-        source/assets/images/imgs/old/linceu_com_fundo_150_150.png
-        source/assets/images/imgs/old/linceu_com_fundo_300_300.png
-        source/assets/images/imgs/old/linceu_com_fundo_1440_2160.png
-        source/assets/images/imgs/old/linceu_com_fundo_2160_2160.png
-        source/assets/images/imgs/old/linceu_sem_fundo.png
-        source/assets/images/imgs/old/linceu_sem_fundo_71_71.png
-        source/assets/images/imgs/old/linceu_sem_fundo_150_150.png
-        source/assets/images/imgs/old/linceu_sem_fundo_300_300.png
-        source/assets/images/imgs/old/linceu_sem_fundo_1440_2160.png
-        source/assets/images/imgs/old/linceu_sem_fundo_2160_2160.png
         source/assets/images/imgs/linceu_sem_fundo.png
         source/assets/images/imgs/linceu_sem_fundo_71_71.png
         source/assets/images/imgs/linceu_sem_fundo_150_150.png
         source/assets/images/imgs/linceu_sem_fundo_300_300.png
+        source/assets/images/imgs/linceu_sem_fundo_584_800.png
+        source/assets/images/imgs/linceu_sem_fundo_1080_1080.png
         source/assets/images/imgs/linceu_sem_fundo_1440_2160.png
+        source/assets/images/imgs/linceu_sem_fundo_1920_1080.png
         source/assets/images/imgs/linceu_sem_fundo_2160_2160.png
+        source/assets/images/imgs/linceu_sem_fundo_3840_2160.png
         source/assets/images/imgs/paleta-de-cores.png
         source/assets/images/imgs/pause1.png
         source/assets/images/imgs/pause2.png
@@ -399,6 +383,7 @@ add_executable(Linceu_Lighthouse_cpp ${LINCEU_APP_KIND}
         source/assets/images/imgs/selecione.png
         source/assets/images/imgs/start.png
         source/assets/images/imgs/statistics.png
+        source/assets/images/imgs/stop.png
         "source/assets/LICENSES/Apache License Version 2.0.txt"
         "source/assets/LICENSES/BSD License Clause-2.txt"
         "source/assets/LICENSES/BSD License Clause-3.txt"
@@ -1203,6 +1188,109 @@ if(MINGW)
     endif()
 endif()
 
+set(LINCEU_CLI_DEPLOY_COMMAND)
+if(BUILD_CLI)
+        set(LINCEU_CLI_SOURCES
+                source/cli/main_cli.cpp
+                ${LINCEU_WINDOWS_RESOURCES}
+                source/security/secore_01_postgres_utils.cpp
+                source/security/secore_01_postgres_utils.h
+                source/security/secore_02_SecurityManager.cpp
+                source/security/secore_02_SecurityManager.h
+                source/security/secore_03_evento_campos.cpp
+                source/security/secore_03_evento_campos.h
+                source/security/secore_05_SecurityDbWriter.cpp
+                source/security/secore_05_SecurityDbWriter.h
+                source/security/base_01_baseline_criptografico.cpp
+                source/security/base_01_baseline_criptografico.h
+                source/security/agre_01_motor_regras.cpp
+                source/security/agre_01_motor_regras.h
+                source/security/risk_01_score_risco.cpp
+                source/security/risk_01_score_risco.h
+                source/security/quar_01_quarentena.cpp
+                source/security/quar_01_quarentena.h
+                source/security/evid_01_exportacao_evidencia.cpp
+                source/security/evid_01_exportacao_evidencia.h
+                source/security/exec_01_inteligencia_executaveis.cpp
+                source/security/exec_01_inteligencia_executaveis.h
+                source/security/mdir_01_multi_diretorio.cpp
+                source/security/mdir_01_multi_diretorio.h
+                source/security/sdiff_01_diff_conteudo.cpp
+                source/security/sdiff_01_diff_conteudo.h
+                source/security/sess_01_correlacao_sessoes.cpp
+                source/security/sess_01_correlacao_sessoes.h
+                source/security/attr_01_atribuicao_forense.cpp
+                source/security/attr_01_atribuicao_forense.h
+                source/services/GerenciamentoMetadados/gmet_10_ExtrairMetadadosExecutavel.cpp
+                source/services/GerenciamentoMetadados/gmet_10_ExtrairMetadadosExecutavel.h
+                source/utils/ApplicationPathUtils.cpp
+                source/utils/ApplicationPathUtils.h
+                source/utils/CaminhoPersistenteUtils.cpp
+                source/utils/CaminhoPersistenteUtils.h
+                source/utils/LogManager.cpp
+                source/utils/LogManager.h
+        )
+
+        add_executable(linceu-lighthouse-cli
+                ${LINCEU_CLI_SOURCES}
+        )
+
+        target_compile_definitions(linceu-lighthouse-cli PRIVATE LINCEU_CLI_HEADLESS)
+
+        target_include_directories(linceu-lighthouse-cli PRIVATE
+                ${CMAKE_SOURCE_DIR}
+                source
+                source/security
+                source/services
+                source/utils
+        )
+
+        target_link_libraries(linceu-lighthouse-cli PRIVATE
+                Qt${QT_VERSION_MAJOR}::Core
+                Qt${QT_VERSION_MAJOR}::Sql
+                Qt${QT_VERSION_MAJOR}::Xml
+        )
+
+        if(WIN32)
+                target_link_libraries(linceu-lighthouse-cli PRIVATE
+                        Shlwapi
+                        Shell32
+                        Advapi32
+                        wintrust
+                        version
+                        crypt32
+                )
+        endif()
+
+        set_target_properties(linceu-lighthouse-cli PROPERTIES
+                OUTPUT_NAME "linceu-lighthouse-cli"
+        )
+
+        if(MSVC)
+                target_compile_options(linceu-lighthouse-cli PRIVATE
+                        $<$<CONFIG:Release>:/Ox /fp:fast /Gw /Zc:inline>
+                        $<$<CONFIG:RelWithDebInfo>:/Ox /fp:fast /Gw /Zc:inline>
+                )
+        endif()
+
+        if(MINGW)
+                target_compile_options(linceu-lighthouse-cli PRIVATE
+                        $<$<CONFIG:Release>:-O3 -ffunction-sections -fdata-sections>
+                        $<$<CONFIG:MinSizeRel>:-Os -ffunction-sections -fdata-sections>
+                )
+                target_link_options(linceu-lighthouse-cli PRIVATE
+                        $<$<CONFIG:Release>:-Wl,--gc-sections -Wl,--strip-all>
+                        $<$<CONFIG:MinSizeRel>:-Wl,--gc-sections -Wl,--strip-all>
+                )
+        endif()
+
+        set(LINCEU_CLI_DEPLOY_COMMAND
+                COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                        "$<TARGET_FILE:linceu-lighthouse-cli>"
+                        "${LINCEU_DEPLOY_DIR}/$<TARGET_FILE_NAME:linceu-lighthouse-cli>"
+        )
+endif()
+
 if (WIN32)
         target_link_libraries(Linceu_Lighthouse_cpp PRIVATE wintrust version crypt32)
 
@@ -1223,6 +1311,7 @@ if (WIN32)
                         COMMAND "${CMAKE_COMMAND}" -E copy_if_different
                                 "$<TARGET_FILE:Linceu_Lighthouse_cpp>"
                                 "${LINCEU_DEPLOY_DIR}/$<TARGET_FILE_NAME:Linceu_Lighthouse_cpp>"
+                        ${LINCEU_CLI_DEPLOY_COMMAND}
                         COMMAND "${LINCEU_WINDEPLOYQT_COMMAND}"
                                 ${LINCEU_WINDEPLOYQT_RUNTIME_ARGS}
                                 --dir "$<TARGET_FILE_DIR:Linceu_Lighthouse_cpp>"
@@ -1260,6 +1349,9 @@ if (WIN32)
                         COMMAND_EXPAND_LISTS
                         VERBATIM)
                 add_dependencies(Linceu_Lighthouse_deploy Linceu_Lighthouse_cpp)
+                if(BUILD_CLI)
+                        add_dependencies(Linceu_Lighthouse_deploy linceu-lighthouse-cli)
+                endif()
         else()
                 message(WARNING "Qt windeployqt target not available; Qt runtime dependencies will not be copied automatically.")
         endif()

@@ -1,3 +1,36 @@
+RELEASE-HINWEISE: Version 2026.10.21.0
+
+HIGHLIGHTS DIESER VERSION
+
+Diese Version von Linceu Lighthouse führt ein eigenständiges Befehlszeilen-Werkzeug für direkte Audits über das Terminal ein, optimiert grafische Elemente mit schlankeren und schnelleren hochauflösenden Grafiken, verbessert die allgemeine Überwachungsstabilität und schafft transparente Richtlinien zur Open-Source-Lizenzierung.
+
+Das neue Konsolenwerkzeug ermöglicht die automatisierte Prüfung von Ordnern, die Verfolgung von Dateiaktivitäten und die Überprüfung der Datenintegrität ohne grafische Oberfläche – ideal für zeitgesteuerte Aufgaben und automatisierte Skripte. Zudem wurde das Anwendungspaket durch die Bereinigung veralteter Bildressourcen spürbar entlastet, was schnellere Startzeiten und gestochen scharfe Darstellungen auf modernen Bildschirmen gewährleistet.
+
+
+NEUE FUNKTIONEN UND VERBESSERUNGEN
+
+1. Eigenständiges Befehlszeilen-Werkzeug (Terminal)
+- Führen Sie umfassende Datei-Audits, Verzeichnisprüfungen und Aktivitätsüberwachungen direkt über die Eingabeaufforderung oder das Terminal aus, ohne die Benutzeroberfläche zu öffnen.
+- Hervorragend geeignet für automatisierte Systemabläufe, geplante Wartungsaufgaben und die regelmäßige Integritätskontrolle.
+- Übersichtliche und strukturierte Ausgabe der Ergebnisse in der Konsole mit flexiblen Filteroptionen und anpassbarer Detailtiefe.
+
+2. Visuelle Optimierung und Schnellere Startzeiten
+- Modernisierung der Bildressourcen durch Entfernen veralteter Grafiken bei voller Beibehaltung hochauflösender Symbole und visueller Komponenten.
+- Geringerer Speicherbedarf und zügigere Anwendungsstarts bei optimierter Ressourcennutzung.
+- Kristallklare und saubere Darstellung auf Bildschirmen mit unterschiedlichen Skalierungen.
+
+3. Transparente Lizenzierung und Schutz der Anwender
+- Vollständige Klarheit über die eingeräumten Rechte der Open-Source-Lizenz zur freien Nutzung, Überprüfung und Anpassung der Anwendung.
+- Eindeutige Schutzhinweise zur Vermeidung unbefugter kommerzieller Weiterverbreitung der offiziellen Binärpakete durch Dritte.
+
+4. Erhöhte Stabilität bei Dauerüberwachungen
+- Gesteigerte Zuverlässigkeit bei langanhaltenden Überwachungssitzungen über umfangreiche Ordnerstrukturen hinweg.
+- Verfeinerte Hintergrundsynchronisation zur konsistenten und aktuellen Bereitstellung aller Betriebsinformationen.
+
+
+_________________________________________________
+
+
 RELEASE-HINWEISE: Version 2026.9.28.0
 
 HIGHLIGHTS DIESER VERSION

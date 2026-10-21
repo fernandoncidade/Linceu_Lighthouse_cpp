@@ -154,7 +154,7 @@ QString build_about_header_html(QObject* loc) {
     return QStringLiteral(
                "<div style=\"margin:0; padding:0;\">"
                "<span style=\"font-size:13pt; font-weight:600;\">LINCEU LIGHTHOUSE</span><br><br>"
-               "<b>%1:</b> 2026.9.28.0<br>"
+               "<b>%1:</b> 2026.10.21.0<br>"
                "<b>%2:</b> Fernando Nillsson Cidade<br>"
                "<b>%3:</b> %4"
                "</div>")

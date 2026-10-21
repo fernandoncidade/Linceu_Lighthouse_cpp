@@ -4,7 +4,7 @@
         {
             "label": "Compilar Linceu Lighthouse (MinGW)",
             "type": "shell",
-            "command": "$env:QTDIR='C:\\Qt\\6.11.1\\mingw_64'; $env:Path='C:\\Qt\\6.11.1\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;' + $env:Path; cmake --preset qt6-mingw-release; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; cmake --build --preset linceu-qt6-mingw-release --parallel",
+            "command": "$ErrorActionPreference = 'Stop'; $env:QTDIR='C:\\Qt\\6.11.1\\mingw_64'; $env:Path='C:\\Qt\\6.11.1\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;' + $env:Path; $process = Get-Process Linceu_Lighthouse,linceu-lighthouse-cli -ErrorAction SilentlyContinue; if ($process) { $process | Stop-Process -Force }; cmake --preset qt6-mingw-release; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; cmake --build --preset linceu-qt6-mingw-release --parallel; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & powershell -ExecutionPolicy Bypass -File '${workspaceFolder}\\cmake\\gerar_distribuicoes_limpas.ps1' -DistributionName Linceu_Lighthouse_mingw; exit $LASTEXITCODE",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -12,6 +12,18 @@
                 "kind": "build",
                 "isDefault": true
             },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Compilar Linceu Lighthouse CLI (MinGW)",
+            "type": "shell",
+            "command": "$ErrorActionPreference = 'Stop'; $env:QTDIR='C:\\Qt\\6.11.1\\mingw_64'; $env:Path='C:\\Qt\\6.11.1\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;' + $env:Path; $process = Get-Process linceu-lighthouse-cli -ErrorAction SilentlyContinue; if ($process) { $process | Stop-Process -Force }; cmake --preset qt6-mingw-release; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; cmake --build --preset linceu-qt6-mingw-release --target linceu-lighthouse-cli --parallel; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & powershell -ExecutionPolicy Bypass -File '${workspaceFolder}\\cmake\\gerar_distribuicoes_limpas.ps1' -DistributionName Linceu_Lighthouse_mingw; exit $LASTEXITCODE",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
             "problemMatcher": [
                 "$gcc"
             ]
@@ -30,6 +42,7 @@
             "dependsOrder": "sequence",
             "dependsOn": [
                 "Compilar Linceu Lighthouse (MinGW)",
+                "Compilar Linceu Lighthouse CLI (MinGW)",
                 "Executar Linceu Lighthouse (MinGW)"
             ],
             "problemMatcher": []
@@ -37,7 +50,19 @@
         {
             "label": "Compilar Linceu Lighthouse (MSVC)",
             "type": "shell",
-            "command": "$ErrorActionPreference = 'Stop'; $env:QTDIR='C:\\Qt\\6.11.1\\msvc2022_64'; $env:QT_PLUGIN_PATH='C:\\Qt\\6.11.1\\msvc2022_64\\plugins'; $env:VSINSTALLDIR='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\'; $env:VCINSTALLDIR='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\'; $env:VCToolsInstallDir='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\'; $env:WindowsSdkDir='C:\\Program Files (x86)\\Windows Kits\\10\\'; $env:WindowsSDKVersion='10.0.28000.0\\'; $env:INCLUDE='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\include;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\ucrt;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\um;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\shared;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\winrt;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\cppwinrt;' + $env:INCLUDE; $env:LIB='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\lib\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.28000.0\\ucrt\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.28000.0\\um\\x64;' + $env:LIB; $env:LIBPATH='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\lib\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\UnionMetadata\\10.0.28000.0;C:\\Program Files (x86)\\Windows Kits\\10\\References\\10.0.28000.0;' + $env:LIBPATH; $env:Path='C:\\Qt\\Tools\\Ninja;C:\\Qt\\6.11.1\\msvc2022_64\\bin;C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.28000.0\\x64;' + $env:Path; cmake --preset qt6-msvc-release; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; cmake --build --preset linceu-qt6-msvc-release --parallel; exit $LASTEXITCODE",
+            "command": "$ErrorActionPreference = 'Stop'; $env:QTDIR='C:\\Qt\\6.11.1\\msvc2022_64'; $env:QT_PLUGIN_PATH='C:\\Qt\\6.11.1\\msvc2022_64\\plugins'; $env:VSINSTALLDIR='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\'; $env:VCINSTALLDIR='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\'; $env:VCToolsInstallDir='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\'; $env:WindowsSdkDir='C:\\Program Files (x86)\\Windows Kits\\10\\'; $env:WindowsSDKVersion='10.0.28000.0\\'; $env:INCLUDE='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\include;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\ucrt;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\um;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\shared;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\winrt;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\cppwinrt;' + $env:INCLUDE; $env:LIB='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\lib\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.28000.0\\ucrt\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.28000.0\\um\\x64;' + $env:LIB; $env:LIBPATH='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\lib\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\UnionMetadata\\10.0.28000.0;C:\\Program Files (x86)\\Windows Kits\\10\\References\\10.0.28000.0;' + $env:LIBPATH; $env:Path='C:\\Qt\\Tools\\Ninja;C:\\Qt\\6.11.1\\msvc2022_64\\bin;C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.28000.0\\x64;' + $env:Path; $process = Get-Process Linceu_Lighthouse,linceu-lighthouse-cli -ErrorAction SilentlyContinue; if ($process) { $process | Stop-Process -Force }; cmake --preset qt6-msvc-release; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; cmake --build --preset linceu-qt6-msvc-release --parallel; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & powershell -ExecutionPolicy Bypass -File '${workspaceFolder}\\cmake\\gerar_distribuicoes_limpas.ps1' -DistributionName Linceu_Lighthouse_msvc; exit $LASTEXITCODE",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "problemMatcher": [
+                "$msCompile"
+            ]
+        },
+        {
+            "label": "Compilar Linceu Lighthouse CLI (MSVC)",
+            "type": "shell",
+            "command": "$ErrorActionPreference = 'Stop'; $env:QTDIR='C:\\Qt\\6.11.1\\msvc2022_64'; $env:QT_PLUGIN_PATH='C:\\Qt\\6.11.1\\msvc2022_64\\plugins'; $env:VSINSTALLDIR='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\'; $env:VCINSTALLDIR='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\'; $env:VCToolsInstallDir='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\'; $env:WindowsSdkDir='C:\\Program Files (x86)\\Windows Kits\\10\\'; $env:WindowsSDKVersion='10.0.28000.0\\'; $env:INCLUDE='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\include;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\ucrt;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\um;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\shared;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\winrt;C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.28000.0\\cppwinrt;' + $env:INCLUDE; $env:LIB='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\lib\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.28000.0\\ucrt\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.28000.0\\um\\x64;' + $env:LIB; $env:LIBPATH='C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\lib\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\UnionMetadata\\10.0.28000.0;C:\\Program Files (x86)\\Windows Kits\\10\\References\\10.0.28000.0;' + $env:LIBPATH; $env:Path='C:\\Qt\\Tools\\Ninja;C:\\Qt\\6.11.1\\msvc2022_64\\bin;C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.28000.0\\x64;' + $env:Path; $process = Get-Process linceu-lighthouse-cli -ErrorAction SilentlyContinue; if ($process) { $process | Stop-Process -Force }; cmake --preset qt6-msvc-release; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; cmake --build --preset linceu-qt6-msvc-release --target linceu-lighthouse-cli --parallel; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & powershell -ExecutionPolicy Bypass -File '${workspaceFolder}\\cmake\\gerar_distribuicoes_limpas.ps1' -DistributionName Linceu_Lighthouse_msvc; exit $LASTEXITCODE",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -60,6 +85,7 @@
             "dependsOrder": "sequence",
             "dependsOn": [
                 "Compilar Linceu Lighthouse (MSVC)",
+                "Compilar Linceu Lighthouse CLI (MSVC)",
                 "Executar Linceu Lighthouse (MSVC)"
             ],
             "problemMatcher": []

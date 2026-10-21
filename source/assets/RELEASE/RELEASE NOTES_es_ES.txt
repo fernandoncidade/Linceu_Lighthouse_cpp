@@ -1,3 +1,36 @@
+NOTAS DE LANZAMIENTO: Versión 2026.10.21.0
+
+DESTACADOS DE ESTA VERSIÓN
+
+Esta versión de Linceu Lighthouse incorpora una nueva herramienta de línea de comandos para auditorías directas desde la terminal, optimiza el paquete de recursos visuales con gráficos ligeros en alta definición, refuerza la estabilidad general del monitoreo y formaliza términos claros de uso y libertades bajo licencia de código abierto.
+
+La nueva herramienta de consola permite auditar carpetas, supervisar actividades y verificar la integridad de archivos de manera desatendida, siendo ideal para tareas programadas y rutinas automáticas que no requieren la interfaz gráfica. Asimismo, el paquete de la aplicación se ha aligerado al retirar elementos gráficos antiguos y redundantes, logrando un inicio más rápido y una nitidez impecable en pantallas modernas.
+
+
+NUEVAS FUNCIONALIDADES Y MEJORAS
+
+1. Herramienta Autónoma de Línea de Comandos (Terminal)
+- Posibilidad de realizar auditorías completas, inspecciones de archivos y supervisión de carpetas directamente desde el símbolo del sistema o terminal, sin necesidad de abrir la interfaz gráfica.
+- Ideal para automatizaciones, tareas programadas del sistema y generación periódica de informes de integridad.
+- Presentación limpia y estructurada de los resultados en consola, con opciones de filtrado y niveles de detalle configurables.
+
+2. Optimización Visual e Inicio Más Rápido
+- Modernización del conjunto de recursos visuales, retirando versiones obsoletas de baja resolución y conservando gráficos e iconos en alta definición.
+- Menor tiempo de inicio y consumo optimizado de almacenamiento y memoria del equipo.
+- Visualización perfecta y uniforme en monitores modernos con diferentes escalas de pantalla.
+
+3. Claridad en Licenciamiento y Protección al Usuario
+- Transparencia total sobre los derechos otorgados por la licencia de código abierto para usar, estudiar y adaptar la aplicación libremente.
+- Avisos claros que protegen a los usuarios contra la redistribución comercial no autorizada de las versiones oficiales por parte de terceros.
+
+4. Mayor Estabilidad en el Monitoreo Continuo
+- Robustez mejorada durante sesiones prolongadas de supervisión en estructuras complejas de carpetas.
+- Perfeccionamiento en la actualización periódica de la información operativa y en la sincronización del estado del sistema.
+
+
+_________________________________________________
+
+
 NOTAS DE LANZAMIENTO: Versión 2026.9.28.0
 
 DESTACADOS DE ESTA VERSIÓN

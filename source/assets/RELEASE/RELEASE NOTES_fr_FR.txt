@@ -1,3 +1,36 @@
+NOTES DE VERSION : Version 2026.10.21.0
+
+POINTS FORTS DE CETTE VERSION
+
+Cette version de Linceu Lighthouse introduit un nouvel outil en ligne de commande pour réaliser des audits directement dans le terminal, optimise les ressources graphiques avec des visuels haute définition plus légers et réactifs, renforce la stabilité générale de la surveillance et clarifie les conditions d'utilisation sous licence libre.
+
+Ce nouvel outil en console permet d'auditer des dossiers, de suivre les activités de fichiers et de vérifier l'intégrité des données de manière totalement automatisée, ce qui le rend idéal pour les tâches planifiées et les scripts sans interface graphique. De plus, l'application s'allège grâce au retrait des anciens éléments graphiques obsolètes, offrant un lancement plus prompt et une netteté remarquable sur les écrans modernes.
+
+
+NOUVELLES FONCTIONNALITÉS ET AMÉLIORATIONS
+
+1. Outil Autonome en Ligne de Commande (Terminal)
+- Exécutez des audits de fichiers complets, des analyses de dossiers et un suivi d'activité en direct depuis l'invite de commandes ou le terminal, sans ouvrir la fenêtre graphique.
+- Parfaitement adapté aux tâches planifiées du système, aux scripts d'administration et aux rapports automatisés.
+- Affichage clair et structuré des résultats en console, avec des options de filtrage et différents niveaux de détail.
+
+2. Optimisation Visuelle et Lancement Accéléré
+- Modernisation de l'ensemble des ressources visuelles, supprimant les anciens fichiers basse résolution au profit d'icônes et d'illustrations haute définition.
+- Réduction du volume global de l'application, entraînant un démarrage plus rapide et une empreinte mémoire optimisée.
+- Rendu visuel soigné et parfaitement net sur les écrans haute résolution récents.
+
+3. Transparence de Licence et Protection des Utilisateurs
+- Clarté complète sur les droits de la licence libre permettant à chacun d'utiliser, d'étudier et d'adapter librement l'application.
+- Mentions protectrices claires empêchant la revente commerciale non autorisée des distributions officielles par des tiers.
+
+4. Stabilité Renforcée pour la Surveillance Continue
+- Meilleure résilience lors de longues sessions de surveillance continue au sein d'arborescences volumineuses.
+- Synchronisation interne perfectionnée assurant une mise à jour fluide et fiable de toutes les données du système.
+
+
+_________________________________________________
+
+
 NOTES DE VERSION : Version 2026.9.28.0
 
 POINTS FORTS DE CETTE VERSION

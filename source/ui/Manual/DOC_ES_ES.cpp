@@ -9,10 +9,14 @@ std::vector<ManualSection> doc_es_es() {
             QStringLiteral("nuevos-recursos-funcionalidades"),
             QStringLiteral("Nuevos recursos y funcionalidades"),
             {
-                QStringLiteral("La versión 2026.9.28.0 introduce mejoras estructurales de confiabilidad en el monitoreo en tiempo real, carga asíncrona no bloqueante para sesiones en tiempo real, sincronización diferencial de tablas sin parpadeo en cuarentena y restauración con verificación criptográfica SHA-256."),
+                QStringLiteral("La versión 2026.10.21.0 introduce la herramienta dedicada de consola (linceu-lighthouse-cli), nuevos parámetros de línea de comandos para la aplicación gráfica, optimización de recursos visuales para pantallas de alta definición y formalización de términos bajo Licencia MIT."),
+                QStringLiteral("La versión 2026.9.28.0 introdujo mejoras estructurales de confiabilidade en el monitoreo en tiempo real, carga asíncrona no bloqueante para sesiones en tiempo real, sincronización diferencial de tablas sin parpadeo en cuarentena y restauración con verificación criptográfica SHA-256."),
                 QStringLiteral("Las siguientes instrucciones detallan cómo utilizar estas capacidades de manera segura, predecible y eficiente en la operación diaria."),
             },
             {
+                QStringLiteral("Herramienta CLI autónoma (linceu-lighthouse-cli.exe): ejecución por terminal para escaneo, monitoreo, metadatos PE, auditoría de línea de base y cuarentena."),
+                QStringLiteral("Parámetros de inicio en la aplicación gráfica: soporte para apertura directa de carpetas, perfiles guardados, escaneo sin monitoreo y exportación automática."),
+                QStringLiteral("Optimización de recursos visuales: inicio más veloz y menor uso de memoria al prescindir de iconos obsoletos en favor de gráficos nativos High-DPI."),
                 QStringLiteral("Sesiones en tiempo real no bloqueantes: carga en segundo plano con indicadores de progreso y cancelación segura."),
                 QStringLiteral("Cuarentena y restauración inteligente: actualización diferencial de tablas que preserva selección, orden y posición de desplazamiento."),
                 QStringLiteral("Restauración segura con selector de carpeta de destino y validación criptográfica de integridad SHA-256."),
@@ -58,6 +62,80 @@ std::vector<ManualSection> doc_es_es() {
                         QStringLiteral("La actualización de la tabla es diferencial: los nuevos registros no alteran su selección activa ni la posición de desplazamiento."),
                         QStringLiteral("Seleccione un archivo y use Abrir carpeta seleccionada para localizarlo en el Explorador de archivos de Windows."),
                         QStringLiteral("Pulse Restaurar copia seleccionada (o Restaurar versión monitorada) para elegir una carpeta segura de destino y recuperar el archivo verificado con integridad criptográfica."),
+                    },
+                    {}
+                },
+            }
+        },
+        {
+            QStringLiteral("utilidad-linea-comandos-cli"),
+            QStringLiteral("Utilidad de Línea de Comandos (CLI) e Automatización"),
+            {
+                QStringLiteral("El ejecutable 'linceu-lighthouse-cli.exe' es la herramienta de consola dedicada de la aplicación, diseñada para interactuar directamente en PowerShell, el Símbolo del sistema (CMD), el Programador de tareas de Windows (Task Scheduler) y flujos automatizados sin requerir interfaz visual."),
+                QStringLiteral("Tanto la aplicación gráfica (Linceu_Lighthouse.exe) como la utilidad CLI funcionan 100% en local, compartiendo la misma infraestructura criptográfica, motor determinista de reglas de seguridad y base de datos SQLite en %LOCALAPPDATA%/LinceuLighthouse/monitoramento.db."),
+            },
+            {
+                QStringLiteral("Sintaxis básica de la CLI: linceu-lighthouse-cli.exe <comando> [opciones]"),
+                QStringLiteral("Comandos disponibles: scan, monitor, metadata, baseline, alerts, quarantine y sessions."),
+                QStringLiteral("Opciones globales: --format <text|json|csv>, --depth <n>, --risks-only, --duration <segundos>, --no-banner, --help y --version."),
+                QStringLiteral("Parámetros en la interfaz gráfica: Linceu_Lighthouse.exe [ruta], --dir <ruta>, --profile <nombre>, --scan-only y --export <formato> <archivo>."),
+                QStringLiteral("Optimización gráfica: inicio ágil y menor consumo de memoria al retirar iconos heredados de baja resolución a favor de gráficos High-DPI."),
+                QStringLiteral("Licencia MIT: libertad de uso e integración para el código fuente, preservando los derechos de distribución de binarios oficiales."),
+            },
+            {
+                {
+                    QStringLiteral("Cómo ejecutar escaneos por terminal (scan)"),
+                    {
+                        QStringLiteral("El comando 'scan' cataloga e inspecciona archivos en la ruta especificada, calculando hashes SHA-256 y nivel de riesgo."),
+                        QStringLiteral("Escaneo básico: linceu-lighthouse-cli.exe scan \"C:\\MisDatos\""),
+                        QStringLiteral("Escaneo con profundidad limitada y salida JSON: linceu-lighthouse-cli.exe scan \"C:\\MisDatos\" --depth 2 --format json"),
+                        QStringLiteral("Escaneo filtrado solo para elementos con riesgo: linceu-lighthouse-cli.exe scan \"C:\\MisDatos\" --risks-only"),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Cómo monitorizar eventos en tiempo real en consola (monitor)"),
+                    {
+                        QStringLiteral("El comando 'monitor' vigila cambios en el sistema de archivos de forma continua mediante APIs nativas de Windows."),
+                        QStringLiteral("Monitoreo continuo: linceu-lighthouse-cli.exe monitor \"C:\\inetpub\\wwwroot\""),
+                        QStringLiteral("Monitoreo programado por tiempo (ej: 1 hora): linceu-lighthouse-cli.exe monitor \"D:\\Datos\" --duration 3600"),
+                        QStringLiteral("Presione Ctrl+C en cualquier momento para concluir la sesión de forma segura."),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Cómo inspeccionar metadados y firmas PE (metadata)"),
+                    {
+                        QStringLiteral("El comando 'metadata' extrae propiedades técnicas profundas de ejecutables (arquitectura, secciones, sellos temporales y firmas Authenticode)."),
+                        QStringLiteral("Ejemplo: linceu-lighthouse-cli.exe metadata \"C:\\Windows\\notepad.exe\""),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Cómo auditar desviaciones de línea de base (baseline)"),
+                    {
+                        QStringLiteral("El comando 'baseline' detecta discrepancias comparando el estado actual de los archivos con el registro criptográfico SQLite."),
+                        QStringLiteral("Auditar desviaciones: linceu-lighthouse-cli.exe baseline \"C:\\Configuraciones\""),
+                        QStringLiteral("Registrar o actualizar línea de base: linceu-lighthouse-cli.exe baseline \"C:\\Configuraciones\" --update"),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Cómo gestionar alertas y cuarentena por terminal (alerts y quarantine)"),
+                    {
+                        QStringLiteral("Consultar incidentes de seguridad: linceu-lighthouse-cli.exe alerts --format json"),
+                        QStringLiteral("Listar archivos aislados en cuarentena: linceu-lighthouse-cli.exe quarantine list"),
+                        QStringLiteral("Restaurar archivo con validación criptográfica: linceu-lighthouse-cli.exe quarantine restore <id> \"C:\\DestinoSeguro\""),
+                    },
+                    {}
+                },
+                {
+                    QStringLiteral("Parámetros útiles en la aplicación de escritorio (Linceu_Lighthouse.exe)"),
+                    {
+                        QStringLiteral("Apertura directa de un directorio: Linceu_Lighthouse.exe \"D:\\Proyectos\""),
+                        QStringLiteral("Carga automática de perfil: Linceu_Lighthouse.exe --profile \"AuditoriaServidores\""),
+                        QStringLiteral("Escaneo silencioso y exportación inmediata: Linceu_Lighthouse.exe --dir \"C:\\Datos\" --scan-only --export xlsx informe.xlsx"),
+                        QStringLiteral("Selección del controlador de gráficos con la variable LINCEU_OPENGL_MODE (auto, desktop, angle, software)."),
                     },
                     {}
                 },

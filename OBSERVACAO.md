@@ -31,14 +31,14 @@ Sua proposta de valor central responde diretamente à pergunta mais frequente de
 O produto atua como uma solução soberana **100% Local-First** (sem nuvem, sem telemetria, sem contas e sem IA externa), estruturada em 3 camadas integradas (Monitoramento Contínuo com detecção correta de Move/Rename, Histórico Pesquisável com 17 gráficos nativos e Segurança/Auditoria Local).
 
 Versão consolidada observada nos assets e na documentação embarcada:
-- `v2026.9.28.0`
+- `v2026.10.21.0`
 Autor identificado no projeto:
 - `Fernando Nillsson Cidade`
 
 Licença do repositório:
-- `GNU Lesser General Public License v3.0 (LGPL-3.0)`
+- `MIT License`
 
-## Atualização funcional observada na versão 2026.9.28.0
+## Atualização funcional observada na versão 2026.10.21.0
 
 Esta versão consolida avanços estruturais na estabilidade, segurança e usabilidade do sistema:
 
@@ -843,14 +843,14 @@ Its core value proposition directly answers the most frequent question of any us
 The product operates as a sovereign **100% Local-First** solution (no cloud, no telemetry, no accounts, and no external AI), structured around 3 integrated layers (Continuous Monitoring with accurate Move/Rename detection, Searchable History with 17 native charts, and Local Security/Auditing).
 
 Consolidated version observed in assets and embedded documentation:
-- `v2026.9.28.0`
+- `v2026.10.21.0`
 Identified author in the project:
 - `Fernando Nillsson Cidade`
 
 Repository license:
-- `GNU Lesser General Public License v3.0 (LGPL-3.0)`
+- `MIT License`
 
-## Functional Update Observed in Version 2026.9.28.0
+## Functional Update Observed in Version 2026.10.21.0
 
 This release consolidates major architectural advancements in stability, local security, and user experience:
 
@@ -1650,14 +1650,14 @@ Su propuesta de valor central responde directamente a la pregunta más frecuente
 El producto actúa como una solución soberana **100% Local-First** (sin nube, sin telemetría, sin cuentas y sin IA externa), estructurada en 3 capas integradas (Monitorización Continua con detección correcta de Move/Rename, Historial Consultable con 17 gráficos nativos y Seguridad/Auditoría Local).
 
 Versión consolidada observada en los recursos y en la documentación integrada:
-- `v2026.9.28.0`
+- `v2026.10.21.0`
 Autor identificado en el proyecto:
 - `Fernando Nillsson Cidade`
 
 Licencia del repositorio:
-- `GNU Lesser General Public License v3.0 (LGPL-3.0)`
+- `MIT License`
 
-## Actualización funcional observada en la versión 2026.9.28.0
+## Actualización funcional observada en la versión 2026.10.21.0
 
 Esta versión consolida mejoras estructurales esenciales en estabilidad, seguridad local y experiencia de usuario:
 
@@ -2417,14 +2417,14 @@ Sa proposition de valeur fondamentale répond directement à la question la plus
 Le produit fonctionne comme une solution souveraine **100% Local-First** (sans cloud, sans télémétrie, sans comptes et sans IA externe), structurée en 3 couches intégrées (Surveillance Continue avec détection précise des opérations Move/Rename, Historique Consultable avec 17 graphiques natifs et Sécurité/Audit Local).
 
 Version consolidée observée dans les ressources et la documentation intégrée :
-- `v2026.9.28.0`
+- `v2026.10.21.0`
 Auteur identifié dans le projet :
 - `Fernando Nillsson Cidade`
 
 Licence du référentiel :
-- `GNU Lesser General Public License v3.0 (LGPL-3.0)`
+- `MIT License`
 
-## Mise à jour fonctionnelle observée dans la version 2026.9.28.0
+## Mise à jour fonctionnelle observée dans la version 2026.10.21.0
 
 Cette version consolide des avancées architecturales majeures en matière de stabilité, de sécurité locale et d'ergonomie :
 
@@ -3088,14 +3088,14 @@ La sua proposta di valore fondamentale risponde in modo diretto alla domanda pi�
 Il prodotto opera come soluzione sovrana **100% Local-First** (senza cloud, senza telemetria, senza account e senza IA esterna), articolata in 3 livelli integrati (Monitoraggio Continuo con rilevamento corretto di Move/Rename, Cronologia Consultabile con 17 grafici nativi e Sicurezza/Audit Locale).
 
 Versione consolidata presente negli asset e nella documentazione integrata:
-- `v2026.9.28.0`
+- `v2026.10.21.0`
 Autore identificato nel progetto:
 - `Fernando Nillsson Cidade`
 
 Licenza del repository:
-- `GNU Lesser General Public License v3.0 (LGPL-3.0)`
+- `MIT License`
 
-## Aggiornamento funzionale osservato nella versione 2026.9.28.0
+## Aggiornamento funzionale osservato nella versione 2026.10.21.0
 
 Questa versione consolida importanti progressi architetturali in termini di stabilità, sicurezza locale ed esperienza utente:
 
@@ -3760,14 +3760,14 @@ Sein zentrales Wertversprechen beantwortet direkt die häufigste Frage jedes Ben
 Das Produkt fungiert als souveräne **100% Local-First**-Lösung (ohne Cloud, ohne Telemetrie, ohne Konten und ohne externe KI), gegliedert in 3 integrierte Schichten (Kontinuierliche Überwachung mit präziser Move/Rename-Erkennung, Durchsuchbarer Verlauf mit 17 nativen Diagrammen und Lokale Sicherheit/Audit).
 
 Konsolidierte Version gemäß Assets und integrierter Dokumentation:
-- `v2026.9.28.0`
+- `v2026.10.21.0`
 Identifizierter Autor im Projekt:
 - `Fernando Nillsson Cidade`
 
 Lizenz des Repositorys:
-- `GNU Lesser General Public License v3.0 (LGPL-3.0)`
+- `MIT License`
 
-## Funktionale Aktualisierungen der Version 2026.9.28.0
+## Funktionale Aktualisierungen der Version 2026.10.21.0
 
 Diese Version konsolidiert bedeutende architektonische Fortschritte bei Stabilität, lokaler Sicherheit und Bedienung:
 
@@ -4493,27 +4493,6 @@ Das **Linceu Lighthouse** in diesem Workspace ist eine native Windows-Desktop-An
 │   │   └── 📄 RELEASE NOTES_pt_BR.txt
 │   └── 📁 images
 │       ├── 📁 icons
-│       │   ├── 📁 old
-│       │   │   ├── 📄 linceu_com_fundo.ico
-│       │   │   ├── 📄 linceu_com_fundo_1080_1080.ico
-│       │   │   ├── 📄 linceu_com_fundo_1440_2160.ico
-│       │   │   ├── 📄 linceu_com_fundo_150_150.ico
-│       │   │   ├── 📄 linceu_com_fundo_1920_1080.ico
-│       │   │   ├── 📄 linceu_com_fundo_2160_2160.ico
-│       │   │   ├── 📄 linceu_com_fundo_300_300.ico
-│       │   │   ├── 📄 linceu_com_fundo_3840_2160.ico
-│       │   │   ├── 📄 linceu_com_fundo_584_800.ico
-│       │   │   ├── 📄 linceu_com_fundo_71_71.ico
-│       │   │   ├── 📄 linceu_sem_fundo.ico
-│       │   │   ├── 📄 linceu_sem_fundo_1080_1080.ico
-│       │   │   ├── 📄 linceu_sem_fundo_1440_2160.ico
-│       │   │   ├── 📄 linceu_sem_fundo_150_150.ico
-│       │   │   ├── 📄 linceu_sem_fundo_1920_1080.ico
-│       │   │   ├── 📄 linceu_sem_fundo_2160_2160.ico
-│       │   │   ├── 📄 linceu_sem_fundo_300_300.ico
-│       │   │   ├── 📄 linceu_sem_fundo_3840_2160.ico
-│       │   │   ├── 📄 linceu_sem_fundo_584_800.ico
-│       │   │   └── 📄 linceu_sem_fundo_71_71.ico
 │       │   ├── 📄 analyze.ico
 │       │   ├── 📄 atualizar.ico
 │       │   ├── 📄 blocos-de-cores.ico
@@ -4544,27 +4523,6 @@ Das **Linceu Lighthouse** in diesem Workspace ist eine native Windows-Desktop-An
 │       │   ├── 📄 statistics.ico
 │       │   └── 📄 stop.ico
 │       └── 📁 imgs
-│           ├── 📁 old
-│           │   ├── 🖼️ linceu_com_fundo.png
-│           │   ├── 🖼️ linceu_com_fundo_1080_1080.png
-│           │   ├── 🖼️ linceu_com_fundo_1440_2160.png
-│           │   ├── 🖼️ linceu_com_fundo_150_150.png
-│           │   ├── 🖼️ linceu_com_fundo_1920_1080.png
-│           │   ├── 🖼️ linceu_com_fundo_2160_2160.png
-│           │   ├── 🖼️ linceu_com_fundo_300_300.png
-│           │   ├── 🖼️ linceu_com_fundo_3840_2160.png
-│           │   ├── 🖼️ linceu_com_fundo_584_800.png
-│           │   ├── 🖼️ linceu_com_fundo_71_71.png
-│           │   ├── 🖼️ linceu_sem_fundo.png
-│           │   ├── 🖼️ linceu_sem_fundo_1080_1080.png
-│           │   ├── 🖼️ linceu_sem_fundo_1440_2160.png
-│           │   ├── 🖼️ linceu_sem_fundo_150_150.png
-│           │   ├── 🖼️ linceu_sem_fundo_1920_1080.png
-│           │   ├── 🖼️ linceu_sem_fundo_2160_2160.png
-│           │   ├── 🖼️ linceu_sem_fundo_300_300.png
-│           │   ├── 🖼️ linceu_sem_fundo_3840_2160.png
-│           │   ├── 🖼️ linceu_sem_fundo_584_800.png
-│           │   └── 🖼️ linceu_sem_fundo_71_71.png
 │           ├── 🖼️ analyze.png
 │           ├── 🖼️ atualizar.png
 │           ├── 🖼️ blocos-de-cores.png
@@ -4594,6 +4552,8 @@ Das **Linceu Lighthouse** in diesem Workspace ist eine native Windows-Desktop-An
 │           ├── 🖼️ start.png
 │           ├── 🖼️ statistics.png
 │           └── 🖼️ stop.png
+├── 📁 cli
+│   └── ⚡ main_cli.cpp
 ├── 📁 data
 │   ├── 📁 Charts
 │   │   ├── ⚡ ch_01_ChartLayoutEngine.cpp
@@ -5503,4 +5463,30 @@ Das **Linceu Lighthouse** in diesem Workspace ist eine native Windows-Desktop-An
 ├── 📄 Linceu_Lighthouse_mingw.iss
 ├── 📄 Linceu_Lighthouse_msvc.iss
 └── 📄 Para preservar o cmake --build sem rodar cmake --preset.txt
+```
+
+# LINCEU LIGHTHOUSE: docs
+
+**Root Path:** `c:\Users\ferna\APLICATIVOS\CPP\Linceu_Lighthouse_cpp\docs`
+
+```
+├── 📁 images
+│   ├── 🖼️ banner.png
+│   └── 🖼️ logo.png
+├── 📝 architecture.md
+├── 📝 cli-reference.md
+├── 📝 compliance.md
+├── 📝 licensing.md
+├── 📝 release-v2026.10.21.0.md
+├── 📝 security-model.md
+├── 📝 suggested-issues.md
+└── 📝 user-guide.md
+```
+
+# LINCEU LIGHTHOUSE: cmake
+
+**Root Path:** `c:\Users\ferna\APLICATIVOS\CPP\Linceu_Lighthouse_cpp\cmake`
+
+```
+└── 📄 gerar_distribuicoes_limpas.ps1
 ```

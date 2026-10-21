@@ -1,3 +1,36 @@
+NOTAS DE LANÇAMENTO: Versão 2026.10.21.0
+
+DESTAQUES DESTA VERSÃO
+
+Esta versão do Linceu Lighthouse introduz uma nova modalidade de operação por linha de comando para auditorias diretas pelo terminal, otimiza o pacote de recursos visuais com gráficos em alta resolução mais leves e rápidos, consolida a estabilidade geral do monitoramento e formaliza termos claros de uso e liberdade sob licença de código aberto.
+
+A nova ferramenta de console permite auditar pastas, acompanhar atividades e verificar a integridade de arquivos de forma totalmente automatizada, sendo ideal para scripts agendados e rotinas que dispensam o uso da interface gráfica. Além disso, o pacote do aplicativo foi aliviado com a remoção de itens gráficos antigos e redundantes, mantendo uma inicialização mais veloz e imagens com nitidez cristalina em telas modernas.
+
+
+NOVOS RECURSOS E MELHORIAS
+
+1. Ferramenta Autônoma de Linha de Comando (Terminal)
+- Nova opção para executar auditorias, inspeções de arquivos e monitoramento de pastas diretamente pelo prompt de comando ou terminal, sem necessidade de abrir a interface visual.
+- Perfeita para rotinas automatizadas, tarefas agendadas do sistema e relatórios automáticos de integridade.
+- Apresentação clara de resultados diretamente na tela, com suporte a filtros e níveis de detalhe personalizáveis.
+
+2. Otimização Visual e Inicialização Mais Ágil
+- Limpeza e modernização do pacote de elementos gráficos, eliminando versões obsoletas e mantendo exclusivamente ilustrações e ícones em alta definição.
+- Inicialização mais rápida e redução do consumo de memória e espaço de armazenamento.
+- Renderização visual impecável e consistente em monitores com diferentes escalas e resoluções.
+
+3. Esclarecimento de Licenciamento e Proteção aos Usuários
+- Transparência total sobre a licença de código aberto que garante liberdade para uso pessoal, modificação e estudo do aplicativo.
+- Orientações claras que protegem os usuários contra versões não autorizadas ou comercializadas indevidamente por terceiros, resguardando a integridade das distribuições oficiais.
+
+4. Estabilidade Contínua no Acompanhamento de Pastas
+- Maior consistência durante longas sessões de verificação contínua e processamento de grandes estruturas de pastas.
+- Aperfeiçoamento na atualização automática de informações do sistema e sincronização de dados operacionais.
+
+
+_________________________________________________
+
+
 NOTAS DE LANÇAMENTO: Versão 2026.9.28.0
 
 DESTAQUES DESTA VERSÃO

@@ -21,8 +21,8 @@
 
 # Manual do Usuário — Linceu Lighthouse
 
-Versão documentada: `2026.9.28.0`
-Data: `28 de setembro de 2026`
+Versão documentada: `2026.10.21.0`
+Data: `21 de outubro de 2026`
 ---
 
 <details>
@@ -343,6 +343,71 @@ Esta seção complementa o manual com os recursos mais recentes do projeto e mos
 2. Valores aceitos: **auto**, **desktop**, **angle**, **software**.
 3. Use **software** apenas para diagnóstico de compatibilidade (pode reduzir desempenho).
 
+## Recursos da versão 2026.10.21.0
+
+Esta versão consolida a introdução da ferramenta autônoma de linha de comando (`linceu-lighthouse-cli`), o suporte aprimorado a parâmetros de console na aplicação gráfica, a otimização de recursos gráficos com imagens em alta definição mais leves e a formalização dos termos de uso sob licença MIT.
+
+### Utilitário Autônomo de Linha de Comando (`linceu-lighthouse-cli.exe`)
+
+O `linceu-lighthouse-cli.exe` é um executável de console dedicado, desenvolvido para executar diretamente no PowerShell, Prompt de Comando (CMD) do Windows, scripts em lote, Tarefas Agendadas (Task Scheduler) e pipelines de integração/automação sem necessitar de interface gráfica.
+
+Ambos os executáveis (`Linceu_Lighthouse.exe` e `linceu-lighthouse-cli.exe`) operam de forma 100% local e compartilham a mesma infraestrutura criptográfica, motor de regras de segurança e o banco de dados SQLite local armazenado em `%LOCALAPPDATA%/LinceuLighthouse/monitoramento.db`.
+
+#### Sintaxe Geral do CLI
+```cmd
+linceu-lighthouse-cli.exe <comando> [opções]
+```
+
+#### Comandos Disponíveis no CLI:
+1. **`scan <caminho>`**: Executa varredura profunda de arquivos e pastas no caminho especificado, calculando hashes SHA-256, metadados e avaliando pontuação de risco.
+   - *Exemplo:* `linceu-lighthouse-cli.exe scan "C:\Projetos\Sistema" --depth 2`
+   - *Exemplo com filtro de risco:* `linceu-lighthouse-cli.exe scan "D:\Arquivos" --risks-only --format json`
+2. **`monitor <caminho>`**: Inicia a observação contínua do sistema de arquivos em tempo real utilizando as APIs nativas do Windows (`ReadDirectoryChangesW`), emitindo eventos instantâneos no console.
+   - *Exemplo:* `linceu-lighthouse-cli.exe monitor "C:\inetpub\wwwroot"`
+   - *Exemplo com duração definida:* `linceu-lighthouse-cli.exe monitor "D:\Dados" --duration 3600 --format text`
+3. **`metadata <arquivo>`**: Extrai metadados técnicos avançados de arquivos e executáveis PE (arquitetura, seções, verificação de assinatura digital Authenticode e carimbos de tempo).
+   - *Exemplo:* `linceu-lighthouse-cli.exe metadata "C:\Windows\notepad.exe"`
+4. **`baseline <caminho>`**: Compara o estado atual dos arquivos contra a linha de base criptográfica armazenada no banco SQLite, identificando desvios (*drift*), adições e adulterações não autorizadas.
+   - *Exemplo de verificação:* `linceu-lighthouse-cli.exe baseline "C:\Configuracoes"`
+   - *Exemplo de atualização da linha de base:* `linceu-lighthouse-cli.exe baseline "C:\Configuracoes" --update`
+5. **`alerts`**: Consulta e lista todos os incidentes de segurança e violações de regras registrados no banco de auditoria local.
+   - *Exemplo:* `linceu-lighthouse-cli.exe alerts --format json`
+6. **`quarantine <ação>`**: Gerencia os arquivos retidos no cofre criptográfico de quarentena.
+   - *Listar arquivos isolados:* `linceu-lighthouse-cli.exe quarantine list`
+   - *Restaurar arquivo com verificação:* `linceu-lighthouse-cli.exe quarantine restore <id> "C:\DestinoSeguro"`
+7. **`sessions`**: Lista o histórico completo das sessões de monitoramento e auditoria persistidas no SQLite.
+   - *Exemplo:* `linceu-lighthouse-cli.exe sessions --format csv`
+
+#### Opções Globais do CLI:
+- **`--format <text|json|csv>`**: Seleciona o formato de saída dos dados no console ou para redirecionamento em arquivo/pipe (padrão: `text`).
+- **`--depth <n>`**: Controla o nível de recursão de subdiretórios (`0` para somente a pasta raiz, `-1` para recursão ilimitada).
+- **`--risks-only`**: Filtra a exibição, mostrando apenas itens com nível de risco relevante (Score ≥ 45 ou níveis Médio, Alto e Crítico).
+- **`--duration <segundos>`**: Define o tempo máximo de execução do monitoramento (`0` para contínuo até pressionar Ctrl+C).
+- **`--no-banner`**: Oprime o cabeçalho textual informativo, ideal para processamento automático de logs e scripts.
+- **`--help` / `-h`**: Exibe a lista completa de comandos e sintaxe no terminal.
+- **`--version` / `-v`**: Exibe a versão oficial compilada do utilitário.
+
+### Parâmetros de Linha de Comando na Aplicação Gráfica (`Linceu_Lighthouse.exe`)
+
+A aplicação com interface gráfica desktop também aceita parâmetros no momento de sua inicialização pelo atalho ou prompt:
+- `Linceu_Lighthouse.exe "D:\MinhaPasta"`: Inicia o aplicativo apontando diretamente para a pasta informada e executando a varredura inicial.
+- `--dir <caminho>` ou `-d <caminho>`: Define explicitamente o diretório alvo para monitoramento.
+- `--profile <nome>`: Carrega automaticamente um perfil de múltiplos diretórios previamente configurado e salvo no banco.
+- `--scan-only`: Executa a varredura completa, cataloga os metadados e encerra o aplicativo sem manter o monitoramento contínuo em segundo plano.
+- `--export <formato> <arquivo>`: Exporta os resultados da auditoria imediatamente após o scan (`xlsx`, `csv`, `json`, `xml` ou `db`).
+- `LINCEU_OPENGL_MODE`: Variável de ambiente para selecionar o perfil de renderização gráfica dos diagramas (`auto`, `desktop`, `angle`, `software`).
+
+### Otimização Visual e Ativos em Alta Definição
+
+O pacote de instalação do aplicativo foi aliviado com a remoção de ativos gráficos legados de baixa resolução, mantendo exclusivamente imagens e ícones em alta definição perfeitamente adaptados para monitores de alta densidade (High-DPI). Essa otimização resulta em:
+- Inicialização mais rápida do software;
+- Menor pegada em disco e consumo de memória otimizado;
+- Renderização visual nítida e uniforme em telas com diferentes escalas no Windows.
+
+### Licenciamento e Garantia de Direitos
+
+O projeto formaliza sua governança sob a Licença MIT para todo o código-fonte, scripts e recursos, assegurando liberdade irrestrita para uso pessoal, comercial, modificação e criação de versões derivadas. É estabelecido um esclarecimento protetivo que resguarda os binários oficiais assinados e empacotados pelo autor nas lojas oficiais contra redistribuição comercial não autorizada por terceiros.
+
 ## Recursos da versão 2026.9.28.0
 
 Esta versão consolida melhorias estruturais no monitoramento em tempo real, carregamento assíncrono não bloqueante para sessões em tempo real, atualização diferencial sem tremulação na quarentena e restauração com validação criptográfica SHA-256.
@@ -586,8 +651,8 @@ Antes de salvar dados, configure **Configurações > Opções de exportação**.
 
 # User Manual — Linceu Lighthouse
 
-Documented version: `2026.9.28.0`  
-Date: `September 28, 2026`
+Documented version: `2026.10.21.0`  
+Date: `October 21, 2026`
 ---
 
 <details>
@@ -902,6 +967,71 @@ This section supplements the manual with the latest project features and demonst
 2. In virtualized or legacy environments, set the environment variable `LINCEU_OPENGL_MODE=software`.
 3. Charts render smoothly using software rasterization without crashes.
 
+## Version 2026.10.21.0 Features
+
+This release consolidates the introduction of the standalone command-line interface tool (`linceu-lighthouse-cli`), enhanced console parameter support in the graphical desktop application, visual asset optimization with lighter high-definition graphics, and formalized open-source licensing terms under the MIT License.
+
+### Standalone Command-Line Tool (`linceu-lighthouse-cli.exe`)
+
+`linceu-lighthouse-cli.exe` is a dedicated console executable engineered for direct execution in PowerShell, Windows Command Prompt (CMD), batch scripts, Windows Task Scheduler, and CI/CD automation pipelines without requiring a graphical display.
+
+Both executables (`Linceu_Lighthouse.exe` and `linceu-lighthouse-cli.exe`) operate 100% locally and share the same cryptographic foundation, security rule engine, and local SQLite database located at `%LOCALAPPDATA%/LinceuLighthouse/monitoramento.db`.
+
+#### General CLI Syntax
+```cmd
+linceu-lighthouse-cli.exe <command> [options]
+```
+
+#### Available CLI Commands:
+1. **`scan <path>`**: Performs a comprehensive integrity scan across files and folders at the specified target, calculating SHA-256 hashes, extracting metadata, and scoring security risks.
+   - *Example:* `linceu-lighthouse-cli.exe scan "C:\Projects\System" --depth 2`
+   - *Example with risk filtering:* `linceu-lighthouse-cli.exe scan "D:\Files" --risks-only --format json`
+2. **`monitor <path>`**: Starts continuous, real-time file system observation using native Windows APIs (`ReadDirectoryChangesW`), emitting instant event notifications to the console.
+   - *Example:* `linceu-lighthouse-cli.exe monitor "C:\inetpub\wwwroot"`
+   - *Example with duration:* `linceu-lighthouse-cli.exe monitor "D:\Data" --duration 3600 --format text`
+3. **`metadata <file>`**: Extracts deep technical metadata from executable files and PE binaries (architecture, sections, Authenticode digital signature validation, and compilation timestamps).
+   - *Example:* `linceu-lighthouse-cli.exe metadata "C:\Windows\notepad.exe"`
+4. **`baseline <path>`**: Compares the current file system state against the cryptographic baseline stored in SQLite, detecting unauthorized modifications, drifts, and additions.
+   - *Verification example:* `linceu-lighthouse-cli.exe baseline "C:\Configurations"`
+   - *Updating baseline example:* `linceu-lighthouse-cli.exe baseline "C:\Configurations" --update`
+5. **`alerts`**: Queries and lists all security incidents and policy violations recorded in the local audit database.
+   - *Example:* `linceu-lighthouse-cli.exe alerts --format json`
+6. **`quarantine <action>`**: Manages files held inside the cryptographic quarantine vault.
+   - *List quarantined files:* `linceu-lighthouse-cli.exe quarantine list`
+   - *Restore file with integrity check:* `linceu-lighthouse-cli.exe quarantine restore <id> "C:\SafeDestination"`
+7. **`sessions`**: Lists historical monitoring and audit sessions persisted in SQLite.
+   - *Example:* `linceu-lighthouse-cli.exe sessions --format csv`
+
+#### Global CLI Options:
+- **`--format <text|json|csv>`**: Selects the output format for console display or redirection into pipes/files (default: `text`).
+- **`--depth <n>`**: Controls subdirectory recursion depth (`0` for root folder only, `-1` for unlimited recursion).
+- **`--risks-only`**: Filters output to only display items with notable risk scores (Score ≥ 45 or Medium/High/Critical levels).
+- **`--duration <seconds>`**: Sets maximum monitoring duration (`0` for continuous operation until Ctrl+C).
+- **`--no-banner`**: Suppresses the decorative header banner, ideal for script pipelines and clean data processing.
+- **`--help` / `-h`**: Displays comprehensive help and command syntax in the terminal.
+- **`--version` / `-v`**: Displays the officially compiled utility version.
+
+### Desktop Application Command-Line Parameters (`Linceu_Lighthouse.exe`)
+
+The desktop GUI application also supports command-line parameters when invoked from shortcuts or the command prompt:
+- `Linceu_Lighthouse.exe "D:\MyFolder"`: Launches the app pointing directly to the target directory and initiates the initial scan.
+- `--dir <path>` or `-d <path>`: Explicitly specifies the monitored directory.
+- `--profile <name>`: Automatically loads a pre-configured multi-directory profile stored in SQLite.
+- `--scan-only`: Performs the complete initial scan, catalogs metadata, and exits without keeping the continuous monitoring service running.
+- `--export <format> <file>`: Exports audit reports immediately after the scan completes (`xlsx`, `csv`, `json`, `xml`, or `db`).
+- `LINCEU_OPENGL_MODE`: Environment variable configuring graphical diagram acceleration (`auto`, `desktop`, `angle`, `software`).
+
+### Visual Asset Optimization and High-Definition Quality
+
+The application distribution package has been streamlined by retiring obsolete low-resolution icons and images, retaining exclusively high-definition visual assets tailored for modern high-DPI displays. Benefits include:
+- Faster application startup times;
+- Reduced disk footprint and optimized runtime memory usage;
+- Crisp and uniform rendering across varied Windows display scale factors.
+
+### Licensing and Rights Governance
+
+The project formalizes governance under the permissive MIT License for all source code, scripts, and assets, granting complete freedom for personal and commercial use, modification, and derivation. It incorporates clear protective terms safeguarding official binaries distributed by the author against unauthorized commercial resale by third parties.
+
 ## Version 2026.9.28.0 Features
 
 This version delivers significant stability, local security, and usability enhancements featuring asynchronous non-blocking real-time session loading, anti-flicker differential quarantine synchronization, and safe recovery with SHA-256 cryptographic verification.
@@ -1131,8 +1261,8 @@ Before saving data, configure **Settings > Export Options**.
 
 # Manual del Usuario — Linceu Lighthouse
 
-Versión documentada: `2026.9.28.0`
-Fecha: `28 de septiembre de 2026`
+Versión documentada: `2026.10.21.0`
+Fecha: `21 de octubre de 2026`
 ---
 
 <details>
@@ -1453,6 +1583,71 @@ Esta sección complementa el manual con las funcionalidades más recientes del p
 2. Valores aceptados: **auto**, **desktop**, **angle**, **software**.
 3. Use **software** solo para diagnóstico de compatibilidad (puede reducir el rendimiento).
 
+## Recursos de la versión 2026.10.21.0
+
+Esta versión consolida la incorporación de la herramienta autónoma de línea de comandos (`linceu-lighthouse-cli`), la compatibilidad mejorada con parámetros de consola en la aplicación gráfica, la optimización de recursos gráficos con imágenes ligeras en alta definición y la formalización de los términos de uso bajo la Licencia MIT.
+
+### Herramienta Autónoma de Línea de Comandos (`linceu-lighthouse-cli.exe`)
+
+`linceu-lighthouse-cli.exe` es un ejecutable de consola dedicado, diseñado para ejecutarse directamente en PowerShell, el Símbolo del sistema (CMD) de Windows, scripts por lotes, el Programador de tareas de Windows (Task Scheduler) y canales de automatización sin necesidad de entorno gráfico.
+
+Ambos ejecutables (`Linceu_Lighthouse.exe` e `linceu-lighthouse-cli.exe`) operan de forma 100% local y comparten la misma infraestructura criptográfica, motor de reglas de seguridad y la base de datos local SQLite situada en `%LOCALAPPDATA%/LinceuLighthouse/monitoramento.db`.
+
+#### Sintaxis General de la CLI
+```cmd
+linceu-lighthouse-cli.exe <comando> [opciones]
+```
+
+#### Comandos Disponibles en la CLI:
+1. **`scan <ruta>`**: Realiza una exploración profunda de archivos y carpetas en el destino indicado, calculando hashes SHA-256, extrayendo metadatos y evaluando puntuaciones de riesgo.
+   - *Ejemplo:* `linceu-lighthouse-cli.exe scan "C:\Proyectos\Sistema" --depth 2`
+   - *Ejemplo con filtro de riesgo:* `linceu-lighthouse-cli.exe scan "D:\Archivos" --risks-only --format json`
+2. **`monitor <ruta>`**: Inicia la supervisión continua del sistema de archivos en tiempo real mediante las APIs nativas de Windows (`ReadDirectoryChangesW`), generando notificaciones inmediatas en la consola.
+   - *Ejemplo:* `linceu-lighthouse-cli.exe monitor "C:\inetpub\wwwroot"`
+   - *Ejemplo con duración fijada:* `linceu-lighthouse-cli.exe monitor "D:\Datos" --duration 3600 --format text`
+3. **`metadata <archivo>`**: Extrae metadatos técnicos avanzados de ejecutables y archivos binarios PE (arquitectura, secciones, validación de firma digital Authenticode y marcas de tiempo).
+   - *Ejemplo:* `linceu-lighthouse-cli.exe metadata "C:\Windows\notepad.exe"`
+4. **`baseline <ruta>`**: Compara el estado actual de los archivos con la línea de base criptográfica almacenada en SQLite, detectando alteraciones, desvíos (*drift*) e incorporaciones no autorizadas.
+   - *Ejemplo de verificación:* `linceu-lighthouse-cli.exe baseline "C:\Configuraciones"`
+   - *Ejemplo de actualización de línea de base:* `linceu-lighthouse-cli.exe baseline "C:\Configuraciones" --update`
+5. **`alerts`**: Consulta y enumera todas las alertas de seguridad e infracciones de directivas registradas en la base de auditoría local.
+   - *Ejemplo:* `linceu-lighthouse-cli.exe alerts --format json`
+6. **`quarantine <acción>`**: Administra los archivos aislados en el almacén criptográfico de cuarentena.
+   - *Listar elementos en cuarentena:* `linceu-lighthouse-cli.exe quarantine list`
+   - *Restaurar archivo con comprobación:* `linceu-lighthouse-cli.exe quarantine restore <id> "C:\DestinoSeguro"`
+7. **`sessions`**: Muestra el historial completo de las sesiones de supervisión y auditoría guardadas en SQLite.
+   - *Ejemplo:* `linceu-lighthouse-cli.exe sessions --format csv`
+
+#### Opciones Globales de la CLI:
+- **`--format <text|json|csv>`**: Selecciona el formato de salida en consola o para canalización en archivo/tubería (predeterminado: `text`).
+- **`--depth <n>`**: Controla la profundidad de recursión en subcarpetas (`0` solo carpeta raíz, `-1` recursión ilimitada).
+- **`--risks-only`**: Filtra la salida para mostrar únicamente elementos con nivel de riesgo relevante (Puntuación ≥ 45 o niveles Medio, Alto y Crítico).
+- **`--duration <segundos>`**: Fija el tiempo máximo de supervisión en segundos (`0` para ejecución continua hasta Ctrl+C).
+- **`--no-banner`**: Suprime el encabezado decorativo, facilitando el procesamiento en scripts y capturas limpias.
+- **`--help` / `-h`**: Muestra la ayuda detallada y la sintaxis de comandos en el terminal.
+- **`--version` / `-v`**: Muestra la versión oficial compilada del utilitario.
+
+### Parámetros de Línea de Comandos en la Aplicación Gráfica (`Linceu_Lighthouse.exe`)
+
+La aplicación gráfica de escritorio también admite parámetros al iniciarse desde un acceso directo o símbolo del sistema:
+- `Linceu_Lighthouse.exe "D:\MiCarpeta"`: Abre la aplicación directamente en la carpeta especificada e inicia la exploración.
+- `--dir <ruta>` o `-d <ruta>`: Especifica explícitamente el directorio objetivo de supervisión.
+- `--profile <nombre>`: Carga automáticamente un perfil multi-directorio configurado previamente y guardado en SQLite.
+- `--scan-only`: Ejecuta la exploración completa, cataloga los metadados y cierra la aplicación sin mantener la supervisión en segundo plano.
+- `--export <formato> <archivo>`: Exporta los informes de auditoría tras concluir la exploración (`xlsx`, `csv`, `json`, `xml` o `db`).
+- `LINCEU_OPENGL_MODE`: Variable de entorno para seleccionar el perfil de aceleración gráfica de diagramas (`auto`, `desktop`, `angle`, `software`).
+
+### Optimización Visual y Gráficos en Alta Definición
+
+El paquete de instalación ha sido optimizado mediante la eliminación de iconos e ilustraciones heredadas en baja resolución, manteniendo exclusivamente elementos visuales de alta definición preparados para pantallas con escalado elevado (High-DPI). Esta optimización aporta:
+- Inicio más rápido de la aplicación;
+- Menor consumo de espacio en disco y memoria;
+- Representación visual nítida y uniforme en pantallas con diferentes densidades.
+
+### Licenciamiento y Derechos de Uso
+
+El proyecto formaliza su distribución bajo la Licencia MIT para todo el código fuente, guiones y recursos, otorgando plena libertad de uso personal, comercial, modificación e integración. Se establece un aviso de protección que resguarda las versiones binarias oficiales firmadas por el autor en las tiendas frente a la comercialización no autorizada por terceros.
+
 ## Recursos de la versión 2026.9.28.0
 
 Esta versión consolida mejoras estructurales de estabilidad, seguridad local y experiencia de usuario, incorporando carga asíncrona no bloqueante para sesiones en tiempo real, actualización diferencial sin parpadeo en cuarentena y restauración con validación criptográfica SHA-256.
@@ -1696,8 +1891,8 @@ Antes de guardar datos, configure **Configuración > Opciones de exportación**.
 
 # Manuel de l'Utilisateur — Linceu Lighthouse
 
-Version documentée : `2026.9.28.0`
-Date: `28 septembre 2026`
+Version documentée : `2026.10.21.0`
+Date: `21 octobre 2026`
 ---
 
 <details>
@@ -2018,6 +2213,71 @@ Cette section complète le manuel avec les fonctionnalités les plus récentes d
 2. Valeurs acceptées : **auto**, **desktop**, **angle**, **software**.
 3. Utilisez **software** uniquement pour le diagnostic de compatibilité (peut réduire les performances).
 
+## Fonctionnalités de la version 2026.10.21.0
+
+Cette version consolide l'introduction de l'outil autonome en ligne de commande (`linceu-lighthouse-cli`), la prise en charge enrichie des paramètres en console pour l'application graphique, l'optimisation des ressources visuelles avec des graphismes haute définition allégés et la formalisation des conditions d'utilisation sous licence MIT.
+
+### Outil Autonome en Ligne de Commande (`linceu-lighthouse-cli.exe`)
+
+`linceu-lighthouse-cli.exe` est un exécutable console dédié, conçu pour fonctionner directement dans PowerShell, l'invite de commandes (CMD) de Windows, des scripts batch, le Planificateur de tâches de Windows (Task Scheduler) ou des pipelines d'automatisation sans nécessiter d'environnement graphique.
+
+Les deux exécutables (`Linceu_Lighthouse.exe` et `linceu-lighthouse-cli.exe`) fonctionnent à 100% localement et partagent la même infrastructure cryptographique, le même moteur de règles de sécurité et la même base de données locale SQLite située sous `%LOCALAPPDATA%/LinceuLighthouse/monitoramento.db`.
+
+#### Syntaxe Générale de la CLI
+```cmd
+linceu-lighthouse-cli.exe <commande> [options]
+```
+
+#### Commandes Disponibles dans la CLI :
+1. **`scan <chemin>`** : Analyse en profondeur les fichiers et dossiers à l'emplacement indiqué, calculant les empreintes SHA-256, extrayant les métadonnées et évaluant le niveau de risque.
+   - *Exemple :* `linceu-lighthouse-cli.exe scan "C:\Projets\Systeme" --depth 2`
+   - *Exemple avec filtre de risque :* `linceu-lighthouse-cli.exe scan "D:\Fichiers" --risks-only --format json`
+2. **`monitor <chemin>`** : Démarre la surveillance continue en temps réel du système de fichiers via les API natives Windows (`ReadDirectoryChangesW`), diffusant instantanément les événements en console.
+   - *Exemple :* `linceu-lighthouse-cli.exe monitor "C:\inetpub\wwwroot"`
+   - *Exemple avec durée définie :* `linceu-lighthouse-cli.exe monitor "D:\Donnees" --duration 3600 --format text`
+3. **`metadata <fichier>`** : Extrait des métadonnées techniques approfondies sur les fichiers exécutables et binaires PE (architecture, sections, validation de signature Authenticode et horodatages).
+   - *Exemple :* `linceu-lighthouse-cli.exe metadata "C:\Windows\notepad.exe"`
+4. **`baseline <chemin>`** : Compare l'état actuel des fichiers à la ligne de base cryptographique stockée dans SQLite, détectant les altérations, dérives (*drift*) et ajouts non autorisés.
+   - *Exemple de vérification :* `linceu-lighthouse-cli.exe baseline "C:\Configurations"`
+   - *Exemple de mise à jour de la ligne de base :* `linceu-lighthouse-cli.exe baseline "C:\Configurations" --update`
+5. **`alerts`** : Interroge et répertorie l'ensemble des alertes de sécurité et violations de règles enregistrées dans la base d'audit locale.
+   - *Exemple :* `linceu-lighthouse-cli.exe alerts --format json`
+6. **`quarantine <action>`** : Gère les fichiers placés dans le coffre cryptographique de quarantaine.
+   - *Lister les éléments isolés :* `linceu-lighthouse-cli.exe quarantine list`
+   - *Restaurer avec vérification :* `linceu-lighthouse-cli.exe quarantine restore <id> "C:\DestinationSure"`
+7. **`sessions`** : Affiche l'historique complet des sessions de surveillance et d'audit persistées dans SQLite.
+   - *Exemple :* `linceu-lighthouse-cli.exe sessions --format csv`
+
+#### Options Globales de la CLI :
+- **`--format <text|json|csv>`** : Sélectionne le format de restitution en console ou pour redirection vers un fichier/tube (par défaut : `text`).
+- **`--depth <n>`** : Détermine la profondeur de récursion dans les sous-dossiers (`0` pour le dossier racine seul, `-1` pour récursion illimitée).
+- **`--risks-only`** : Filtre la sortie pour n'afficher que les éléments présentant un niveau de risque significatif (Score ≥ 45 ou niveaux Moyen, Élevé et Critique).
+- **`--duration <secondes>`** : Définit la durée maximale de surveillance en secondes (`0` pour surveillance continue jusqu'à Ctrl+C).
+- **`--no-banner`** : Masque la bannière textuelle informative pour un traitement scripté limpide.
+- **`--help` / `-h`** : Affiche l'aide détaillée et la syntaxe des commandes dans le terminal.
+- **`--version` / `-v`** : Indique la version officielle compilée de l'utilitaire.
+
+### Paramètres en Ligne de Commande pour l'Application Graphique (`Linceu_Lighthouse.exe`)
+
+L'application de bureau à interface graphique accepte également des paramètres lors de son exécution :
+- `Linceu_Lighthouse.exe "D:\MonDossier"` : Démarre l'application en ciblant directement le dossier spécifié et lance l'analyse initiale.
+- `--dir <chemin>` ou `-d <chemin>` : Spécifie explicitement le répertoire à surveiller.
+- `--profile <nom>` : Charge automatiquement un profil multi-répertoires configuré et sauvegardé dans SQLite.
+- `--scan-only` : Effectue l'analyse complète, catalogue les métadonnées et quitte l'application sans maintenir la surveillance active.
+- `--export <format> <fichier>` : Exporte le rapport d'audit immédiatement après l'analyse (`xlsx`, `csv`, `json`, `xml` ou `db`).
+- `LINCEU_OPENGL_MODE` : Variable d'environnement pour configurer le mode de rendu graphique des diagrammes (`auto`, `desktop`, `angle`, `software`).
+
+### Optimisation Visuelle et Haute Définition
+
+Le paquet de distribution a été allégé grâce au retrait des anciennes icônes et illustrations basse résolution, conservant exclusivement des ressources haute définition conçues pour les écrans modernes à haute densité (High-DPI). Cette démarche offre :
+- Un démarrage plus prompt de l'application ;
+- Une empreinte disque réduite et une mémoire optimisée ;
+- Un rendu graphique d'une netteté parfaite sur toutes les échelles d'écran sous Windows.
+
+### Licenciement et Protection des Utilisateurs
+
+Le projet est régi par la licence permissive MIT pour l'ensemble du code source, des scripts et des ressources, garantissant une liberté totale d'utilisation, d'adaptation et de distribution. Une mention protectrice réserve la diffusion des binaires officiels signés par l'auteur sur les boutiques afin de prévenir toute revente commerciale non autorisée par des tiers.
+
 ## Fonctionnalités de la version 2026.9.28.0
 
 Cette version consolide des améliorations structurelles en matière de stabilité, de sécurité locale et de confort d'utilisation, intégrant un chargement asynchrone non bloquant pour les sessions en temps réel, une mise à jour différentielle sans scintillement pour la quarantaine et une restauration sécurisée avec validation cryptographique SHA-256.
@@ -2261,8 +2521,8 @@ Avant d'enregistrer des données, configurez **Paramètres > Options d'exportati
 
 # Manuale dell'Utente — Linceu Lighthouse
 
-Versione documentata: `2026.9.28.0`
-Data: `28 settembre 2026`
+Versione documentata: `2026.10.21.0`
+Data: `21 ottobre 2026`
 ---
 
 <details>
@@ -2583,6 +2843,71 @@ Questa sezione integra il manuale con le funzionalità più recenti del progetto
 2. Valori accettati: **auto**, **desktop**, **angle**, **software**.
 3. Usa **software** solo per la diagnosi di compatibilità (può ridurre le prestazioni).
 
+## Funzionalità della versione 2026.10.21.0
+
+Questa versione consolida l'introduzione dello strumento autonomo a riga di comando (`linceu-lighthouse-cli`), il supporto avanzato ai parametri di console nell'applicazione grafica, l'ottimizzazione delle risorse visive con grafiche ad alta definizione più leggere e la formalizzazione dei termini d'uso sotto Licenza MIT.
+
+### Strumento Autonomo a Riga di Comando (`linceu-lighthouse-cli.exe`)
+
+`linceu-lighthouse-cli.exe` è un eseguibile console dedicato, progettato per funzionare direttamente in PowerShell, nel Prompt dei comandi (CMD) di Windows, script batch, nell'Utilità di pianificazione di Windows (Task Scheduler) e in pipeline di automazione senza richiedere un'interfaccia grafica.
+
+Entrambi gli eseguibili (`Linceu_Lighthouse.exe` e `linceu-lighthouse-cli.exe`) operano al 100% localmente e condividono la medesima infrastruttura crittografica, il motore di regole di sicurezza e il database SQLite locale situato in `%LOCALAPPDATA%/LinceuLighthouse/monitoramento.db`.
+
+#### Sintassi Generale della CLI
+```cmd
+linceu-lighthouse-cli.exe <comando> [opzioni]
+```
+
+#### Comandi Disponibili nella CLI:
+1. **`scan <percorso>`**: Esegue una scansione approfondita di file e cartelle nel percorso specificato, calcolando gli hash SHA-256, estraendo i metadati e valutando il punteggio di rischio.
+   - *Esempio:* `linceu-lighthouse-cli.exe scan "C:\Progetti\Sistema" --depth 2`
+   - *Esempio con filtro di rischio:* `linceu-lighthouse-cli.exe scan "D:\File" --risks-only --format json`
+2. **`monitor <percorso>`**: Avvia l'osservazione continua in tempo reale del file system mediante le API native di Windows (`ReadDirectoryChangesW`), generando eventi immediati nella console.
+   - *Esempio:* `linceu-lighthouse-cli.exe monitor "C:\inetpub\wwwroot"`
+   - *Esempio con durata definita:* `linceu-lighthouse-cli.exe monitor "D:\Dati" --duration 3600 --format text`
+3. **`metadata <file>`**: Estrae metadati tecnici avanzati da file eseguibili e binari PE (architettura, sezioni, convalida della firma digitale Authenticode e timestamp).
+   - *Esempio:* `linceu-lighthouse-cli.exe metadata "C:\Windows\notepad.exe"`
+4. **`baseline <percorso>`**: Confronta lo stato attuale dei file con la baseline crittografica memorizzata in SQLite, rilevando modifiche, deviazioni (*drift*) e aggiunte non autorizzate.
+   - *Esempio di verifica:* `linceu-lighthouse-cli.exe baseline "C:\Configurazioni"`
+   - *Esempio di aggiornamento della baseline:* `linceu-lighthouse-cli.exe baseline "C:\Configurazioni" --update`
+5. **`alerts`**: Interroga ed elenca tutti gli incidenti di sicurezza e le violazioni delle regole registrati nel database di audit locale.
+   - *Esempio:* `linceu-lighthouse-cli.exe alerts --format json`
+6. **`quarantine <azione>`**: Gestisce i file trattenuti nel caveau crittografico di quarantena.
+   - *Elencare i file in quarantena:* `linceu-lighthouse-cli.exe quarantine list`
+   - *Ripristinare un file con verifica:* `linceu-lighthouse-cli.exe quarantine restore <id> "C:\DestinazioneSicura"`
+7. **`sessions`**: Mostra la cronologia completa delle sessioni di monitoraggio e audit memorizzate in SQLite.
+   - *Esempio:* `linceu-lighthouse-cli.exe sessions --format csv`
+
+#### Opzioni Globali della CLI:
+- **`--format <text|json|csv>`**: Seleziona il formato di output nella console o per l'indirizzamento in pipe/file (predefinito: `text`).
+- **`--depth <n>`**: Limita la profondità di ricorsione delle sottocartelle (`0` per la sola cartella radice, `-1` per ricorsione illimitata).
+- **`--risks-only`**: Filtra l'output visualizzando solo elementi con livello di rischio significativo (Punteggio ≥ 45 o livelli Medio, Alto e Critico).
+- **`--duration <secondi>`**: Imposta la durata massima del monitoraggio in secondi (`0` per esecuzione continua fino a Ctrl+C).
+- **`--no-banner`**: Elimina l'intestazione decorativa, ideale per pipeline automatizzate e script.
+- **`--help` / `-h`**: Mostra la guida completa e la sintassi dei comandi nel terminale.
+- **`--version` / `-v`**: Mostra la versione ufficiale compilata dello strumento.
+
+### Parametri a Riga di Comando nell'Applicazione Grafica (`Linceu_Lighthouse.exe`)
+
+L'applicazione desktop con interfaccia grafica supporta a sua volta parametri da riga di comando o collegamento:
+- `Linceu_Lighthouse.exe "D:\MiaCartella"`: Avvia l'applicazione puntando direttamente alla cartella indicata e avvia la scansione.
+- `--dir <percorso>` o `-d <percorso>`: Definisce esplicitamente la cartella da monitorare.
+- `--profile <nome>`: Carica automaticamente un profilo multi-directory precedentemente configurato in SQLite.
+- `--scan-only`: Esegue la scansione completa, cataloga i metadati e si chiude senza mantenere attivo il servizio di monitoraggio.
+- `--export <formato> <file>`: Esporta i report di audit al termine della scansione (`xlsx`, `csv`, `json`, `xml` o `db`).
+- `LINCEU_OPENGL_MODE`: Variabile di ambiente per configurare la modalità di accelerazione grafica dei grafici (`auto`, `desktop`, `angle`, `software`).
+
+### Ottimizzazione Grafica e Alta Definizione
+
+Il pacchetto dell'applicazione è stato snellito rimuovendo le grafiche e icone legacy a bassa risoluzione, preservando unicamente risorse visive in alta definizione pronte per schermi moderni ad alta densità (High-DPI). I vantaggi comprendono:
+- Avvio più celere dell'applicazione;
+- Riduzione dello spazio occupato su disco e minore utilizzo di memoria;
+- Resa visiva nitida e uniforme su schermi con differenti fattori di scala Windows.
+
+### Licenza e Tutela dei Diritti
+
+Il progetto formalizza la propria distribuzione sotto Licenza MIT per tutto il codice sorgente, script e risorse, garantendo piena libertà di utilizzo personale, commerciale, modifica e integrazione. Viene inserito un avviso a tutela dei file binari ufficiali firmati e distribuiti dall'autore sugli store contro qualsiasi redistribuzione commerciale non autorizzata da parte di terzi.
+
 ## Funzionalità della versione 2026.9.28.0
 
 Questa versione consolida importanti miglioramenti strutturali di stabilità, sicurezza locale ed esperienza utente, introducendo il caricamento asincrono non bloccante per le sessioni in tempo reale, l'aggiornamento differenziale anti-sfarfallio per la quarantena e il ripristino sicuro con convalida crittografica SHA-256.
@@ -2826,8 +3151,8 @@ Prima di salvare i dati, configura **Impostazioni > Opzioni di esportazione**.
 
 # Benutzerhandbuch — Linceu Lighthouse
 
-Dokumentierte Version: `2026.9.28.0`
-Datum: `28. September 2026`
+Dokumentierte Version: `2026.10.21.0`
+Datum: `21. Oktober 2026`
 ---
 
 <details>
@@ -3147,6 +3472,71 @@ Dieser Abschnitt ergänzt das Handbuch um die neuesten Projektfunktionen und dem
 1. Vor dem Programmstart Umgebungsvariable **LINCEU_OPENGL_MODE** definieren.
 2. Gültige Werte: **auto**, **desktop**, **angle**, **software**.
 3. **software** nur zur Fehlerdiagnose verwenden (kann Leistung mindern).
+
+## Funktionen der Version 2026.10.21.0
+
+Diese Version führt das eigenständige Befehlszeilenwerkzeug (`linceu-lighthouse-cli`) ein, bietet erweiterte Konsolenparameter für die grafische Desktop-Anwendung, optimiert visuelle Ressourcen durch leichtere High-Definition-Grafiken und formalisiert die Nutzungsbedingungen unter der MIT-Lizenz.
+
+### Eigenständiges Befehlszeilenwerkzeug (`linceu-lighthouse-cli.exe`)
+
+`linceu-lighthouse-cli.exe` ist eine dedizierte Konsolenanwendung, die für den direkten Einsatz in PowerShell, der Windows-Eingabeaufforderung (CMD), Batch-Skripten, der Windows-Aufgabenplanung (Task Scheduler) und Automatisierungs-Pipelines ohne grafische Benutzeroberfläche entwickelt wurde.
+
+Beide ausführbaren Dateien (`Linceu_Lighthouse.exe` und `linceu-lighthouse-cli.exe`) arbeiten zu 100 % lokal und teilen dieselbe kryptografische Infrastruktur, Sicherheitsregel-Engine und lokale SQLite-Datenbank unter `%LOCALAPPDATA%/LinceuLighthouse/monitoramento.db`.
+
+#### Allgemeine CLI-Syntax
+```cmd
+linceu-lighthouse-cli.exe <Befehl> [Optionen]
+```
+
+#### Verfügbare CLI-Befehle:
+1. **`scan <Pfad>`**: Führt eine gründliche Überprüfung von Dateien und Verzeichnissen am angegebenen Pfad durch, berechnet SHA-256-Hashes, extrahiert Metadaten und bewertet den Risiko-Score.
+   - *Beispiel:* `linceu-lighthouse-cli.exe scan "C:\Projekte\System" --depth 2`
+   - *Beispiel mit Risikofilter:* `linceu-lighthouse-cli.exe scan "D:\Dateien" --risks-only --format json`
+2. **`monitor <Pfad>`**: Startet die kontinuierliche Echtzeitüberwachung des Dateisystems über native Windows-APIs (`ReadDirectoryChangesW`) und gibt sofortige Ereignisse in der Konsole aus.
+   - *Beispiel:* `linceu-lighthouse-cli.exe monitor "C:\inetpub\wwwroot"`
+   - *Beispiel mit festgelegter Dauer:* `linceu-lighthouse-cli.exe monitor "D:\Daten" --duration 3600 --format text`
+3. **`metadata <Datei>`**: Extrahiert erweiterte technische Metadaten aus ausführbaren Dateien und PE-Binärdateien (Architektur, Sektionen, Authenticode-Signaturprüfung und Zeitstempel).
+   - *Beispiel:* `linceu-lighthouse-cli.exe metadata "C:\Windows\notepad.exe"`
+4. **`baseline <Pfad>`**: Vergleicht den aktuellen Dateistatus mit der in SQLite gespeicherten kryptografischen Baseline und erkennt Änderungen, Abweichungen (*Drift*) sowie nicht autorisierte Ergänzungen.
+   - *Prüfbeispiel:* `linceu-lighthouse-cli.exe baseline "C:\Konfigurationen"`
+   - *Aktualisierungsbeispiel:* `linceu-lighthouse-cli.exe baseline "C:\Konfigurationen" --update`
+5. **`alerts`**: Fragt alle im lokalen Audit-Protokoll erfassten Sicherheitsvorfälle und Regelverletzungen ab und listet sie auf.
+   - *Beispiel:* `linceu-lighthouse-cli.exe alerts --format json`
+6. **`quarantine <Aktion>`**: Verwaltet die im kryptografischen Quarantäne-Tresor gesicherten Dateien.
+   - *Dateien auflisten:* `linceu-lighthouse-cli.exe quarantine list`
+   - *Datei mit Prüfung wiederherstellen:* `linceu-lighthouse-cli.exe quarantine restore <id> "C:\SichererZielpfad"`
+7. **`sessions`**: Zeigt den vollständigen Verlauf der in SQLite gespeicherten Überwachungs- und Audit-Sitzungen an.
+   - *Beispiel:* `linceu-lighthouse-cli.exe sessions --format csv`
+
+#### Globale CLI-Optionen:
+- **`--format <text|json|csv>`**: Wählt das Ausgabeformat für Konsole, Weiterleitungen oder Skripte (Standard: `text`).
+- **`--depth <n>`**: Begrenzt die Rekursionstiefe für Unterordner (`0` nur Stammverzeichnis, `-1` für unbegrenzte Rekursion).
+- **`--risks-only`**: Filtert die Ausgabe, sodass nur Elemente mit signifikantem Risikolevel angezeigt werden (Score ≥ 45 oder Stufen Mittel, Hoch und Kritisch).
+- **`--duration <Sekunden>`**: Legt die maximale Überwachungsdauer in Sekunden fest (`0` für kontinuierliche Ausführung bis Strg+C).
+- **`--no-banner`**: Unterdrückt das dekorative Startbanner, ideal für Pipelines und automatisierte Skripte.
+- **`--help` / `-h`**: Zeigt die vollständige Hilfe und Befehlssyntax im Terminal an.
+- **`--version` / `-v`**: Zeigt die offiziell kompilierte Version des Werkzeugs an.
+
+### Befehlszeilenparameter der grafischen Desktop-Anwendung (`Linceu_Lighthouse.exe`)
+
+Die Desktop-Anwendung mit grafischer Benutzeroberfläche unterstützt ebenfalls Konsolenparameter beim Direktstart oder über Verknüpfungen:
+- `Linceu_Lighthouse.exe "D:\MeinOrdner"`: Startet die Anwendung direkt im angegebenen Verzeichnis und beginnt den Scan.
+- `--dir <Pfad>` oder `-d <Pfad>`: Legt das zu überwachende Verzeichnis explizit fest.
+- `--profile <Name>`: Lädt automatisch ein zuvor in SQLite konfiguriertes Multi-Verzeichnis-Profil.
+- `--scan-only`: Führt die vollständige Überprüfung durch, katalogisiert Metadaten und beendet sich, ohne den Hintergrundüberwachungsdienst aktiv zu halten.
+- `--export <Format> <Datei>`: Exportiert Audit-Berichte nach Abschluss des Scans (`xlsx`, `csv`, `json`, `xml` oder `db`).
+- `LINCEU_OPENGL_MODE`: Umgebungsvariable zur Konfiguration des Grafikbeschleunigungsmodus der Diagramme (`auto`, `desktop`, `angle`, `software`).
+
+### Grafische Optimierung und High Definition
+
+Das Anwendungspaket wurde durch Entfernen veralteter Grafiken und Icons mit niedriger Auflösung optimiert. Es enthält ausschließlich hochauflösende visuelle Ressourcen für moderne High-DPI-Bildschirme. Die Vorteile umfassen:
+- Schnellerer Anwendungsstart;
+- Geringerer Speicherbedarf auf dem Datenträger und reduzierter RAM-Verbrauch;
+- Gestochen scharfe und gleichmäßige Darstellung über verschiedene Windows-Skalierungsfaktoren hinweg.
+
+### Lizenzierung und Rechtsschutz
+
+Das Projekt formalisiert seine Distribution unter der MIT-Lizenz für den gesamten Quellcode, Skripte und Assets und garantiert volle Freiheit für private sowie kommerzielle Nutzung, Modifikation und Integration. Ein ausdrücklicher Schutzhinweis schützt die offiziell vom Autor signierten und in App Stores verteilten Binärdateien vor unbefugter Weiterverbreitung durch Dritte.
 
 ## Funktionen der Version 2026.9.28.0
 

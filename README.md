@@ -14,7 +14,7 @@
 
 <h2 id="ptbr">🇧🇷 Português (BR)</h2>
 
-> **Observação:** Este repositório refere-se à versão **v2026.9.28.0** do Projeto Linceu Lighthouse. Apoie o projeto e adquira a versão paga através do link: [Instalar via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
+> **Observação:** Este repositório refere-se à versão **v2026.10.21.0** do Projeto Linceu Lighthouse. Apoie o projeto e adquira a versão paga através do link: [Instalar via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
 
 <details>
 <summary>Clique para expandir o README em português</summary>
@@ -33,7 +33,7 @@
 </p>
 
 Projeto: LINCEU LIGHTHOUSE  
-Versão: v2026.9.28.0<br>
+Versão: v2026.10.21.0<br>
 Autor: Fernando Nillsson Cidade<br>
 
 Descrição: Plataforma Local de Inteligência, Histórico e Auditoria de Atividades de Arquivos
@@ -913,13 +913,23 @@ Logs são gravados com timestamp em:
 
 ---
 
-### 📄 Licença e Autoria
+### ⚖️ Licença de Código Aberto e Distribuição Comercial
 
-**Autores:** Fernando Nillsson Cidade<br>
-**Versão:** v2026.9.28.0<br>
-**Licença:** [GNU Lesser General Public License v3.0 (LGPL-3.0)](https://github.com/fernandoncidade/Linceu_Lighthouse_cpp/blob/main/LICENSE)
+O código-fonte deste repositório é 100% licenciado sob a **[Licença MIT](LICENSE)**.
 
-Para mais informações, consulte também `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.md`, os assets embarcados e a documentação específica nos módulos do código-fonte.
+> **Declaração do Titular dos Direitos:**  
+> Eu, **Fernando Nillsson Cidade**, na qualidade de único criador e detentor dos direitos autorais do projeto **Linceu Lighthouse**, concedo expressamente a qualquer pessoa ou organização todas as permissões estabelecidas na Licença MIT, incluindo, sem limitação, os direitos de usar, copiar, modificar, mesclar, publicar, distribuir, sublicenciar e comercializar cópias do Software na forma de código-fonte ou binários compilados.
+
+- **Código Aberto:** O código-fonte integral é livre para bifurcação (*fork*), compilação, estudo e adaptação sob a Licença MIT.
+- **Documentação em `source/assets/`:** Desenvolvida especificamente para a publicação na Microsoft Store. Desenvolvedores e mantenedores de *forks* têm total liberdade para alterar, excluir, adicionar ou personalizar essa documentação para seus próprios ecossistemas e plataformas, desde que respeitem as diretrizes e leis de seus respectivos países.
+- **Edição Oficial da Microsoft Store:** O binário pré-compilado e assinado digitalmente distribuído oficialmente pelo autor na [Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM) é um pacote comercial pronto para uso. Terceiros **não possuem autorização** para comercializar, redistribuir ou realizar engenharia reversa sobre os binários oficiais compilados pelo autor (qualquer pessoa ou organização que deseje distribuir binários pode compilá-los livremente a partir do código-fonte aberto).
+- Detalhes completos: [docs/licensing.md](docs/licensing.md).
+
+Versão: v2026.10.21.0<br>
+Data técnica desta revisão: 21 de outubro de 2026<br>
+Autor: Fernando Nillsson Cidade<br>
+
+Para mais informações, consulte também `OBSERVACAO.md`, `MANUAL.md`, `docs/`, os assets embarcados e a documentação específica nos módulos do código-fonte.
 
 ---
 
@@ -929,7 +939,7 @@ Para mais informações, consulte também `OBSERVACAO.md`, `ARCHITECTURE.md`, `M
 
 <h2 id="enus">🇺🇸 English (US)</h2>
 
-> **Note:** This repository refers to version **v2026.9.28.0** of the Linceu Lighthouse Project. Support the project and get the store release via: [Install via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
+> **Note:** This repository refers to version **v2026.10.21.0** of the Linceu Lighthouse Project. Support the project and get the store release via: [Install via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
 
 <details>
 <summary>Click to expand the README in English</summary>
@@ -948,7 +958,7 @@ Para mais informações, consulte também `OBSERVACAO.md`, `ARCHITECTURE.md`, `M
 </p>
 
 Project: LINCEU LIGHTHOUSE  
-Version: v2026.9.28.0<br>
+Version: v2026.10.21.0<br>
 Author: Fernando Nillsson Cidade<br>
 
 Description: Local File Activity Intelligence, History & Audit Platform
@@ -1829,13 +1839,23 @@ Logs are written with timestamps to:
 
 ---
 
-### 📄 License and Authorship
+### ⚖️ Open Source License & Commercial Distribution
 
-**Authors:** Fernando Nillsson Cidade<br>
-**Version:** v2026.9.28.0<br>
-**License:** [GNU Lesser General Public License v3.0 (LGPL-3.0)](https://github.com/fernandoncidade/Linceu_Lighthouse_cpp/blob/main/LICENSE)
+The source code in this repository is 100% licensed under the **[MIT License](LICENSE)**.
 
-For more information, also consult `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.md`, embedded assets and module-specific source documentation.
+> **Rights Holder Statement:**  
+> I, **Fernando Nillsson Cidade**, as the sole creator and copyright owner of the **Linceu Lighthouse** project, hereby expressly grant to any person or organization all permissions established in the MIT License, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and sell copies of the Software in source code or compiled formats.
+
+- **Open Source:** The full codebase is free to fork, build, study, and adapt under the MIT License.
+- **Documentation in `source/assets/`:** Created specifically for the Microsoft Store release. Developers and forks have complete freedom to alter, delete, add, or customize this documentation for their own platforms and target markets, provided they comply with their local laws and platform regulations.
+- **Official Microsoft Store Edition:** The official pre-compiled and digitally signed binary distributed by the author on the [Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM) is a turnkey commercial package. Third parties are **not authorized** to commercially resell, redistribute, or reverse-engineer the author's official compiled binaries (anyone wishing to distribute builds may compile their own binaries from the open source code).
+- Complete details: [docs/licensing.md](docs/licensing.md).
+
+Version: v2026.10.21.0<br>
+Technical revision date: October 21, 2026<br>
+Author: Fernando Nillsson Cidade<br>
+
+For more information, also consult `OBSERVACAO.md`, `MANUAL.md`, `docs/`, embedded assets and module-specific source documentation.
 
 ---
 
@@ -1845,7 +1865,7 @@ For more information, also consult `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.m
 
 <h2 id="eses">🇪🇸 Español (ES)</h2>
 
-> **Nota:** Este repositorio se refiere a la versión **v2026.9.28.0** del Proyecto Linceu Lighthouse. Apoye el proyecto y adquiera la versión de pago a través del enlace: [Instalar vía Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
+> **Nota:** Este repositorio se refiere a la versión **v2026.10.21.0** del Proyecto Linceu Lighthouse. Apoye el proyecto y adquiera la versión de pago a través del enlace: [Instalar vía Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
 
 <details>
 <summary>Haga clic para expandir el README en español</summary>
@@ -1864,7 +1884,7 @@ For more information, also consult `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.m
 </p>
 
 Proyecto: LINCEU LIGHTHOUSE  
-Versión: v2026.9.28.0<br>
+Versión: v2026.10.21.0<br>
 Autor: Fernando Nillsson Cidade<br>
 
 Descripción: Plataforma Local de Inteligencia, Historial y Auditoría de Actividades de Archivos
@@ -2744,13 +2764,23 @@ Los registros se guardan con marca temporal en:
 
 ---
 
-### 📄 Licencia y Autoría
+### ⚖️ Licencia de Código Abierto y Distribución Comercial
 
-**Autor:** Fernando Nillsson Cidade<br>
-**Versión:** v2026.9.28.0<br>
-**Licencia:** [GNU Lesser General Public License v3.0 (LGPL-3.0)](https://github.com/fernandoncidade/Linceu_Lighthouse_cpp/blob/main/LICENSE)
+El código fuente de este repositorio está 100% licenciado bajo la **[Licencia MIT](LICENSE)**.
 
-Para más información, consulte también `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.md`, los assets integrados y la documentación específica en los módulos del código fuente.
+> **Declaración del Titular de los Derechos:**  
+> Yo, **Fernando Nillsson Cidade**, en calidad de único creador y titular de los derechos de autor del proyecto **Linceu Lighthouse**, otorgo expresamente a cualquier persona u organización todos los permisos establecidos en la Licencia MIT, incluidos, entre otros, los derechos de usar, copiar, modificar, fusionar, publicar, distribuir, sublicenciar y comercializar copias del Software en forma de código fuente o binarios compilados.
+
+- **Código Abierto:** El código fuente integral es libre para bifurcación (*fork*), compilación, estudio y adaptación bajo la Licencia MIT.
+- **Documentación en `source/assets/`:** Desarrollada específicamente para la publicación en la Microsoft Store. Los desarrolladores y mantenedores de *forks* tienen total libertad para modificar, eliminar, agregar o personalizar esta documentación para sus propios ecosistemas y plataformas, siempre que cumplan con las directrices y leyes de sus respectivos países.
+- **Edición Oficial de Microsoft Store:** El binario precompilado y firmado digitalmente distribuido oficialmente por el autor en la [Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM) es un paquete comercial listo para usar. Terceros **no tienen autorización** para comercializar, redistribuir o realizar ingeniería inversa sobre los binarios oficiales compilados por el autor (cualquier persona u organización que desee distribuir binarios puede compilarlos libremente a partir del código fuente abierto).
+- Detalles completos: [docs/licensing.md](docs/licensing.md).
+
+Versión: v2026.10.21.0<br>
+Fecha técnica de esta revisión: 21 de octubre de 2026<br>
+Autor: Fernando Nillsson Cidade<br>
+
+Para más información, consulte también `OBSERVACAO.md`, `MANUAL.md`, `docs/`, los assets integrados y la documentación específica en los módulos del código fuente.
 
 ---
 
@@ -2760,7 +2790,7 @@ Para más información, consulte también `OBSERVACAO.md`, `ARCHITECTURE.md`, `M
 
 <h2 id="frfr">🇫🇷 Français (FR)</h2>
 
-> **Remarque :** Ce dépôt fait référence à la version **v2026.9.28.0** du Projet Linceu Lighthouse. Soutenez le projet et procurez-vous la version payante via le lien : [Installer via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
+> **Remarque :** Ce dépôt fait référence à la version **v2026.10.21.0** du Projet Linceu Lighthouse. Soutenez le projet et procurez-vous la version payante via le lien : [Installer via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
 
 <details>
 <summary>Cliquez pour développer le README en français</summary>
@@ -2779,7 +2809,7 @@ Para más información, consulte también `OBSERVACAO.md`, `ARCHITECTURE.md`, `M
 </p>
 
 Projet : LINCEU LIGHTHOUSE  
-Version : v2026.9.28.0<br>
+Version : v2026.10.21.0<br>
 Auteur : Fernando Nillsson Cidade<br>
 
 Description : Plateforme Locale d'Intelligence, d'Historique et d'Audit d'Activités de Fichiers
@@ -3659,13 +3689,23 @@ Les journaux sont enregistrés avec horodatage dans :
 
 ---
 
-### 📄 Licence et Auteurs
+### ⚖️ Licence Open Source et Distribution Commerciale
 
-**Auteur :** Fernando Nillsson Cidade<br>
-**Version :** v2026.9.28.0<br>
-**Licence :** [GNU Lesser General Public License v3.0 (LGPL-3.0)](https://github.com/fernandoncidade/Linceu_Lighthouse_cpp/blob/main/LICENSE)
+Le code source de ce dépôt est sous licence 100% **[Licence MIT](LICENSE)**.
 
-Pour plus d'informations, consultez également `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.md`, les assets intégrés et la documentation spécifique dans les modules du code source.
+> **Déclaration du Titulaire des Droits :**  
+> Moi, **Fernando Nillsson Cidade**, en tant qu'unique créateur et titulaire des droits d'auteur du projet **Linceu Lighthouse**, accorde expressément à toute personne ou organisation toutes les autorisations établies dans la Licence MIT, y compris, sans limitation, les droits d'utiliser, copier, modifier, fusionner, publier, distribuer, concéder des sous-licences et commercialiser des copies du Logiciel sous forme de code source ou de binaires compilés.
+
+- **Open Source :** L'intégralité du code source est libre d'être dérivée (*fork*), compilée, étudiée et adaptée sous Licence MIT.
+- **Documentation dans `source/assets/` :** Conçue spécifiquement pour la publication sur le Microsoft Store. Les développeurs et les responsables de *forks* ont toute liberté pour modifier, supprimer, ajouter ou personnaliser cette documentation pour leurs propres écosystèmes et plateformes, à condition de respecter les directives et lois de leurs pays respectifs.
+- **Édition Officielle du Microsoft Store :** Le binaire précompilé et signé numériquement distribué officiellement par l'auteur sur le [Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM) est un package commercial prêt à l'emploi. Les tiers **ne sont pas autorisés** à commercialiser, redistribuer ou procéder à la rétro-ingénierie des binaires officiels compilés par l'auteur (toute personne ou organisation souhaitant distribuer des binaires peut librement les compiler à partir du code source ouvert).
+- Détails complets : [docs/licensing.md](docs/licensing.md).
+
+Version : v2026.10.21.0<br>
+Date technique de cette révision : 21 octobre 2026<br>
+Auteur : Fernando Nillsson Cidade<br>
+
+Pour plus d'informations, consultez également `OBSERVACAO.md`, `MANUAL.md`, `docs/`, les assets intégrés et la documentation spécifique dans les modules du code source.
 
 ---
 
@@ -3675,7 +3715,7 @@ Pour plus d'informations, consultez également `OBSERVACAO.md`, `ARCHITECTURE.md
 
 <h2 id="itit">🇮🇹 Italiano (IT)</h2>
 
-> **Nota:** Questo repository fa riferimento alla versione **v2026.9.28.0** del Progetto Linceu Lighthouse. Sostieni il progetto e acquista la versione a pagamento tramite il link: [Installa via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
+> **Nota:** Questo repository fa riferimento alla versione **v2026.10.21.0** del Progetto Linceu Lighthouse. Sostieni il progetto e acquista la versione a pagamento tramite il link: [Installa via Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
 
 <details>
 <summary>Fai clic per espandere il README in italiano</summary>
@@ -3694,7 +3734,7 @@ Pour plus d'informations, consultez également `OBSERVACAO.md`, `ARCHITECTURE.md
 </p>
 
 Progetto: LINCEU LIGHTHOUSE  
-Versione: v2026.9.28.0<br>
+Versione: v2026.10.21.0<br>
 Autore: Fernando Nillsson Cidade<br>
 
 Descrizione: Piattaforma Locale di Intelligence, Cronologia e Audit delle Attività sui File
@@ -4574,13 +4614,23 @@ I log vengono registrati con timestamp in:
 
 ---
 
-### 📄 Licenza e Autori
+### ⚖️ Licenza Open Source e Distribuzione Commerciale
 
-**Autore:** Fernando Nillsson Cidade<br>
-**Versione:** v2026.9.28.0<br>
-**Licence:** [GNU Lesser General Public License v3.0 (LGPL-3.0)](https://github.com/fernandoncidade/Linceu_Lighthouse_cpp/blob/main/LICENSE)
+Il codice sorgente di questo repository è concesso al 100% con **[Licenza MIT](LICENSE)**.
 
-Per ulteriori informazioni, consultare anche `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.md`, gli asset integrati e la documentazione specifica nei moduli del codice sorgente.
+> **Dichiarazione del Titolare dei Diritti:**  
+> Io, **Fernando Nillsson Cidade**, in qualità di unico creatore e titolare del copyright del progetto **Linceu Lighthouse**, concedo espressamente a qualsiasi persona o organizzazione tutte le autorizzazioni stabilite nella Licenza MIT, inclusi, a titolo esemplificativo, i diritti di utilizzare, copiare, modificare, unire, pubblicare, distribuire, concedere in sublicenza e commercializzare copie del Software sotto forma di codice sorgente o binari compilati.
+
+- **Open Source:** L'intero codice sorgente è libero per *fork*, compilazione, studio e adattamento sotto Licenza MIT.
+- **Documentazione in `source/assets/`:** Creata appositamente per la pubblicazione su Microsoft Store. Gli sviluppatori e i manutentori di *fork* hanno la totale libertà di modificare, eliminare, aggiungere o personalizzare questa documentazione per i propri ecosistemi e piattaforme, purché rispettino le linee guida e le leggi vigenti nei rispettivi paesi.
+- **Edizione Ufficiale di Microsoft Store:** Il binario precompilato e firmato digitalmente distribuito ufficialmente dall'autore su [Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM) è un pacchetto commerciale pronto all'uso. Terze parti **non sono autorizzate** a commercializzare, ridistribuire o effettuare ingegneria inversa sui binari ufficiali compilati dall'autore (chiunque desideri distribuire binari può compilarli liberamente a partire dal codice sorgente aperto).
+- Dettagli completi: [docs/licensing.md](docs/licensing.md).
+
+**Versione:** v2026.10.21.0<br>
+Data tecnica di questa revisione: 21 ottobre 2026<br>
+Autore: Fernando Nillsson Cidade<br>
+
+Per ulteriori informazioni, consultare anche `OBSERVACAO.md`, `MANUAL.md`, `docs/`, gli asset integrati e la documentazione specifica nei moduli del codice sorgente.
 
 ---
 
@@ -4590,7 +4640,7 @@ Per ulteriori informazioni, consultare anche `OBSERVACAO.md`, `ARCHITECTURE.md`,
 
 <h2 id="dede">🇩🇪 Deutsch (DE)</h2>
 
-> **Hinweis:** Dieses Repository bezieht sich auf die Version **v2026.9.28.0** des Projekts Linceu Lighthouse. Unterstützen Sie das Projekt und erwerben Sie die kostenpflichtige Version über den Link: [Über Microsoft Store installieren](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
+> **Hinweis:** Dieses Repository bezieht sich auf die Version **v2026.10.21.0** des Projekts Linceu Lighthouse. Unterstützen Sie das Projekt und erwerben Sie die kostenpflichtige Version über den Link: [Über Microsoft Store installieren](https://apps.microsoft.com/detail/9NN8Z5Z700TM)
 
 <details>
 <summary>Klicken Sie hier, um die README auf Deutsch zu erweitern</summary>
@@ -4609,7 +4659,7 @@ Per ulteriori informazioni, consultare anche `OBSERVACAO.md`, `ARCHITECTURE.md`,
 </p>
 
 Projekt: LINCEU LIGHTHOUSE  
-Version: v2026.9.28.0<br>
+Version: v2026.10.21.0<br>
 Autor: Fernando Nillsson Cidade<br>
 
 Beschreibung: Lokale Plattform für Datei-Intelligenz, Verlauf und Dateiaktivitäts-Audit
@@ -5489,13 +5539,23 @@ Protokolle werden mit Zeitstempel gespeichert unter:
 
 ---
 
-### 📄 Lizenz und Autoren
+### ⚖️ Open-Source-Lizenz und kommerzielle Distribution
 
-**Autor:** Fernando Nillsson Cidade<br>
-**Version:** v2026.9.28.0<br>
-**Lizenz:** [GNU Lesser General Public License v3.0 (LGPL-3.0)](https://github.com/fernandoncidade/Linceu_Lighthouse_cpp/blob/main/LICENSE)
+Der Quellcode in diesem Repository ist zu 100 % unter der **[MIT-Lizenz](LICENSE)** lizenziert.
 
-Weitere Informationen finden Sie auch in `OBSERVACAO.md`, `ARCHITECTURE.md`, `MANUAL.md`, den integrierten Assets und der spezifischen Dokumentation in den Quellcodemodulen.
+> **Erklärung des Rechteinhabers:**  
+> Ich, **Fernando Nillsson Cidade**, als alleiniger Schöpfer und Urheberrechtsinhaber des Projekts **Linceu Lighthouse**, gewähre hiermit jeder Person oder Organisation ausdrücklich alle in der MIT-Lizenz festgelegten Genehmigungen, einschließlich, aber nicht beschränkt auf die Rechte zur Nutzung, Vervielfältigung, Änderung, Zusammenführung, Veröffentlichung, Verbreitung, Unterlizenzierung und zum Verkauf von Kopien der Software in Form von Quellcode oder kompilierten Binärdateien.
+
+- **Open Source:** Der gesamte Quellcode kann unter der MIT-Lizenz frei geforkt, kompiliert, analysiert und angepasst werden.
+- **Dokumentation in `source/assets/`:** Speziell für die Veröffentlichung im Microsoft Store erstellt. Entwickler und Betreiber von Forks haben die uneingeschränkte Freiheit, diese Dokumentation für ihre eigenen Plattformen und Zielmärkte zu ändern, zu löschen, zu ergänzen oder anzupassen, vorausgesetzt, sie halten sich an die Richtlinien und Gesetze ihrer jeweiligen Länder.
+- **Offizielle Microsoft Store-Edition:** Die vom Autor im [Microsoft Store](https://apps.microsoft.com/detail/9NN8Z5Z700TM) offiziell vertriebene, vorkompilierte und digital signierte Binärdatei ist ein schlüsselfertiges kommerzielles Paket. Dritte sind **nicht berechtigt**, die vom Autor offiziell kompilierten Binärdateien kommerziell weiterzuverkaufen, weiterzuverbreiten oder durch Reverse Engineering zu analysieren (jeder, der Binärdateien vertreiben möchte, kann diese frei aus dem offenen Quellcode selbst kompilieren).
+- Vollständige Details: [docs/licensing.md](docs/licensing.md).
+
+Version: v2026.10.21.0<br>
+Technisches Revisionsdatum: 21. Oktober 2026<br>
+Autor: Fernando Nillsson Cidade<br>
+
+Weitere Informationen finden Sie auch in `OBSERVACAO.md`, `MANUAL.md`, `docs/`, den integrierten Assets und der spezifischen Dokumentation in den Quellcodemodulen.
 
 ---
 

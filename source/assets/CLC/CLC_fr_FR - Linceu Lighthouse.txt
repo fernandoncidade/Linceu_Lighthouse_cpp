@@ -1,5 +1,5 @@
 CONTRAT DE LICENCE COMMERCIALE - Linceu Lighthouse
-Version 2026.9.28.0, 28 septembre 2026
+Version 2026.10.21.0, 21 octobre 2026
 
 Ce Contrat de Licence (« Contrat ») est conclu entre :
 

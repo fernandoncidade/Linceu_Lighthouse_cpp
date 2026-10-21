@@ -18,12 +18,14 @@
 #include "source/security/sdiff_01_diff_conteudo.h"
 #include "source/security/evid_01_exportacao_evidencia.h"
 #include "source/security/exec_01_inteligencia_executaveis.h"
-#include "source/security/mdir_01_multi_diretorio.h"
 #include "source/security/quar_01_quarentena.h"
 #include "source/security/agre_01_motor_regras.h"
 #include "source/security/risk_01_score_risco.h"
 #include "source/security/sess_01_correlacao_sessoes.h"
+#include "source/security/mdir_01_multi_diretorio.h"
+#if !defined(LINCEU_CLI_HEADLESS)
 #include "source/services/ob_08_EventoMovido.h"
+#endif
 #include "source/utils/CaminhoPersistenteUtils.h"
 
 namespace source::security {
@@ -908,6 +910,33 @@ bool SecurityManager::restore_monitored_version(const QString& original_path,
     return write_text_file(snapshot_text, destination_path, error_message);
 }
 
+#if defined(LINCEU_CLI_HEADLESS)
+source::services::Observador* SecurityManager::configure_runtime_observers() const {
+    return nullptr;
+}
+
+void SecurityManager::stop_runtime_observers() const {}
+
+void SecurityManager::start_runtime_observers() const {}
+
+void SecurityManager::stop_runtime_scans() const {}
+
+void SecurityManager::sync_runtime_language(const QString& language) const {
+    Q_UNUSED(language);
+}
+
+bool SecurityManager::any_runtime_active() const {
+    return false;
+}
+
+bool SecurityManager::any_runtime_scan_running() const {
+    return false;
+}
+
+source::services::Observador* SecurityManager::primary_observer() const {
+    return nullptr;
+}
+#else
 source::services::Observador* SecurityManager::configure_runtime_observers() const {
     if (interface_ == nullptr) {
         return nullptr;
@@ -952,5 +981,6 @@ bool SecurityManager::any_runtime_scan_running() const {
 source::services::Observador* SecurityManager::primary_observer() const {
     return MultiDiretorioCoordinator::instance().primary_observer(interface_);
 }
+#endif
 
 }  // namespace source::security
